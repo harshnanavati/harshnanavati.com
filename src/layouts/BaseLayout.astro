@@ -1,0 +1,123 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/source-serif-4';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { SITE } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  ogImage?: string;
+}
+
+const { title, description, path, ogImage = '/og/index.png' } = Astro.props;
+const fullTitle = path === '/' ? `${SITE.name} · ${SITE.role}` : `${title} · ${SITE.name}`;
+const canonical = new URL(path, SITE.url).href;
+const ogImageUrl = new URL(ogImage, SITE.url).href;
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.name,
+  jobTitle: SITE.role,
+  url: SITE.url,
+  sameAs: [SITE.linkedin],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    {
+      SITE.goatcounter && (
+        <script
+          is:inline
+          data-goatcounter={`https://${SITE.goatcounter}.goatcounter.com/count`}
+          async
+          src="//gc.zgo.at/count.js"
+        />
+      )
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="container wide site-header">
+      <nav aria-label="Main">
+        <a class="name" href="/">{SITE.name}</a>
+        <span class="links">
+          <a href="/#work">Work</a>
+          <a href="/about">About</a>
+          <a href="/resume">Resume</a>
+        </span>
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="container wide site-footer">
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+      <a href="/resume">Resume</a>
+      <span class="muted">© 2026 {SITE.name}</span>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px 16px;
+    padding: 24px 0 8px;
+    font-size: 15px;
+  }
+
+  .site-header a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .site-header a:hover {
+    color: var(--accent);
+  }
+
+  .name {
+    font-weight: 500;
+  }
+
+  .links {
+    display: flex;
+    gap: 20px;
+  }
+
+  main {
+    padding: 32px 0 64px;
+  }
+
+  .site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    padding-top: 24px;
+    padding-bottom: 48px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+  }
+</style>
