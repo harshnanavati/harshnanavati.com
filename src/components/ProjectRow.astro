@@ -1,0 +1,70 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  outcome: string;
+  tags: string[];
+}
+
+const { href, title, outcome, tags } = Astro.props;
+---
+
+<li class="row">
+  <a href={href}>
+    <span class="title">{title}</span>
+    <span class="outcome">{outcome}</span>
+    <span class="tags">
+      {tags.map((tag) => <span class="tag mono">{tag}</span>)}
+    </span>
+    <span class="arrow" aria-hidden="true">→</span>
+  </a>
+</li>
+
+<style>
+  .row {
+    border-bottom: 1px solid var(--border);
+  }
+
+  a {
+    position: relative;
+    display: grid;
+    gap: 4px;
+    padding: 16px 28px 16px 0;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
+  .outcome {
+    color: var(--muted);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    color: var(--muted);
+  }
+
+  .arrow {
+    position: absolute;
+    right: 4px;
+    top: 16px;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+
+  a:hover .title,
+  a:hover .arrow {
+    color: var(--accent);
+  }
+
+  a:hover .arrow {
+    transform: translateX(4px);
+  }
+</style>

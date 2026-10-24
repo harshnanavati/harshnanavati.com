@@ -1,0 +1,27 @@
+---
+interface Props {
+  links: { label: string; href: string }[];
+}
+
+const { links } = Astro.props;
+---
+
+<p class="links-out">
+  {
+    links.map((link) => (
+      <a href={link.href} target="_blank" rel="noopener">
+        {link.label} →
+      </a>
+    ))
+  }
+</p>
+
+<style>
+  .links-out {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin: 1rem 0;
+    font-weight: 500;
+  }
+</style>

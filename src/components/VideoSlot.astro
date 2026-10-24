@@ -1,0 +1,50 @@
+---
+import 'lite-youtube-embed/src/lite-yt-embed.css';
+import type { Diagram as DiagramData } from '../diagrams/types';
+import Diagram from './Diagram.astro';
+
+interface Props {
+  title: string;
+  youtubeId?: string;
+  diagram: DiagramData;
+}
+
+const { title, youtubeId, diagram } = Astro.props;
+---
+
+<section class="video-slot" aria-label={`Video: ${title}`}>
+  {
+    youtubeId ? (
+      <lite-youtube videoid={youtubeId} playlabel={title}>
+        <a class="lite-youtube-fallback" href={`https://www.youtube.com/watch?v=${youtubeId}`}>
+          Watch "{title}" on YouTube
+        </a>
+      </lite-youtube>
+    ) : (
+      <>
+        <Diagram diagram={diagram} />
+        <p class="soon muted">Video coming soon: {title}</p>
+      </>
+    )
+  }
+</section>
+
+<script>
+  import 'lite-youtube-embed';
+</script>
+
+<style>
+  .video-slot {
+    margin: 2rem 0;
+  }
+
+  .soon {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  lite-youtube {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+</style>
