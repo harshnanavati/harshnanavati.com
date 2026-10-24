@@ -1,0 +1,24 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# test output
+test-results/
+playwright-report/
+
+# logs
+npm-debug.log*
+
+# secrets and local-only files
+.env*
+*.local.*
+
+# plan execution scratch
+.superpowers/
+
+# OS / editor
+.DS_Store
+.idea/
