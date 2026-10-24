@@ -1,0 +1,52 @@
+---
+title: QuantumCopilot – AI Loan & Financial Assistant
+order: 5
+outcome: Ask about a loan in plain English and get calculated scenarios side by side, while the LLM never does the math.
+summary: Plain-English loan questions in, calculated scenarios out, with the LLM never doing the math
+chips:
+  - { value: '6', label: loan products }
+  - { value: 'Up to 3', label: scenarios in parallel }
+  - { value: '~3x', label: lower latency }
+  - { value: 'Multi-turn', label: memory }
+tags: [llm, asyncio, fastapi]
+links:
+  - { label: 'Try it live', href: 'https://www.loanquantum.com/quantumcopilot' }
+videoTitle: Why the LLM never does the math
+stack: [Python, FastAPI, asyncio, OpenAI (GPT-4.1-nano), SQL Server, Pydantic, IIS]
+---
+
+import ProjectDiagram from '../../components/ProjectDiagram.astro';
+
+## The problem
+
+People think about loans in sentences: "What's my EMI on a 20-lakh home loan over 15 years, and what if the rate drops?" Loan calculators make them fill in forms instead.
+
+## Constraints
+
+- The numbers must be exact. An LLM's arithmetic isn't good enough for money.
+- Follow-up questions should feel natural.
+- It's a production API, so it has to be secure and keep working when dependencies fail.
+
+## How it works
+
+<ProjectDiagram slug="quantumcopilot" index={0} />
+
+After an API key check and loading recent conversation memory, the LLM turns the question into typed parameters: loan product, amount, tenure, rate. Up to three scenarios are built and sent to the calculation engine at the same time, then the LLM writes a comparison table and the memory is updated. If no loan details are found, it falls back to a general finance chat.
+
+## Key decisions
+
+1. **The LLM extracts, the engine computes.** The model only turns language into typed parameters. A deterministic calculation engine does every number.
+2. **Parallel scenarios.** Up to three scenarios run at once, so the wait is the slowest one instead of all three added together. That made it about 3x faster.
+3. **Memory as summaries.** Each turn is saved as a short summary. "Make it 20 years" changes only the tenure and carries everything else over.
+4. **Boring security, done properly.** Constant-time API key checks with key rotation, parameterized SQL, retries with backoff on rate limits and server errors, and one consistent error format.
+
+## Results
+
+- Plain-English questions answered across 6 loan products.
+- ~3x lower latency from parallel scenario calculation.
+- Live in production, running on 8 Uvicorn workers.
+
+## What I'd do next
+
+- Bring the amortization engine fully in-house and benchmark latency formally.
+- Move parameter extraction to schema-enforced structured outputs.

@@ -1,0 +1,54 @@
+---
+title: AI Face Matching System
+order: 4
+outcome: 'Automatic player tagging for tournament photos: a GPU face-recognition pipeline that runs unattended.'
+summary: GPU face recognition that tags players in tournament photos, unattended
+chips:
+  - { value: '~70%', label: less manual tagging }
+  - { value: '512-D', label: face embeddings }
+  - { value: 'Unattended', label: runs }
+  - { value: 'Extended', label: to video }
+tags: [pytorch, facenet, cuda]
+videoTitle: A face-recognition pipeline that recovers from its own failures
+privacyNote: No real photos are shown on this page. The system processes images of real people, so everything here is a diagram.
+stack: [Python, PyTorch (CUDA), 'facenet-pytorch (MTCNN, FaceNet)', YOLOv8, ONNX Runtime (DirectML), SQL Server, APScheduler]
+---
+
+import ProjectDiagram from '../../components/ProjectDiagram.astro';
+
+## The problem
+
+A US youth-sports organization photographs every game, and staff tagged the players in each photo by hand so families could find their pictures. It was slow and repetitive work.
+
+## Constraints
+
+- It runs with no engineer watching.
+- Corrupt files and missing data are normal, not exceptions.
+- Data is spread across three separate databases.
+- The business must control how strict matching is.
+- Face data is sensitive and has to be handled carefully.
+
+## How it works
+
+<ProjectDiagram slug="ai-face-matching" index={0} />
+
+A scheduler finds new games and puts them on a job queue. Each player's roster photo is turned once into a face embedding (512 numbers per face) and cached. For every game photo, each face is detected, embedded and compared against that game's team rosters, and the matches are saved for staff review.
+
+## Key decisions
+
+1. **A job queue built for failure.** Every job has a retry budget, so one corrupt photo can't block the rest. If a run crashes mid-job, its claim expires and the next run takes it over.
+2. **Park, don't fail.** Games with missing data are parked and re-checked automatically on every run, then rejoin the queue once the data shows up.
+3. **Cache embeddings, and respect humans.** Roster embeddings are computed once and reused. When a game is re-run, manual corrections by staff are kept, not overwritten.
+4. **Thresholds belong to the business.** A 0–100 strictness setting in the database maps to the model's distance threshold, so staff can tune it without an engineer.
+
+**Extension to video:** frames sampled from game video → player detection with YOLOv8 (exported to ONNX, run with DirectML) → optional super-resolution on player crops → the same face-matching pipeline.
+
+## Results
+
+- ~70% less manual tagging.
+- Runs unattended across three databases, recovering from bad inputs on its own.
+
+## What I'd do next
+
+- Replace pair-by-pair matching with a single matrix operation, to make large tournaments much faster.
+- Measure precision and recall at each threshold, so the strictness setting maps to known error rates.

@@ -1,0 +1,61 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import LinksOut from '../../components/LinksOut.astro';
+import MetricChips from '../../components/MetricChips.astro';
+import VideoSlot from '../../components/VideoSlot.astro';
+import { DIAGRAMS, type WorkSlug } from '../../diagrams';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const entries = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+  return entries.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, next: entries[(i + 1) % entries.length] },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'work'>;
+  next: CollectionEntry<'work'>;
+}
+
+const { entry, next } = Astro.props;
+const { data } = entry;
+const slug = entry.id as WorkSlug;
+const { Content } = await render(entry);
+---
+
+<BaseLayout title={data.title} description={data.outcome} path={`/work/${slug}/`} ogImage={`/og/${slug}.png`}>
+  <article class="container">
+    <h1>{data.title}</h1>
+    <p class="outcome">{data.outcome}</p>
+    <MetricChips chips={data.chips} />
+    {data.links && <LinksOut links={data.links} />}
+    {data.privacyNote && <p class="privacy-note muted"><em>{data.privacyNote}</em></p>}
+    <VideoSlot title={data.videoTitle} youtubeId={data.youtubeId} diagram={DIAGRAMS[slug][0]} />
+    <Content />
+    <h2>Stack</h2>
+    <p class="stack">{data.stack.join(' · ')}</p>
+    <p class="next">
+      <a class="next-project" href={`/work/${next.id}/`}>Next project: {next.data.title} →</a>
+    </p>
+  </article>
+</BaseLayout>
+
+<style>
+  .outcome {
+    font-size: 1.15rem;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .stack {
+    color: var(--muted);
+  }
+
+  .next {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+</style>

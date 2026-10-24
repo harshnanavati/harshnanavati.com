@@ -1,0 +1,57 @@
+---
+title: CrickPal AI Summary – Real-Time LLM Commentary Engine
+order: 3
+outcome: Live ball-by-ball commentary in, readable match summaries out, updated every few deliveries by a self-hosted LLM.
+summary: Live cricket commentary turned into match summaries by a self-hosted LLM
+chips:
+  - { value: '2', label: summary tiers }
+  - { value: 'Self-hosted', label: LLM }
+  - { value: 'Exactly-once', label: processing }
+  - { value: 'Per-match', label: tuning without redeploys }
+tags: [ollama, real-time, fastapi]
+links:
+  - { label: 'CrickPal, the platform this runs on', href: 'https://www.crickpal.com/' }
+videoTitle: Summarizing a live match without the prompt growing
+stack: [Python, FastAPI, Ollama, MongoDB, SQL Server, tenacity, Angular + Material, JWT, IIS]
+---
+
+import ProjectDiagram from '../../components/ProjectDiagram.astro';
+
+## The problem
+
+CrickPal has live ball-by-ball commentary for every match. Readers who arrive mid-match want two things fast: what's happened so far, and the headline.
+
+## Constraints
+
+- Live and continuous, with several matches running at once.
+- Cost must stay flat as matches get longer.
+- After a crash, no summary can be missed or duplicated.
+
+## How it works
+
+<ProjectDiagram slug="crickpal-ai-summary" index={0} />
+
+A poller checks each active match in turn and batches new deliveries every few balls. The self-hosted model gets its previous summary plus only those new deliveries, writes the detailed narrative, then a one-line headline from it. Both are saved together in one transaction and served through FastAPI, with an admin console for per-match settings.
+
+## Key decisions
+
+1. **Incremental, not full re-summarization.** The model gets its own previous summary plus only the new deliveries. The prompt stays roughly the same size from the first over to the last.
+2. **Exactly-once processing.** A timestamp watermark, a carried-over ball count and a dedup table keyed on each delivery's ID. A failed batch is never marked done, so it's retried on the next cycle.
+3. **Self-hosted model, protected.** Ollama means no per-token bill. A circuit breaker and backoff stop retries from hammering a struggling model, and JSON output mode keeps responses parseable.
+4. **Settings in the database, not the code.** Prompt, model, temperature and batch size can be overridden per match from the admin console, with system defaults as the fallback. No redeploys to experiment.
+
+## Hard problems
+
+- **Junk output.** Models sometimes echo the prompt or return placeholder text. An output guard rejects it before it's saved.
+- **Matches that go quiet.** After an idle timeout, leftover deliveries are flushed into a final summary and processing stops by itself.
+
+## Results
+
+- Narrative and headline summaries for live matches, updated every few deliveries.
+- No per-token cost, and prompt size that doesn't grow with the match.
+- Prompt changes tested live, per match, with no redeploy.
+
+## What I'd do next
+
+- Exclusive match ownership between servers, so several instances can share the load without ever processing the same match twice.
+- An evaluation set to score summary accuracy against the actual commentary.

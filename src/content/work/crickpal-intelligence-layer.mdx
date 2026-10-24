@@ -1,0 +1,62 @@
+---
+title: CrickPal Intelligence Layer – AI Win-Prediction Platform
+order: 2
+outcome: A pre-match win-prediction platform for international cricket, where an LLM agent writes the feature code and a test harness decides whether it ships.
+summary: An AI agent writes prediction features, and a test harness decides whether they ship
+chips:
+  - { value: '4.1k', label: T20Is }
+  - { value: '0.643', label: log-loss }
+  - { value: '0.227', label: Brier score }
+  - { value: '~800', label: automated tests }
+  - { value: 'Human-approved', label: releases }
+tags: [agents, evals, ml]
+links:
+  - { label: 'CrickPal, the platform this runs on', href: 'https://www.crickpal.com/' }
+videoTitle: Why my AI agent can't ship code until it passes tests
+stack: [Python, scikit-learn, OpenAI, FastAPI, Streamlit, MongoDB, SQL Server / SQLite, pytest]
+---
+
+import ProjectDiagram from '../../components/ProjectDiagram.astro';
+
+## The problem
+
+CrickPal wanted pre-match win probabilities for men's T20 and ODI internationals. Analysts have good ideas for features, like "recent form at this venue", but turning an idea into correct, leak-free code is slow, and the most dangerous bugs are invisible.
+
+## Constraints
+
+- **No information from the future.** A feature computed before a match must not use anything that happened after that moment. That includes the toss and the lineups, depending on when the prediction is made.
+- Results must be reproducible.
+- Analysts describe features in plain English; they aren't engineers.
+
+## How it works
+
+<ProjectDiagram slug="crickpal-intelligence-layer" index={0} />
+
+Match history is replayed in date order to build Elo ratings and features, which feed a logistic-regression model trained and backtested on chronological splits. New features come from analysts: their plain-English spec and worked examples go to an LLM agent, and the code it writes must pass a verification harness and a human review before it goes live. Everything is served through FastAPI, with a Streamlit studio for analysts.
+
+## Key decisions
+
+1. **Define leakage formally.** Every piece of match data is classified by when it becomes known: before the match, after lineups, after the toss. Feature code only ever sees a filtered view of the data that's legal for its prediction moment.
+2. **Treat generated code like a pull request from a stranger.** The harness runs four checks:
+   - **Golden examples:** does the code reproduce the analyst's own worked examples?
+   - **Mirror symmetry:** if the two teams are swapped, does the feature flip correctly?
+   - **Replay leakage:** if the data is cut off at match time and replayed, does the value stay identical?
+   - **Determinism:** same input, same output, every time.
+3. **The agent may repair its code, never the examples.** The analyst's examples are the ground truth. Nothing goes live without a human approving it. Every LLM call is logged with tokens and latency.
+4. **Baseline first, and protect the test set.** An Elo rating system sets the bar every model must beat. The test split is fingerprinted, and the system counts how many times the test window has been scored, which guards against quietly tuning on test data.
+
+## Hard problems
+
+- **Merging several old pipelines into one engine without changing any result.** Parity tests prove the new engine's output is byte-identical to the old pipelines.
+- **Testing an LLM agent offline.** A scripted fake LLM lets the whole agent loop run in the test suite, with no API calls.
+
+## Results
+
+- Elo baseline: log-loss 0.643, Brier score 0.227 over 4,100 international T20s.
+- ~800 automated tests.
+- New features go from analyst idea to verified code without an engineer hand-writing them.
+
+## What I'd do next
+
+- Publish how much the full model improves on the Elo baseline, with confidence intervals.
+- Rebuild a public version on open Cricsheet data, so the code can be shared.
