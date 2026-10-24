@@ -1,16 +1,141 @@
 ---
+import { getCollection } from 'astro:content';
+import MetricChips from '../components/MetricChips.astro';
+import ProjectRow from '../components/ProjectRow.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { INTRO_VIDEO } from '../lib/intro';
+import { SITE } from '../lib/site';
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title={SITE.name}
+  description="Applied AI engineer building production LLM systems: RAG with source-cited answers, agents that verify their own code, real-time LLM pipelines and GPU computer vision."
+  path="/"
+  ogImage="/og/index.png"
+>
+  <div class="container">
+    <section class="hero">
+      <h1>I build production AI systems that people actually use.</h1>
+      <p class="sub muted">
+        Applied AI engineer · LLMs, RAG and agentic systems · Based in India, working remotely with EU and US teams
+      </p>
+      <p class="ctas">
+        <a class="primary" href="#work">View work</a>
+        <a href="/resume">Resume</a>
+        <a href={`mailto:${SITE.email}`}>Email me</a>
+      </p>
+      {
+        INTRO_VIDEO.youtubeId && (
+          <p class="intro-video">
+            <a href={`https://www.youtube.com/watch?v=${INTRO_VIDEO.youtubeId}`} target="_blank" rel="noopener">
+              Watch the 60-second intro →
+            </a>
+          </p>
+        )
+      }
+    </section>
+
+    <MetricChips
+      chips={[
+        { value: '600+', label: 'users on one system' },
+        { value: '~70%', label: 'less manual work' },
+        { value: '~800', label: 'automated tests on an agentic pipeline' },
+      ]}
+    />
+
+    <section id="work">
+      <h2>Selected work</h2>
+      <ul class="rows">
+        {
+          work.map((entry) => (
+            <ProjectRow
+              href={`/work/${entry.id}/`}
+              title={entry.data.title}
+              outcome={entry.data.summary}
+              tags={entry.data.tags}
+            />
+          ))
+        }
+      </ul>
+    </section>
+
+    <section>
+      <h2>How I build</h2>
+      <p>
+        <strong>Answers you can check.</strong> If an AI system can't show where an answer came from, people can't trust
+        it. My systems cite their sources, down to the page.
+      </p>
+      <p>
+        <strong>Verify before shipping.</strong> Generated code, retrieved context and model output all pass automated
+        checks before they reach a user.
+      </p>
+      <p>
+        <strong>Built to keep running.</strong> Retries, job queues, circuit breakers and logging aren't extras. Production
+        AI fails in boring ways, and I design for that from day one.
+      </p>
+    </section>
+
+    <p class="closing">
+      Looking for an Applied AI or GenAI engineering role, remote, full-time or contract.
+      <a href={`mailto:${SITE.email}`}>Email me</a> or <a href={SITE.linkedin} target="_blank" rel="noopener"
+        >connect on LinkedIn</a
+      >.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: 24px 0 8px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.1rem, 6vw, 3rem);
+  }
+
+  .sub {
+    font-size: 1.05rem;
+  }
+
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 1.5rem;
+  }
+
+  .ctas a {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 15px;
+  }
+
+  .ctas a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .ctas a.primary {
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .closing {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+</style>

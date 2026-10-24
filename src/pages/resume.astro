@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pdf = '/resume/HarshNanavati_AppliedAIEngineer_Resume_2026.pdf';
+---
+
+<BaseLayout
+  title="Resume"
+  description="Resume of Harsh Nanavati, Applied AI Engineer: LLMs, RAG, agentic systems and evaluation."
+  path="/resume/"
+  ogImage="/og/resume.png"
+>
+  <div class="container wide">
+    <h1>Resume</h1>
+    <p class="muted">One page. Last updated October 2026.</p>
+    <p><a class="download" href={pdf} download>Download PDF</a></p>
+    <object class="pdf" data={pdf} type="application/pdf" aria-label="Resume PDF">
+      <p><a href={pdf}>Open the resume PDF</a></p>
+    </object>
+  </div>
+</BaseLayout>
+
+<style>
+  .download {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .pdf {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .pdf {
+      display: block;
+      width: 100%;
+      height: 1100px;
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+    }
+  }
+</style>
