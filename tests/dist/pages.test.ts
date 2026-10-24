@@ -75,6 +75,7 @@ describe('resume page', () => {
 
 describe('every page', () => {
   it.each(ALL_PAGES)('%s never shows the phone number', (path) => {
+    // Any Indian mobile number, with or without the country code.
     expect(rawPage(path)).not.toMatch(/\+91|[6-9]\d{4}[\s-]?\d{5}/);
   });
 });

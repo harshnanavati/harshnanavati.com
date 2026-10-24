@@ -29,6 +29,8 @@ jobs:
         run: npm run verify
         env:
           CI: true
+          # The confidentiality list lives only in this repository secret (one term per line).
+          BANNED_TERMS: ${{ secrets.BANNED_TERMS }}
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

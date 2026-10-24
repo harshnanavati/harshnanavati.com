@@ -27,6 +27,13 @@ describe('DIAGRAMS registry', () => {
     }
   });
 
+  it('describes the QuantumCopilot key check as constant-time, not HMAC', () => {
+    const steps = DIAGRAMS.quantumcopilot[0].lanes.flatMap((l) => l.steps);
+    const keyCheck = steps.find((s) => s.label === 'API key check');
+    expect(keyCheck?.tech).toBe('constant-time compare');
+    expect(JSON.stringify(DIAGRAMS)).not.toMatch(/hmac/i);
+  });
+
   it('the chatbots page has two diagrams', () => {
     expect(DIAGRAMS['support-concierge-chatbots']).toHaveLength(2);
   });

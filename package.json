@@ -12,7 +12,7 @@
     "astro": "astro",
     "test:unit": "vitest run tests/unit",
     "test:dist": "vitest run tests/dist",
-    "check:dist": "node scripts/check-banned.mjs dist && node scripts/check-banned.mjs src && node scripts/check-links.mjs dist",
+    "check:dist": "node scripts/check-banned.mjs dist && node scripts/check-banned.mjs --repo && node scripts/check-links.mjs dist",
     "test:e2e": "playwright test",
     "verify": "npm run test:unit && npm run build && npm run test:dist && npm run check:dist && npm run test:e2e"
   },

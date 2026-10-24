@@ -7,7 +7,7 @@ export const diagrams: Diagram[] = [
       {
         steps: [
           { label: 'Question' },
-          { label: 'API key check', tech: 'hmac' },
+          { label: 'API key check', tech: 'constant-time compare' },
           { label: 'Load conversation memory', tech: 'sql server' },
           { label: 'LLM extracts typed parameters', tech: 'gpt-4.1-nano', key: true },
           { label: 'Build up to 3 scenarios' },
