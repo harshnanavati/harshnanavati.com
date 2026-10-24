@@ -1,0 +1,125 @@
+---
+import type { Diagram } from '../diagrams/types';
+
+interface Props {
+  diagram: Diagram;
+}
+
+const { diagram } = Astro.props;
+const description = [
+  diagram.caption,
+  ...diagram.lanes.map((lane) => `${lane.label ? `${lane.label}: ` : ''}${lane.steps.map((s) => s.label).join(', then ')}`),
+]
+  .filter(Boolean)
+  .join('. ');
+---
+
+<figure class="diagram" role="img" aria-label={`Diagram. ${description}.`}>
+  {diagram.caption && <figcaption class="caption">{diagram.caption}</figcaption>}
+  {
+    diagram.lanes.map((lane) => (
+      <div class="lane">
+        {lane.label && <div class="lane-label mono">{lane.label}</div>}
+        <ol class="steps">
+          {lane.steps.map((step, i) => (
+            <>
+              {i > 0 && (
+                <li class="arrow" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" width="16" height="16">
+                    <path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" />
+                  </svg>
+                </li>
+              )}
+              <li class:list={['step', { key: step.key }]}>
+                <span class="label">{step.label}</span>
+                {step.tech && <span class="tech mono">{step.tech}</span>}
+              </li>
+            </>
+          ))}
+        </ol>
+      </div>
+    ))
+  }
+</figure>
+
+<style>
+  .diagram {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(var(--wide-width), calc(100vw - 2 * var(--gutter)));
+    margin: 1.5rem 0;
+  }
+
+  .caption {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .lane + .lane {
+    margin-top: 16px;
+  }
+
+  .lane-label {
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .steps {
+    display: flex;
+    align-items: stretch;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .step {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13.5px;
+    line-height: 1.35;
+  }
+
+  .step.key {
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tech {
+    font-size: 11.5px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .arrow {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 720px) {
+    .steps {
+      flex-direction: column;
+    }
+
+    .arrow {
+      justify-content: center;
+      padding: 2px 0;
+    }
+
+    .arrow svg {
+      transform: rotate(90deg);
+    }
+  }
+</style>
