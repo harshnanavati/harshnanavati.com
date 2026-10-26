@@ -80,6 +80,11 @@ export const RESUME = {
       ],
     },
   ],
+  project: {
+    title: 'ViperMind – Multi-Agent Python Tutor',
+    href: '/work/vipermind/',
+    text: 'Personal project: a LangGraph router over four GPT-4 agents; code grades answers against an LLM-written key; Redis cache, PostgreSQL and a 7-service Docker Compose stack with monitoring.',
+  },
   research: {
     title: 'Blockchain-Driven Federated Learning for Parkinson’s Detection',
     text: 'M.Tech research: privacy-preserving diagnosis combining federated learning, blockchain-based model traceability and explainable AI.',

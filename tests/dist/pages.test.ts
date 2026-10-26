@@ -125,7 +125,9 @@ describe('resume page', () => {
         .map((h) => h.text.trim());
     // The story reads first; the facts sit in a side column.
     expect(headings('.resume-main')).toEqual(['Summary', 'Experience']);
-    expect(headings('.resume-aside')).toEqual(['Skills', 'Education', 'Research']);
+    expect(headings('.resume-aside')).toEqual(['Skills', 'Education', 'Project', 'Research']);
+    // The personal project links to its case study.
+    expect(resume().querySelector('.resume-aside a[href="/work/vipermind/"]')?.text).toContain('ViperMind');
     // Skills read as plain lists, not a wall of tags.
     expect(resume().querySelector('.skill-tags')).toBeNull();
     const lists = resume().querySelectorAll('.resume-aside .skill-list');
