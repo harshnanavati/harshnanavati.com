@@ -1,9 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import ProjectRow from '../components/ProjectRow.astro';
+import type { WorkSlug } from '../diagrams';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { HEADSHOT } from '../lib/headshot';
 import { INTRO_VIDEO } from '../lib/intro';
 import { SITE } from '../lib/site';
+import { MOMENTS } from '../visuals';
 
 const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
 ---
@@ -16,40 +20,51 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   width="wide"
 >
   <div class="container wide">
-    <section class="hero">
-      <h1>I build production AI systems that people actually use.</h1>
-      <p class="sub muted">
-        I'm an applied AI engineer in India, working remotely with teams in Europe and the US. I design and ship LLM
-        systems: retrieval, agents and real-time pipelines.
-      </p>
-      <p class="ctas">
-        <a class="primary" href="#work">View work</a>
-        <a href="/resume">Resume</a>
-        <a href={`mailto:${SITE.email}`}>Email me</a>
-      </p>
-      {
-        INTRO_VIDEO.youtubeId && (
-          <p class="intro-video">
-            <a href={`https://www.youtube.com/watch?v=${INTRO_VIDEO.youtubeId}`} target="_blank" rel="noopener">
-              Watch the 60-second intro →
-            </a>
-          </p>
-        )
-      }
+    <section class:list={['hero', { 'with-photo': HEADSHOT }]}>
+      <div class="hero-text">
+        <h1>I build production AI systems that people actually use.</h1>
+        <p class="sub muted">
+          I'm an applied AI engineer in India, working remotely with teams in Europe and the US. I design and ship LLM
+          systems: retrieval, agents and real-time pipelines.
+        </p>
+        <p class="current">
+          Currently an AI engineer at Masterly Solutions, with 2+ years shipping LLM systems used by 600+ people.
+        </p>
+        <p class="ctas">
+          <a class="primary" href="#work">View work</a>
+          <a href="/resume">Resume</a>
+          <a href={`mailto:${SITE.email}`}>Email me</a>
+        </p>
+        {
+          INTRO_VIDEO.youtubeId && (
+            <p class="intro-video">
+              <a href={`https://www.youtube.com/watch?v=${INTRO_VIDEO.youtubeId}`} target="_blank" rel="noopener">
+                Watch the intro video
+              </a>
+            </p>
+          )
+        }
+      </div>
+      {HEADSHOT && <Image class="photo" src={HEADSHOT} alt="Harsh Nanavati" width={360} height={360} loading="eager" />}
     </section>
 
     <section id="work">
       <h2>Selected work</h2>
       <ul class="rows">
         {
-          work.map((entry) => (
-            <ProjectRow
-              href={`/work/${entry.id}/`}
-              title={entry.data.title}
-              outcome={entry.data.summary}
-              tags={entry.data.tags}
-            />
-          ))
+          work.map((entry) => {
+            const Moment = MOMENTS[entry.id as WorkSlug];
+            return (
+              <ProjectRow
+                href={`/work/${entry.id}/`}
+                title={entry.data.title}
+                outcome={entry.data.summary}
+                tags={entry.data.tags}
+              >
+                {Moment && <Moment slot="preview" />}
+              </ProjectRow>
+            );
+          })
         }
       </ul>
     </section>
@@ -82,6 +97,8 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
 
 <style>
   .hero {
+    display: grid;
+    gap: 32px;
     padding: 24px 0 8px;
   }
 
@@ -90,9 +107,25 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     font-size: clamp(2.1rem, 6vw, 3.2rem);
   }
 
-  .sub {
+  .sub,
+  .current {
     max-width: var(--text-width);
     font-size: 1.05rem;
+  }
+
+  .sub {
+    margin-bottom: 0.5rem;
+  }
+
+  .current {
+    margin-top: 0;
+  }
+
+  .photo {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
   }
 
   .ctas {
@@ -125,7 +158,7 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   .rows {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    column-gap: 48px;
+    gap: 24px;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -140,6 +173,7 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   @media (min-width: 760px) {
     .rows {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
     }
 
     .principles {
@@ -148,6 +182,16 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
 
     .principles p {
       margin-top: 0;
+    }
+
+    .hero.with-photo {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .photo {
+      width: 220px;
+      height: 220px;
     }
   }
 

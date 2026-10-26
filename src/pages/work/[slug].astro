@@ -26,6 +26,11 @@ const slug = entry.id as WorkSlug;
 const { Content, headings } = await render(entry);
 const sections = headings.filter((h) => h.depth === 2);
 const Moment = MOMENTS[slug];
+// Result cells hold measurable numbers only. Descriptive chips ("Self-hosted LLM") are
+// already told in the text; a single number sits in the details card instead of a lone cell.
+const numbers = data.chips.filter((chip) => /\d/.test(chip.value));
+const showStats = numbers.length >= 2;
+const soloResult = numbers.length === 1 ? numbers[0] : undefined;
 ---
 
 <BaseLayout
@@ -55,6 +60,16 @@ const Moment = MOMENTS[slug];
             <dt>Type</dt>
             <dd>{data.kind}</dd>
           </div>
+          {
+            soloResult && (
+              <div>
+                <dt>In numbers</dt>
+                <dd>
+                  <span class="result-value">{soloResult.value}</span> {soloResult.label}
+                </dd>
+              </div>
+            )
+          }
           <div>
             <dt>Stack</dt>
             <dd>
@@ -68,16 +83,18 @@ const Moment = MOMENTS[slug];
       </aside>
     </header>
 
-    <ul class="stats" aria-label="Results at a glance">
-      {
-        data.chips.map((chip) => (
-          <li>
-            <span class="value">{chip.value}</span>
-            <span class="label">{chip.label}</span>
-          </li>
-        ))
-      }
-    </ul>
+    {
+      showStats && (
+        <ul class="stats" aria-label="Results at a glance">
+          {numbers.map((chip) => (
+            <li>
+              <span class="value">{chip.value}</span>
+              <span class="label">{chip.label}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
 
     {data.privacyNote && <p class="privacy-note">{data.privacyNote}</p>}
 
@@ -245,16 +262,27 @@ const Moment = MOMENTS[slug];
     color: var(--muted);
   }
 
+  .stats + .stage,
+  .privacy-note + .stage {
+    margin-top: 24px;
+  }
+
   .privacy-note {
-    margin: 24px 0 0;
+    margin: 32px 0 0;
     font-size: 15px;
     font-style: italic;
     color: var(--muted);
   }
 
   /* The one bold element: the stage that opens every case study */
+  .result-value {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--accent);
+  }
+
   .stage {
-    margin-top: 24px;
+    margin-top: 40px;
     padding: clamp(16px, 4vw, 48px);
     background: var(--surface);
     border-radius: 16px;

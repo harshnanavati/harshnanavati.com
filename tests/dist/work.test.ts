@@ -61,9 +61,17 @@ describe.each(WORK_SLUGS)('work page %s', (slug) => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
   });
 
-  it('shows the spec metric values', () => {
-    const values = main(slug).querySelectorAll('.stats .value').map((v) => v.text.trim());
+  it('shows the spec metric values, as result cells or in the details card', () => {
+    const values = main(slug)
+      .querySelectorAll('.stats .value, .meta-card .result-value')
+      .map((v) => v.text.trim());
     for (const v of CHIP_VALUES[slug]) expect(values).toContain(v);
+  });
+
+  it('only puts real numbers in result cells', () => {
+    const values = main(slug).querySelectorAll('.stats .value').map((v) => v.text.trim());
+    for (const v of values) expect(v).toMatch(/\d/);
+    if (values.length > 0) expect(values.length).toBeGreaterThanOrEqual(2);
   });
 
   it('has a project details card with the type and stack', () => {

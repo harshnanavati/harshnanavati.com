@@ -25,6 +25,21 @@ describe('home page', () => {
     expect(sub).toMatch(/remote/i);
   });
 
+  it('states where Harsh works now and how long he has shipped AI', () => {
+    const hero = home().querySelector('.hero')!.text;
+    expect(hero).toContain('Masterly Solutions');
+    expect(hero).toContain('2+ years');
+  });
+
+  it('shows a preview of each project’s illustration, hidden from screen readers', () => {
+    const previews = home().querySelectorAll('#work li .preview');
+    expect(previews).toHaveLength(6);
+    for (const p of previews) {
+      expect(p.getAttribute('aria-hidden')).toBe('true');
+      expect(p.querySelector('.product-moment')).not.toBeNull();
+    }
+  });
+
   it('goes straight from the hero to the selected work, with no numbers strip', () => {
     expect(home().querySelector('.chips')).toBeNull();
     expect(home().text).not.toContain('users on one system');
@@ -57,6 +72,17 @@ describe('about page', () => {
     expect(about().querySelector('.contact')!.text.replace(/\s+/g, ' ').trim()).toBe('Email me · LinkedIn · Resume');
   });
 
+  it('has an experience and education timeline, newest first', () => {
+    const items = about().querySelectorAll('ol.timeline > li');
+    expect(items).toHaveLength(4);
+    const text = items.map((li) => li.text.replace(/\s+/g, ' '));
+    expect(text[0]).toContain('Masterly Solutions');
+    expect(text[0]).toContain('2024');
+    expect(text[1]).toContain('Deloitte');
+    expect(text[2]).toContain('Nirma University');
+    expect(text[3]).toContain('LDRP-ITR');
+  });
+
   it('shows no video placeholder until the intro video exists', () => {
     expect(about().text).not.toContain('Video coming soon');
     expect(about().querySelector('.video-slot figure.diagram')).toBeNull();
@@ -75,10 +101,22 @@ describe('about page', () => {
 });
 
 describe('resume page', () => {
+  const resume = () => loadPage('/resume/').querySelector('main')!;
+
   it('links to the PDF, and the PDF is published', () => {
-    const page = loadPage('/resume/').querySelector('main')!;
-    expect(page.querySelector(`a[href="${RESUME_PDF}"]`)).not.toBeNull();
+    expect(resume().querySelector(`a[href="${RESUME_PDF}"]`)).not.toBeNull();
     expect(existsSync(join(DIST, RESUME_PDF))).toBe(true);
+  });
+
+  it('shows the resume as readable text instead of an embedded PDF', () => {
+    expect(resume().querySelector('object, embed, iframe')).toBeNull();
+    const sections = resume()
+      .querySelectorAll('h2')
+      .map((h) => h.text.trim());
+    expect(sections).toEqual(['Summary', 'Skills', 'Experience', 'Research', 'Education']);
+    expect(resume().text).toContain('SDE – Artificial Intelligence');
+    expect(resume().text).toContain('Deloitte Haskins & Sells LLP');
+    expect(resume().text).toContain('DocuPilot – Enterprise RAG Platform');
   });
 });
 
