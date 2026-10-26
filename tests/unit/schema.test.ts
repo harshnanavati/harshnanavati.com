@@ -8,9 +8,9 @@ const valid = {
   outcome: 'An AI assistant that answers staff questions.',
   summary: 'Answers for 600+ staff, with a source for every answer',
   chips: [
-    { value: '600+', label: 'staff' },
-    { value: '14', label: 'document categories' },
-    { value: '~40%', label: 'fewer manual queries' },
+    { value: '600+', label: 'staff', basis: 'Production user count.', evidence: 'results' },
+    { value: '14', label: 'document categories', basis: 'Configured in production.', evidence: 'results' },
+    { value: '~40%', label: 'fewer manual queries', basis: 'Estimated after rollout.', evidence: 'results' },
   ],
   tags: ['rag', 'docling', 'faiss'],
   videoTitle: 'How DocuPilot backs every answer with a source',
@@ -42,6 +42,24 @@ describe('workSchema', () => {
 
   it('rejects an order outside 1–6', () => {
     expect(() => workSchema.parse({ ...valid, order: 7 })).toThrow();
+  });
+
+  it('rejects a number without a stated basis', () => {
+    const chips = [
+      { value: '600+', label: 'staff' },
+      { value: '14', label: 'categories', basis: 'Configured in production.', evidence: 'results' },
+      { value: '~40%', label: 'fewer queries', basis: 'Estimated after rollout.', evidence: 'results' },
+    ];
+    expect(() => workSchema.parse({ ...valid, chips })).toThrow();
+  });
+
+  it('accepts descriptive chips without a basis', () => {
+    const chips = [
+      { value: 'Self-hosted', label: 'LLM' },
+      { value: '14', label: 'categories', basis: 'Configured in production.', evidence: 'results' },
+      { value: '~40%', label: 'fewer queries', basis: 'Estimated after rollout.', evidence: 'results' },
+    ];
+    expect(() => workSchema.parse({ ...valid, chips })).not.toThrow();
   });
 
   it('rejects a link that is not a URL', () => {

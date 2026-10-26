@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import Cite from '../components/Cite.astro';
 import ProjectRow from '../components/ProjectRow.astro';
 import type { WorkSlug } from '../diagrams';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -28,13 +29,28 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
           systems: retrieval, agents and real-time pipelines.
         </p>
         <p class="current">
-          Currently an AI engineer at Masterly Solutions, with 2+ years shipping LLM systems used by 600+ people.
+          Currently an AI engineer at Masterly Solutions, with 2+ years<Cite
+            n={1}
+            id="hero-years"
+            source="Experience timeline"
+            basis="Shipping LLM systems as an AI engineer since October 2024; before that, a year of data science at Deloitte."
+            href="/about/#experience"
+            linkText="Go to the timeline"
+          /> shipping LLM systems used by 600+ people<Cite
+            n={2}
+            id="hero-users"
+            source="DocuPilot – Enterprise RAG Platform"
+            basis="DocuPilot alone is used by 600+ staff in production."
+            href="/work/docupilot/#results"
+            linkText="Go to DocuPilot's results"
+          />.
         </p>
         <p class="ctas">
           <a class="primary" href="#work">View work</a>
           <a href="/resume">Resume</a>
           <a href={`mailto:${SITE.email}`}>Email me</a>
         </p>
+        <p class="cite-note muted">Claims on this site link to their evidence. Tap a small number to see it.</p>
         {
           INTRO_VIDEO.youtubeId && (
             <p class="intro-video">
@@ -74,15 +90,36 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
       <div class="principles">
         <p>
           <strong>Answers you can check.</strong> If an AI system can't show where an answer came from, people can't
-          trust it. My systems cite their sources, down to the page.
+          trust it. My systems cite their sources, down to the page.<Cite
+            n={3}
+            id="principle-cite"
+            source="DocuPilot's two-stage citation gate"
+            basis="Answers cite only passages that clear a minimum score and sit close to the best match, with the exact page region highlighted."
+            href="/work/docupilot/#key-decisions"
+            linkText="Go to the decision"
+          />
         </p>
         <p>
           <strong>Verify before shipping.</strong> Generated code, retrieved context and model output all pass automated
-          checks before they reach a user.
+          checks before they reach a user.<Cite
+            n={4}
+            id="principle-verify"
+            source="CrickPal Intelligence Layer's verification harness"
+            basis="Generated feature code must pass golden-example, mirror-symmetry, replay-leakage and determinism checks, then human approval."
+            href="/work/crickpal-intelligence-layer/#key-decisions"
+            linkText="Go to the decision"
+          />
         </p>
         <p>
           <strong>Built to keep running.</strong> Retries, job queues, circuit breakers and logging aren't extras.
-          Production AI fails in boring ways, and I design for that from day one.
+          Production AI fails in boring ways, and I design for that from day one.<Cite
+            n={5}
+            id="principle-running"
+            source="AI Face Matching's job queue"
+            basis="Retry budgets, expiring leases and parked jobs let it run unattended and recover from bad inputs on its own."
+            href="/work/ai-face-matching/#key-decisions"
+            linkText="Go to the decision"
+          />
         </p>
       </div>
     </section>
@@ -126,6 +163,11 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     height: 180px;
     border-radius: 50%;
     object-fit: cover;
+  }
+
+  .cite-note {
+    margin: 1rem 0 0;
+    font-size: 14px;
   }
 
   .ctas {

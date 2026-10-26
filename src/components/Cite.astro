@@ -1,0 +1,107 @@
+---
+// A citation marker: a small numbered button that opens a card saying where a claim
+// comes from, with a link to the evidence. Uses the native popover (keyboard and Esc
+// work for free); browsers without popover support jump straight to the evidence.
+interface Props {
+  n: number;
+  /** Unique within the page. */
+  id: string;
+  source: string;
+  basis: string;
+  href: string;
+  linkText?: string;
+}
+
+const { n, id, source, basis, href, linkText = 'See the evidence' } = Astro.props;
+const cardId = `cite-${id}`;
+---
+
+<button
+  class="cite"
+  type="button"
+  popovertarget={cardId}
+  data-href={href}
+  aria-label={`Evidence ${n}: ${source}`}>{n}</button
+><span class="cite-card" id={cardId} popover role="note">
+  <span class="cite-source">Evidence {n} · {source}</span>
+  <span class="cite-basis">{basis}</span>
+  <a class="cite-link" href={href}>{linkText}</a>
+</span>
+
+<script>
+  const supported = typeof HTMLElement !== 'undefined' && 'popover' in HTMLElement.prototype;
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>('button.cite')) {
+    if (button.dataset.wired) continue;
+    button.dataset.wired = '1';
+    if (!supported) {
+      button.addEventListener('click', () => (window.location.href = button.dataset.href ?? '#'));
+      continue;
+    }
+    const card = document.getElementById(button.getAttribute('popovertarget') ?? '');
+    // Place the card just under its marker, kept inside the screen.
+    card?.addEventListener('toggle', (event) => {
+      if ((event as ToggleEvent).newState !== 'open') return;
+      const r = button.getBoundingClientRect();
+      const width = Math.min(340, window.innerWidth - 32);
+      const left = Math.min(Math.max(16, r.left - 12), window.innerWidth - width - 16);
+      card.style.width = `${width}px`;
+      card.style.left = `${left}px`;
+      card.style.top = `${r.bottom + 8}px`;
+    });
+  }
+</script>
+
+<style>
+  .cite {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    margin-left: 3px;
+    padding: 0 4px;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--accent);
+    font: 600 11px/1 var(--font-sans);
+    vertical-align: 0.35em;
+    cursor: pointer;
+  }
+
+  .cite:hover,
+  .cite:focus-visible {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .cite-card {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--text);
+    font: 400 14px/1.55 var(--font-sans);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  }
+
+  .cite-card:popover-open {
+    display: grid;
+    gap: 4px;
+  }
+
+  .cite-source {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .cite-link {
+    margin-top: 4px;
+    font-weight: 600;
+  }
+</style>

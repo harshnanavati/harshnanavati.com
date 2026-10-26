@@ -1,5 +1,6 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Cite from '../../components/Cite.astro';
 import Diagram from '../../components/Diagram.astro';
 import LinksOut from '../../components/LinksOut.astro';
 import VideoSlot from '../../components/VideoSlot.astro';
@@ -31,6 +32,16 @@ const Moment = MOMENTS[slug];
 const numbers = data.chips.filter((chip) => /\d/.test(chip.value));
 const showStats = numbers.length >= 2;
 const soloResult = numbers.length === 1 ? numbers[0] : undefined;
+// Every number carries a citation to the section of this page that backs it.
+const sectionTitle = (id?: string) => sections.find((s) => s.slug === id)?.text ?? 'the evidence';
+const cite = (chip: (typeof numbers)[number], i: number) => ({
+  n: i + 1,
+  id: `${slug}-${i + 1}`,
+  source: `${chip.value} ${chip.label}`,
+  basis: chip.basis ?? '',
+  href: `#${chip.evidence}`,
+  linkText: `Go to ${sectionTitle(chip.evidence)}`,
+});
 ---
 
 <BaseLayout
@@ -64,8 +75,9 @@ const soloResult = numbers.length === 1 ? numbers[0] : undefined;
             soloResult && (
               <div>
                 <dt>In numbers</dt>
-                <dd>
+                <dd class="result">
                   <span class="result-value">{soloResult.value}</span> {soloResult.label}
+                  <Cite {...cite(soloResult, 0)} />
                 </dd>
               </div>
             )
@@ -86,9 +98,12 @@ const soloResult = numbers.length === 1 ? numbers[0] : undefined;
     {
       showStats && (
         <ul class="stats" aria-label="Results at a glance">
-          {numbers.map((chip) => (
+          {numbers.map((chip, i) => (
             <li>
-              <span class="value">{chip.value}</span>
+              <span class="value-row">
+                <span class="value">{chip.value}</span>
+                <Cite {...cite(chip, i)} />
+              </span>
               <span class="label">{chip.label}</span>
             </li>
           ))}
@@ -228,9 +243,10 @@ const soloResult = numbers.length === 1 ? numbers[0] : undefined;
   }
 
   /* Results at a glance */
+  /* Flex rather than grid, so a short last row stretches instead of leaving an empty cell. */
   .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 1px;
     margin: 40px 0 0;
     padding: 0;
@@ -242,6 +258,7 @@ const soloResult = numbers.length === 1 ? numbers[0] : undefined;
   }
 
   .stats li {
+    flex: 1 1 150px;
     display: flex;
     flex-direction: column;
     gap: 2px;

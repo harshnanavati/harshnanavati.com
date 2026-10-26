@@ -5,11 +5,11 @@ outcome: An AI assistant that answers staff questions from hundreds of pages of 
 summary: Answers for 600+ staff from company documents, with a source for every answer
 kind: Client project
 chips:
-  - { value: '600+', label: staff }
-  - { value: '14', label: document categories }
-  - { value: '12,000+', label: chunks }
-  - { value: '~40%', label: fewer manual queries }
-  - { value: 'sub-100 ms', label: retrieval }
+  - { value: '600+', label: staff, basis: 'Production user count: staff with access to DocuPilot at the time of writing.', evidence: results }
+  - { value: '14', label: document categories, basis: 'Document categories configured in production.', evidence: results }
+  - { value: '12,000+', label: chunks, basis: 'Chunks indexed across the production document set.', evidence: results }
+  - { value: '~40%', label: fewer manual queries, basis: 'An estimate: the drop in procedure questions reaching supervisors after rollout.', evidence: results }
+  - { value: 'sub-100 ms', label: retrieval, basis: 'Median vector-search time, taken from production query logs.', evidence: results }
 tags: [rag, docling, faiss]
 videoTitle: How DocuPilot backs every answer with a source
 stack: [Python, FastAPI, Docling, 'OpenAI (text-embedding-3-small, GPT-4o-mini)', FAISS, SQL Server, JWT, Angular 20, IIS on a CUDA Windows Server]

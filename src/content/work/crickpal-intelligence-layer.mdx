@@ -5,10 +5,10 @@ outcome: A pre-match win-prediction platform for international cricket, where an
 summary: An AI agent writes prediction features, and a test harness decides whether they ship
 kind: In-house product
 chips:
-  - { value: '4.1k', label: T20Is }
-  - { value: '0.643', label: log-loss }
-  - { value: '0.227', label: Brier score }
-  - { value: '~800', label: automated tests }
+  - { value: '4.1k', label: T20Is, basis: 'International T20 matches scored after the Elo warm-up period.', evidence: results }
+  - { value: '0.643', label: log-loss, basis: 'Log-loss of the Elo baseline on those matches. Lower is better; a coin flip scores 0.693.', evidence: results }
+  - { value: '0.227', label: Brier score, basis: 'Brier score of the Elo baseline on the same matches. Lower is better; a coin flip scores 0.25.', evidence: results }
+  - { value: '~800', label: automated tests, basis: 'Test functions in the platform''s automated test suite.', evidence: results }
   - { value: 'Human-approved', label: releases }
 tags: [agents, evals, ml]
 links:
