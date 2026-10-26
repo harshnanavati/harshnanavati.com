@@ -7,7 +7,8 @@ describe('home page citations', () => {
   it('cites both hero claims, numbered in reading order', () => {
     const cites = home().querySelectorAll('.hero button.cite');
     expect(cites.map((c) => c.text.trim())).toEqual(['1', '2']);
-    expect(cites[0].getAttribute('data-href')).toBe('/about/#experience');
+    expect(cites[0].getAttribute('data-href')).toBe('#work');
+    expect(cites[0].getAttribute('popovertarget')).toBe('cite-hero-systems');
     expect(cites[1].getAttribute('data-href')).toBe('/work/docupilot/#results');
   });
 

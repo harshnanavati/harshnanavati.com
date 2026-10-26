@@ -8,8 +8,11 @@ const RESUME_PDF = '/resume/HarshNanavati_AppliedAIEngineer_Resume_2026.pdf';
 describe('home page', () => {
   const home = () => loadPage('/').querySelector('main')!;
 
-  it('has the spec headline', () => {
-    expect(home().querySelector('h1')?.text.trim()).toBe('I build production AI systems that people actually use.');
+  it('names Harsh above a headline that says what his systems do', () => {
+    expect(home().querySelector('.hero .kicker')?.text.trim()).toBe('Harsh Nanavati, Applied AI Engineer');
+    expect(home().querySelector('h1')?.text.trim()).toBe(
+      'I build LLM systems that cite their sources and test their own code.',
+    );
   });
 
   it('lists the six projects in order, with their home summaries', () => {
@@ -18,17 +21,22 @@ describe('home page', () => {
     expect(rows[0].text).toContain('with a source for every answer');
   });
 
-  it('introduces Harsh in plain sentences, not a dot-separated tag line', () => {
-    const sub = home().querySelector('.hero .sub')!.text;
-    expect(sub).not.toContain('·');
-    expect(sub).toMatch(/India/);
-    expect(sub).toMatch(/remote/i);
+  it('introduces Harsh in one paragraph, by scope rather than years', () => {
+    const hero = home().querySelector('.hero')!;
+    expect(hero.querySelectorAll('.sub, .current')).toHaveLength(0);
+    const lede = hero.querySelector('.lede')!.text.replace(/\s+/g, ' ');
+    expect(lede).toContain('Masterly Solutions');
+    expect(lede).toContain('six AI systems');
+    expect(lede).toContain('600+ staff');
+    expect(hero.text).not.toContain('2+ years');
   });
 
-  it('states where Harsh works now and how long he has shipped AI', () => {
-    const hero = home().querySelector('.hero')!.text;
-    expect(hero).toContain('Masterly Solutions');
-    expect(hero).toContain('2+ years');
+  it('says how remote work with Harsh works, in plain sentences', () => {
+    const remote = home().querySelector('.hero .remote')!.text.replace(/\s+/g, ' ');
+    for (const fact of ['India', 'IST (UTC+5:30)', '4+ hours', 'US East', 'Europe', 'full-time', 'contract', 'employer of record']) {
+      expect(remote).toContain(fact);
+    }
+    expect(remote).not.toContain('·');
   });
 
   it('shows a preview of each project’s illustration, hidden from screen readers', () => {
@@ -77,6 +85,7 @@ describe('about page', () => {
     expect(items).toHaveLength(4);
     const text = items.map((li) => li.text.replace(/\s+/g, ' '));
     expect(text[0]).toContain('Masterly Solutions');
+    expect(text[0]).toContain('SDE – Artificial Intelligence (Applied AI Engineer)');
     expect(text[0]).toContain('2024');
     expect(text[1]).toContain('Deloitte');
     expect(text[2]).toContain('Nirma University');
@@ -117,8 +126,12 @@ describe('resume page', () => {
     // The story reads first; the facts sit in a side column.
     expect(headings('.resume-main')).toEqual(['Summary', 'Experience']);
     expect(headings('.resume-aside')).toEqual(['Skills', 'Education', 'Research']);
-    expect(resume().querySelectorAll('.resume-aside .skill-tags li').length).toBeGreaterThan(30);
-    expect(resume().text).toContain('SDE – Artificial Intelligence');
+    // Skills read as plain lists, not a wall of tags.
+    expect(resume().querySelector('.skill-tags')).toBeNull();
+    const lists = resume().querySelectorAll('.resume-aside .skill-list');
+    expect(lists).toHaveLength(5);
+    expect(lists.reduce((n, l) => n + l.text.split(', ').length, 0)).toBeGreaterThan(30);
+    expect(resume().text).toContain('SDE – Artificial Intelligence (Applied AI Engineer)');
     expect(resume().text).toContain('Deloitte Haskins & Sells LLP');
     expect(resume().text).toContain('DocuPilot – Enterprise RAG Platform');
   });

@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { loadPage, WORK_SLUGS } from './helpers';
 
-const TITLES: Record<(typeof WORK_SLUGS)[number], string> = {
-  docupilot: 'DocuPilot – Enterprise RAG Platform',
-  'crickpal-intelligence-layer': 'CrickPal Intelligence Layer – AI Win-Prediction Platform',
-  'crickpal-ai-summary': 'CrickPal AI Summary – Real-Time LLM Commentary Engine',
-  'ai-face-matching': 'AI Face Matching System',
-  quantumcopilot: 'QuantumCopilot – AI Loan & Financial Assistant',
-  'support-concierge-chatbots': 'RAG Support & Concierge Chatbots',
+// The product name leads; the descriptor sits under it.
+const TITLES: Record<(typeof WORK_SLUGS)[number], [string, string?]> = {
+  docupilot: ['DocuPilot', 'Enterprise RAG Platform'],
+  'crickpal-intelligence-layer': ['CrickPal Intelligence Layer', 'AI Win-Prediction Platform'],
+  'crickpal-ai-summary': ['CrickPal AI Summary', 'Real-Time LLM Commentary Engine'],
+  'ai-face-matching': ['AI Face Matching System'],
+  quantumcopilot: ['QuantumCopilot', 'AI Loan & Financial Assistant'],
+  'support-concierge-chatbots': ['RAG Support & Concierge Chatbots'],
 };
 
 const CHIP_VALUES: Record<(typeof WORK_SLUGS)[number], string[]> = {
@@ -47,7 +48,11 @@ const main = (slug: string) => page(slug).querySelector('main')!;
 
 describe.each(WORK_SLUGS)('work page %s', (slug) => {
   it('has the spec title as h1', () => {
-    expect(main(slug).querySelector('h1')?.text.trim()).toBe(TITLES[slug]);
+    const [name, descriptor] = TITLES[slug];
+    expect(main(slug).querySelector('h1')?.text.trim()).toBe(name);
+    expect(main(slug).querySelector('.hero .descriptor')?.text.trim()).toBe(descriptor);
+    // The browser tab and search results keep the full title.
+    expect(page(slug).querySelector('title')?.text).toContain(descriptor ?? name);
   });
 
   it('has the template sections in order', () => {
@@ -78,7 +83,9 @@ describe.each(WORK_SLUGS)('work page %s', (slug) => {
     const card = main(slug).querySelector('.meta-card')!;
     expect(card).not.toBeNull();
     expect(card.text).toContain(KINDS[slug]);
-    expect(card.querySelectorAll('.stack-tags li').length).toBeGreaterThan(3);
+    // The stack reads as a plain list, not a row of chips.
+    expect(card.querySelector('.stack-tags')).toBeNull();
+    expect(card.querySelector('dd.stack')!.text.split(', ').length).toBeGreaterThan(3);
   });
 
   it('has a section nav pointing at every section', () => {

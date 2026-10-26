@@ -8,6 +8,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { HEADSHOT } from '../lib/headshot';
 import { INTRO_VIDEO } from '../lib/intro';
 import { SITE } from '../lib/site';
+import { splitTitle } from '../lib/title';
 import { MOMENTS } from '../visuals';
 
 const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
@@ -22,20 +23,18 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   <div class="container wide">
     <section class:list={['hero', { 'with-photo': HEADSHOT }]}>
       <div class="hero-text">
-        <h1>I build production AI systems that people actually use.</h1>
-        <p class="sub muted">
-          I'm an applied AI engineer in India, working remotely with teams in Europe and the US. I design and ship LLM
-          systems: retrieval, agents and real-time pipelines.
-        </p>
-        <p class="current">
-          Currently an AI engineer at Masterly Solutions, with 2+ years<Cite
+        <p class="kicker">{SITE.name}, {SITE.role}</p>
+        <h1>I build LLM systems that cite their sources and test their own code.</h1>
+        <p class="lede">
+          I design and ship production AI: retrieval, agents, real-time LLM pipelines and computer vision. At Masterly
+          Solutions I've built six AI systems<Cite
             n={1}
-            id="hero-years"
-            source="Experience timeline"
-            basis="Shipping LLM systems as an AI engineer since October 2024; before that, a year of data science at Deloitte."
-            href="/about/#experience"
-            linkText="Go to the timeline"
-          /> shipping LLM systems used by 600+ people<Cite
+            id="hero-systems"
+            source="Selected work"
+            basis="Six case studies on this page: three client projects and three in-house products, two of them live."
+            href="#work"
+            linkText="Go to the work"
+          />, the largest used by 600+ staff<Cite
             n={2}
             id="hero-users"
             source="DocuPilot – Enterprise RAG Platform"
@@ -48,6 +47,10 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
           <a class="primary" href="#work">View work</a>
           <a href="/resume/">Resume</a>
           <a href={`mailto:${SITE.email}`}>Email me</a>
+        </p>
+        <p class="remote muted">
+          I work remotely from India on IST (UTC+5:30), with 4+ hours of overlap with US East and Europe. Open to
+          full-time, contract or employer of record roles.
         </p>
         <p class="cite-note muted">Claims on this site link to their evidence. Tap a small number to see it.</p>
         {
@@ -69,10 +72,12 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
         {
           work.map((entry) => {
             const Moment = MOMENTS[entry.id as WorkSlug];
+            const { name, descriptor } = splitTitle(entry.data.title);
             return (
               <ProjectRow
                 href={`/work/${entry.id}/`}
-                title={entry.data.title}
+                title={name}
+                descriptor={descriptor}
                 outcome={entry.data.summary}
                 tags={entry.data.tags}
               >
@@ -138,23 +143,31 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     padding: 24px 0 8px;
   }
 
+  .kicker {
+    margin: 0 0 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
   .hero h1 {
-    max-width: 780px;
+    max-width: 900px;
+    margin: 0 0 20px;
     font-size: clamp(2.1rem, 6vw, 3.2rem);
+    text-wrap: balance;
   }
 
-  .sub,
-  .current {
+  .lede {
     max-width: var(--text-width);
-    font-size: 1.05rem;
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.6;
   }
 
-  .sub {
-    margin-bottom: 0.5rem;
-  }
-
-  .current {
-    margin-top: 0;
+  .remote {
+    max-width: var(--text-width);
+    margin: 1.25rem 0 0;
+    font-size: 15px;
   }
 
   .photo {
@@ -172,28 +185,27 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   .ctas {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 1.5rem;
+    align-items: center;
+    gap: 12px 24px;
+    margin-top: 1.75rem;
   }
 
   .ctas a {
-    padding: 8px 16px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    text-decoration: none;
-    font-size: 15px;
-  }
-
-  .ctas a:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .ctas a.primary {
-    border-color: var(--accent);
-    color: var(--accent);
+    font-size: 16px;
     font-weight: 500;
+  }
+
+  /* One clear action; the rest are plain links. */
+  .ctas a.primary {
+    padding: 10px 20px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+  }
+
+  .ctas a.primary:hover {
+    background: var(--text);
   }
 
   .rows {

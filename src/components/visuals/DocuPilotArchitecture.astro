@@ -7,7 +7,7 @@ const label =
   'DocuPilot architecture. In a background task, an admin upload is checked for duplicates with SHA-256, parsed for structure by Docling with OCR and table detection, ' +
   'split into structure-aware chunks that keep the page and position, embedded, and stored in one FAISS index per document. ' +
   'When staff ask a question, the role in their login token decides which documents may be searched; each allowed index is searched, ' +
-  'GPT-4o-mini writes the answer, and an answer-grounded rerank and citation gate decide which passages are cited. ' +
+  'GPT-4o-mini writes the answer, and answer-grounded citation selection decides which passages are cited. ' +
   'The answer comes back with page highlights, and every query is logged to SQL Server with latency, citations and feedback.';
 ---
 
@@ -46,7 +46,7 @@ const label =
   <ArchNode x={170} y={200} w={140} h={64} label="Allowed documents" tech="narrow, never widen" />
   <ArchNode x={330} y={200} w={120} h={64} label="Search each" tech="faiss · top 8" />
   <ArchNode x={470} y={200} w={150} h={64} label="Write the answer" tech="gpt-4o-mini · history" />
-  <ArchNode x={640} y={200} w={180} h={64} label={['Answer-grounded rerank', '+ citation gate']} tech="floor · ratio to best" keyIdea />
+  <ArchNode x={640} y={200} w={180} h={64} label={['Answer-grounded', 'citation selection']} tech="floor · ratio to best" keyIdea />
   <ArchNode x={10} y={298} w={120} h={56} label="Answer" tech="page highlights" />
   <ArchNode x={480} y={354} w={130} h={66} label="SQL Server" tech="logs · feedback" store />
 </ArchFigure>

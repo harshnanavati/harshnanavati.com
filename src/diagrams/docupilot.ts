@@ -21,7 +21,7 @@ export const diagrams: Diagram[] = [
           { label: 'Allowed documents for this role' },
           { label: 'Search each allowed document', tech: 'faiss' },
           { label: 'Write the answer', tech: 'gpt-4o-mini' },
-          { label: 'Answer-grounded rerank + citation gate', key: true },
+          { label: 'Answer-grounded citation selection', key: true },
           { label: 'Answer with page highlights' },
         ],
       },

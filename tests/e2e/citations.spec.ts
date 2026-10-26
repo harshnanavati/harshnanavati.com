@@ -27,7 +27,7 @@ test('works from the keyboard', async ({ page }) => {
   await page.goto('/');
   await page.locator('.hero button.cite').first().focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('#cite-hero-years')).toBeVisible();
+  await expect(page.locator('#cite-hero-systems')).toBeVisible();
 });
 
 test.describe('on a phone', () => {

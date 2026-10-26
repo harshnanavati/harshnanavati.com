@@ -6,6 +6,7 @@ import LinksOut from '../../components/LinksOut.astro';
 import VideoSlot from '../../components/VideoSlot.astro';
 import { DIAGRAMS, type WorkSlug } from '../../diagrams';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { splitTitle } from '../../lib/title';
 import { MOMENTS } from '../../visuals';
 
 export async function getStaticPaths() {
@@ -27,6 +28,7 @@ const slug = entry.id as WorkSlug;
 const { Content, headings } = await render(entry);
 const sections = headings.filter((h) => h.depth === 2);
 const Moment = MOMENTS[slug];
+const { name, descriptor } = splitTitle(data.title);
 // Result cells hold measurable numbers only. Descriptive chips ("Self-hosted LLM") are
 // already told in the text; a single number sits in the details card instead of a lone cell.
 const numbers = data.chips.filter((chip) => /\d/.test(chip.value));
@@ -54,7 +56,8 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
   <article class="container wide case">
     <header class="hero">
       <div class="hero-text">
-        <h1>{data.title}</h1>
+        <h1>{name}</h1>
+        {descriptor && <p class="descriptor">{descriptor}</p>}
         <p class="outcome">{data.outcome}</p>
       </div>
       <aside class="meta-card" aria-label="Project details">
@@ -84,11 +87,7 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
           }
           <div>
             <dt>Stack</dt>
-            <dd>
-              <ul class="stack-tags">
-                {data.stack.map((item) => <li>{item}</li>)}
-              </ul>
-            </dd>
+            <dd class="stack">{data.stack.join(', ')}</dd>
           </div>
         </dl>
         {data.links && <LinksOut links={data.links} />}
@@ -139,7 +138,7 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     <p class="next">
       <a class="next-project" href={`/work/${next.id}/`}>
         <span class="next-label">Next project</span>
-        <span class="next-title">{next.data.title}</span>
+        <span class="next-title">{splitTitle(next.data.title).name}</span>
       </a>
     </p>
   </article>
@@ -186,6 +185,13 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     margin: 0 0 16px;
   }
 
+  .descriptor {
+    margin: -8px 0 16px;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
   .outcome {
     max-width: 36em;
     margin: 0;
@@ -219,21 +225,8 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     line-height: 1.45;
   }
 
-  .stack-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    list-style: none;
-    margin: 4px 0 0;
-    padding: 0;
-  }
-
-  .stack-tags li {
-    padding: 2px 8px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 13px;
-    line-height: 1.5;
+  .stack {
+    color: var(--muted);
   }
 
   .meta-card :global(.links-out) {
@@ -347,30 +340,29 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     margin-top: 0.4rem;
   }
 
-  /* Key decisions read as a set of cards: each one is a choice and its reason. */
+  /* Key decisions read as a ruled list: each one is a choice and its reason. */
   .prose :global(#key-decisions + ol) {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
+    gap: 8px 40px;
     padding: 0;
     list-style: none;
   }
 
   .prose :global(#key-decisions + ol > li) {
     margin: 0;
-    padding: 20px 22px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    padding: 16px 0 8px;
+    border-top: 1px solid var(--border);
     line-height: 1.6;
   }
 
   .prose :global(#key-decisions + ol > li > strong:first-child) {
     display: block;
-    margin-bottom: 6px;
-    font-family: var(--font-serif);
-    font-size: 1.12rem;
-    font-weight: 500;
-    color: var(--accent);
+    margin-bottom: 4px;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
   }
 
   .prose :global(#key-decisions + ol ul) {
@@ -408,6 +400,36 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
   @media (min-width: 760px) {
     .prose :global(#key-decisions + ol) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Below the two-column layout, show what the product does before its details. */
+  @media (max-width: 1023px) {
+    .case {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero {
+      display: contents;
+    }
+
+    .hero-text {
+      order: 1;
+      padding-top: 16px;
+    }
+
+    .stage {
+      order: 2;
+    }
+
+    .meta-card {
+      order: 3;
+      margin-top: 24px;
+    }
+
+    .case > :not(.hero):not(.stage) {
+      order: 4;
     }
   }
 

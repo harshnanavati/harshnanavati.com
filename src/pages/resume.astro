@@ -2,8 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { RESUME, RESUME_PDF } from '../lib/resume';
 import { SITE } from '../lib/site';
-
-const skills = RESUME.skills.map((s) => ({ group: s.group, tags: s.items.split(', ') }));
 ---
 
 <BaseLayout
@@ -64,14 +62,10 @@ const skills = RESUME.skills.map((s) => ({ group: s.group, tags: s.items.split('
         <section>
           <h2>Skills</h2>
           {
-            skills.map((s) => (
+            RESUME.skills.map((s) => (
               <div class="skill-group">
                 <h3>{s.group}</h3>
-                <ul class="skill-tags">
-                  {s.tags.map((t) => (
-                    <li>{t}</li>
-                  ))}
-                </ul>
+                <p class="skill-list">{s.items}</p>
               </div>
             ))
           }
@@ -242,20 +236,9 @@ const skills = RESUME.skills.map((s) => ({ group: s.group, tags: s.items.split('
     font-size: 14.5px;
   }
 
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 8px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .skill-tags li {
-    padding: 2px 8px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 13px;
+  .skill-list {
+    margin: 2px 0 0;
+    font-size: 14.5px;
     line-height: 1.5;
   }
 
@@ -281,10 +264,6 @@ const skills = RESUME.skills.map((s) => ({ group: s.group, tags: s.items.split('
       border: 1px solid var(--border);
       border-radius: 14px;
       background: var(--surface);
-    }
-
-    .resume-aside .skill-tags li {
-      background: var(--bg);
     }
   }
 

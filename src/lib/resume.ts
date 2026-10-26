@@ -29,7 +29,7 @@ export const RESUME = {
   ],
   experience: [
     {
-      role: 'SDE – Artificial Intelligence',
+      role: 'SDE – Artificial Intelligence (Applied AI Engineer)',
       company: 'Masterly Solutions Pvt. Ltd.',
       where: 'Ahmedabad, India',
       when: 'Oct 2024 – present',
@@ -41,7 +41,7 @@ export const RESUME = {
         },
         {
           lead: 'DocuPilot – Answer Grounding & Guardrails',
-          text: 'GPT-4o-mini answers constrained by answer-grounded reranking and two-stage citation gating, with every claim linked to its source page region; role-based document access, JWT auth, SHA-256 dedup and per-query observability on FastAPI and SQL Server.',
+          text: 'GPT-4o-mini answers constrained by answer-grounded citation selection and a two-stage citation gate, with every claim linked to its source page region; role-based document access, JWT auth, SHA-256 dedup and per-query observability on FastAPI and SQL Server.',
         },
         {
           lead: 'CrickPal Intelligence Layer – AI Win-Prediction Platform',
@@ -49,7 +49,7 @@ export const RESUME = {
         },
         {
           lead: 'CrickPal AI Summary – Real-Time LLM Commentary Engine',
-          text: 'live ball-by-ball data turned into narrative and headline summaries on self-hosted Ollama; incremental summarization keeps prompt size flat as a match grows; exactly-once batching, a circuit breaker with backoff, and an admin console for per-match prompt and model tuning without redeploys.',
+          text: 'live ball-by-ball data turned into narrative and headline summaries on self-hosted Ollama; incremental summarization keeps prompt size flat as a match grows; exactly-once batching on a single instance, a circuit breaker with backoff, and an admin console for per-match prompt and model tuning without redeploys.',
         },
         {
           lead: 'AI Face Matching System',
@@ -57,7 +57,7 @@ export const RESUME = {
         },
         {
           lead: 'QuantumCopilot – AI Loan & Financial Assistant',
-          text: 'maps natural-language queries to typed parameters across 6 loan products; parallel scenario fan-out (~3x lower latency), multi-turn memory, and 8 Uvicorn workers on IIS.',
+          text: 'maps natural-language queries to typed parameters across 6 loan products; parallel scenario fan-out (~3x faster scenario stage), multi-turn memory, and 8 Uvicorn workers on IIS.',
         },
         {
           lead: 'RAG Support & Concierge Chatbots',
@@ -72,11 +72,11 @@ export const RESUME = {
       when: 'Jun 2023 – May 2024',
       note: '',
       points: [
-        { lead: '', text: 'Improved audit reporting accuracy by 20% with Power BI dashboards for enterprise audit workflows.' },
         {
           lead: '',
-          text: 'Built entity-resolution and anomaly-detection analyses on large-scale financial datasets using Scala, Spark and SQL.',
+          text: 'Used Spark, Scala and SQL for entity-resolution and anomaly-detection analyses on large-scale financial datasets.',
         },
+        { lead: '', text: 'Improved audit reporting accuracy by 20% with Power BI dashboards for enterprise audit workflows.' },
       ],
     },
   ],

@@ -38,7 +38,7 @@ Documents are parsed for structure, not just text, so a table stays a table. Eac
 
 1. **Parse structure, not just text.** Plain PDF text extraction mangles tables and checklists. Docling keeps the document's real structure, so chunks follow sections and every citation can highlight the exact region on the page.
 2. **One index per document, with access by intersection.** A request can narrow the set of documents searched, never widen it. If someone asks for a document they aren't allowed to see, the system says it doesn't exist rather than "forbidden", so it doesn't even confirm the document is there.
-3. **Rerank after answering.** Retrieval scores say what *looked* relevant before the answer existed. Blending in each passage's similarity to the final answer shows what the answer actually relied on.
+3. **Answer-grounded citation selection.** Retrieval scores say what *looked* relevant before the answer existed. Blending in each passage's similarity to the final answer shows what the answer actually relied on.
 4. **A two-stage citation gate.** A minimum score stops greetings and small talk from getting fake citations. A ratio to the best match keeps only passages that genuinely support the answer.
 
 ## Hard problems

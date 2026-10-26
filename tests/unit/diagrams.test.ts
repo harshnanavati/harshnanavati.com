@@ -56,7 +56,7 @@ describe('Diagram component', () => {
     const doc = parse(html);
     const keys = doc.querySelectorAll('.key');
     expect(keys).toHaveLength(1);
-    expect(keys[0].text).toContain('citation gate');
+    expect(keys[0].text).toContain('citation selection');
     const fig = doc.querySelector('figure');
     expect(fig?.getAttribute('role')).toBe('img');
     expect(fig?.getAttribute('aria-label')?.length).toBeGreaterThan(20);

@@ -7,7 +7,7 @@ kind: In-house product, live
 chips:
   - { value: '2', label: summary tiers, basis: 'Every update produces two summaries: a detailed narrative and a one-line headline.', evidence: how-it-works }
   - { value: 'Self-hosted', label: LLM }
-  - { value: 'Exactly-once', label: processing }
+  - { value: 'Exactly-once', label: processing on a single instance }
   - { value: 'Per-match', label: tuning without redeploys }
 tags: [ollama, real-time, fastapi]
 links:
@@ -37,7 +37,7 @@ A poller checks each active match in turn and batches new deliveries every few b
 ## Key decisions
 
 1. **Incremental, not full re-summarization.** The model gets its own previous summary plus only the new deliveries. The prompt stays roughly the same size from the first over to the last.
-2. **Exactly-once processing.** A timestamp watermark, a carried-over ball count and a dedup table keyed on each delivery's ID. A failed batch is never marked done, so it's retried on the next cycle.
+2. **Exactly-once processing on a single instance.** A timestamp watermark, a carried-over ball count and a dedup table keyed on each delivery's ID. A failed batch is never marked done, so it's retried on the next cycle.
 3. **Self-hosted model, protected.** Ollama means no per-token bill. A circuit breaker and backoff stop retries from hammering a struggling model, and JSON output mode keeps responses parseable.
 4. **Settings in the database, not the code.** Prompt, model, temperature and batch size can be overridden per match from the admin console, with system defaults as the fallback. No redeploys to experiment.
 

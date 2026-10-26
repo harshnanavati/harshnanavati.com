@@ -1,20 +1,15 @@
 ---
-// The app-window frame every product illustration sits in, plus its caption.
-// Captions always say it's an illustration, so nothing reads as a client screenshot.
+// The panel every product illustration sits in, plus its caption. No fake browser
+// chrome: captions always say it's an illustration, so nothing reads as a screenshot.
 interface Props {
-  title: string;
   caption: string;
 }
 
-const { title, caption } = Astro.props;
+const { caption } = Astro.props;
 ---
 
 <figure class="product-moment">
   <div class="window">
-    <div class="bar">
-      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="app">{title}</span>
-    </div>
     <div class="window-body">
       <slot />
     </div>
@@ -32,28 +27,6 @@ const { title, caption } = Astro.props;
     border-radius: 12px;
     overflow: hidden;
     background: var(--bg);
-  }
-
-  .bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  .dots {
-    display: flex;
-    gap: 5px;
-  }
-
-  .dots i {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--border);
   }
 
   .window-body {

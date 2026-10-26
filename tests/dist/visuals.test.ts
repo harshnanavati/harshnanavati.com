@@ -5,7 +5,7 @@ const main = (slug: string) => loadPage(`/work/${slug}/`).querySelector('main')!
 
 // What each architecture diagram must single out as the project's key idea.
 const KEY_IDEA: Record<(typeof WORK_SLUGS)[number], string> = {
-  docupilot: 'citation gate',
+  docupilot: 'citation selection',
   'crickpal-intelligence-layer': 'Verification harness',
   'crickpal-ai-summary': 'new balls only',
   'ai-face-matching': 'Job queue',
