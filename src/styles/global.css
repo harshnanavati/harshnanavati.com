@@ -9,7 +9,7 @@
   --font-sans: 'Inter Variable', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
   --text-width: 680px;
-  --wide-width: 960px;
+  --wide-width: 1080px;
   --gutter: 16px;
   color-scheme: light;
 }

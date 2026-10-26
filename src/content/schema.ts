@@ -8,6 +8,8 @@ export const workSchema = z.object({
   order: z.number().int().min(1).max(6),
   outcome: z.string().min(1),
   summary: z.string().min(1),
+  kind: z.string().min(1),
+  role: z.string().min(1).optional(),
   chips: z.array(chip).min(3),
   tags: z.array(z.string().min(1)).length(3),
   links: z.array(link).optional(),

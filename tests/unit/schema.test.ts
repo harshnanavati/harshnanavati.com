@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { workSchema } from '../../src/content/schema';
 
 const valid = {
+  kind: 'Client project',
   title: 'DocuPilot – Enterprise RAG Platform',
   order: 1,
   outcome: 'An AI assistant that answers staff questions.',

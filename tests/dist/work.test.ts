@@ -27,9 +27,17 @@ const SECTION_ORDER = [
   'Hard problems',
   'Results',
   "What I'd do next",
-  'Stack',
 ];
-const REQUIRED_SECTIONS = ['The problem', 'How it works', 'Key decisions', 'Results', "What I'd do next", 'Stack'];
+const REQUIRED_SECTIONS = ['The problem', 'How it works', 'Key decisions', 'Results', "What I'd do next"];
+
+const KINDS: Record<(typeof WORK_SLUGS)[number], string> = {
+  docupilot: 'Client project',
+  'crickpal-intelligence-layer': 'In-house product',
+  'crickpal-ai-summary': 'In-house product, live',
+  'ai-face-matching': 'Client project',
+  quantumcopilot: 'In-house product, live',
+  'support-concierge-chatbots': 'Client project',
+};
 
 const CRICKPAL = 'https://www.crickpal.com/';
 const QUANTUM = 'https://www.loanquantum.com/quantumcopilot';
@@ -54,8 +62,37 @@ describe.each(WORK_SLUGS)('work page %s', (slug) => {
   });
 
   it('shows the spec metric values', () => {
-    const values = main(slug).querySelectorAll('.chips .value').map((v) => v.text.trim());
+    const values = main(slug).querySelectorAll('.stats .value').map((v) => v.text.trim());
     for (const v of CHIP_VALUES[slug]) expect(values).toContain(v);
+  });
+
+  it('has a project details card with the type and stack', () => {
+    const card = main(slug).querySelector('.meta-card')!;
+    expect(card).not.toBeNull();
+    expect(card.text).toContain(KINDS[slug]);
+    expect(card.querySelectorAll('.stack-tags li').length).toBeGreaterThan(3);
+  });
+
+  it('has a section nav pointing at every section', () => {
+    const tocTargets = main(slug)
+      .querySelectorAll('nav.toc a')
+      .map((a) => a.getAttribute('href'));
+    const sectionIds = main(slug)
+      .querySelectorAll('.prose h2[id]')
+      .map((h) => `#${h.getAttribute('id')}`);
+    expect(tocTargets).toEqual(sectionIds);
+    expect(tocTargets.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('opens with a visual in the stage panel', () => {
+    const stage = main(slug).querySelector('.stage')!;
+    expect(stage).not.toBeNull();
+    const expected = slug === 'quantumcopilot' ? '.product-moment' : 'figure.diagram';
+    expect(stage.querySelector(expected)).not.toBeNull();
+  });
+
+  it('has no video placeholder', () => {
+    expect(main(slug).text).not.toContain('Video coming soon');
   });
 
   it('links to the next project', () => {
@@ -84,6 +121,14 @@ describe('external product links', () => {
 
   it.each(['docupilot', 'ai-face-matching', 'support-concierge-chatbots'])('%s has no product links', (slug) => {
     expect(external(slug)).toEqual([]);
+  });
+});
+
+describe('roles', () => {
+  it('QuantumCopilot states Harsh’s role', () => {
+    expect(main('quantumcopilot').querySelector('.meta-card')!.text).toContain(
+      'Designed and built the backend and LLM pipeline',
+    );
   });
 });
 

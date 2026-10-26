@@ -1,7 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Diagram from '../../components/Diagram.astro';
 import LinksOut from '../../components/LinksOut.astro';
-import MetricChips from '../../components/MetricChips.astro';
 import VideoSlot from '../../components/VideoSlot.astro';
 import { DIAGRAMS, type WorkSlug } from '../../diagrams';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -23,42 +23,399 @@ interface Props {
 const { entry, next } = Astro.props;
 const { data } = entry;
 const slug = entry.id as WorkSlug;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
+const sections = headings.filter((h) => h.depth === 2);
 const Moment = MOMENTS[slug];
 ---
 
-<BaseLayout title={data.title} description={data.outcome} path={`/work/${slug}/`} ogImage={`/og/${slug}.png`}>
-  <article class="container">
-    <h1>{data.title}</h1>
-    <p class="outcome">{data.outcome}</p>
-    <MetricChips chips={data.chips} />
-    {data.links && <LinksOut links={data.links} />}
-    {data.privacyNote && <p class="privacy-note muted"><em>{data.privacyNote}</em></p>}
-    {Moment && <Moment />}
-    <VideoSlot title={data.videoTitle} youtubeId={data.youtubeId} diagram={DIAGRAMS[slug][0]} />
-    <Content />
-    <h2>Stack</h2>
-    <p class="stack">{data.stack.join(' · ')}</p>
+<BaseLayout
+  title={data.title}
+  description={data.outcome}
+  path={`/work/${slug}/`}
+  ogImage={`/og/${slug}.png`}
+  width="wide"
+>
+  <article class="container wide case">
+    <header class="hero">
+      <div class="hero-text">
+        <h1>{data.title}</h1>
+        <p class="outcome">{data.outcome}</p>
+      </div>
+      <aside class="meta-card" aria-label="Project details">
+        <dl>
+          {
+            data.role && (
+              <div>
+                <dt>Role</dt>
+                <dd>{data.role}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt>Type</dt>
+            <dd>{data.kind}</dd>
+          </div>
+          <div>
+            <dt>Stack</dt>
+            <dd>
+              <ul class="stack-tags">
+                {data.stack.map((item) => <li>{item}</li>)}
+              </ul>
+            </dd>
+          </div>
+        </dl>
+        {data.links && <LinksOut links={data.links} />}
+      </aside>
+    </header>
+
+    <ul class="stats" aria-label="Results at a glance">
+      {
+        data.chips.map((chip) => (
+          <li>
+            <span class="value">{chip.value}</span>
+            <span class="label">{chip.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    {data.privacyNote && <p class="privacy-note">{data.privacyNote}</p>}
+
+    <section class="stage" aria-label={Moment ? 'What the product does' : 'How it works at a glance'}>
+      {Moment ? <Moment /> : <Diagram diagram={DIAGRAMS[slug][0]} />}
+    </section>
+
+    {data.youtubeId && <VideoSlot title={data.videoTitle} youtubeId={data.youtubeId} diagram={DIAGRAMS[slug][0]} />}
+
+    <div class="body">
+      <nav class="toc" aria-label="On this page">
+        <ul>
+          {
+            sections.map((s) => (
+              <li>
+                <a href={`#${s.slug}`}>{s.text}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
     <p class="next">
-      <a class="next-project" href={`/work/${next.id}/`}>Next project: {next.data.title} →</a>
+      <a class="next-project" href={`/work/${next.id}/`}>
+        <span class="next-label">Next project</span>
+        <span class="next-title">{next.data.title}</span>
+      </a>
     </p>
   </article>
 </BaseLayout>
 
+<script>
+  // Highlight the section being read in the side nav.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('nav.toc a')].map((a) => [a.hash.slice(1), a]),
+  );
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        for (const a of links.values()) a.removeAttribute('aria-current');
+        links.get(entry.target.id)?.setAttribute('aria-current', 'true');
+      }
+    },
+    { rootMargin: '0px 0px -70% 0px' },
+  );
+  for (const id of links.keys()) {
+    const heading = document.getElementById(id);
+    if (heading) observer.observe(heading);
+  }
+</script>
+
 <style>
+  .case {
+    --toc-width: 196px;
+    --body-gap: 64px;
+  }
+
+  /* Hero */
+  .hero {
+    display: grid;
+    gap: 24px;
+    padding-top: 16px;
+  }
+
+  h1 {
+    font-size: clamp(2.1rem, 4.2vw, 3.1rem);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+  }
+
   .outcome {
-    font-size: 1.15rem;
+    max-width: 36em;
+    margin: 0;
+    font-size: 1.2rem;
+    line-height: 1.55;
     color: var(--muted);
+  }
+
+  .meta-card {
+    align-self: start;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .meta-card dl {
+    display: grid;
+    gap: 14px;
     margin: 0;
   }
 
-  .stack {
+  dt {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .stack-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+  }
+
+  .stack-tags li {
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .meta-card :global(.links-out) {
+    margin: 18px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Results at a glance */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    margin: 40px 0 0;
+    padding: 0;
+    list-style: none;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .stats li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 16px 18px;
+    background: var(--bg);
+  }
+
+  .stats .value {
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    line-height: 1.2;
+    color: var(--accent);
+  }
+
+  .stats .label {
+    font-size: 14px;
+    line-height: 1.4;
     color: var(--muted);
   }
 
+  .privacy-note {
+    margin: 24px 0 0;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  /* The one bold element: the stage that opens every case study */
+  .stage {
+    margin-top: 24px;
+    padding: clamp(16px, 4vw, 48px);
+    background: var(--surface);
+    border-radius: 16px;
+  }
+
+  .stage :global(.product-moment) {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .stage :global(.diagram) {
+    margin: 0;
+  }
+
+  /* Body: section nav beside the reading column */
+  .body {
+    margin-top: 56px;
+  }
+
+  .toc {
+    display: none;
+  }
+
+  .prose > :global(*:not(figure):not(.phone-only):not(ol)) {
+    max-width: 680px;
+  }
+
+  .prose :global(h2) {
+    margin: 3.25rem 0 1rem;
+    scroll-margin-top: 24px;
+  }
+
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .prose :global(ol),
+  .prose :global(ul) {
+    padding-left: 1.25rem;
+  }
+
+  .prose :global(li + li) {
+    margin-top: 0.4rem;
+  }
+
+  /* Key decisions read as a set of cards: each one is a choice and its reason. */
+  .prose :global(#key-decisions + ol) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .prose :global(#key-decisions + ol > li) {
+    margin: 0;
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    line-height: 1.6;
+  }
+
+  .prose :global(#key-decisions + ol > li > strong:first-child) {
+    display: block;
+    margin-bottom: 6px;
+    font-family: var(--font-serif);
+    font-size: 1.12rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .prose :global(#key-decisions + ol ul) {
+    margin-top: 8px;
+  }
+
   .next {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
+    margin: 72px 0 0;
+    padding-top: 24px;
     border-top: 1px solid var(--border);
+  }
+
+  .next-project {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    text-decoration: none;
+  }
+
+  .next-label {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .next-title {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    color: var(--text);
+  }
+
+  .next-project:hover .next-title {
+    color: var(--accent);
+  }
+
+  @media (min-width: 760px) {
+    .prose :global(#key-decisions + ol) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 56px;
+    }
+
+    .body {
+      display: grid;
+      grid-template-columns: var(--toc-width) minmax(0, 1fr);
+      gap: var(--body-gap);
+      align-items: start;
+    }
+
+    .toc {
+      display: block;
+      position: sticky;
+      top: 24px;
+    }
+
+    .toc ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-left: 1px solid var(--border);
+    }
+
+    .toc a {
+      display: block;
+      margin-left: -1px;
+      padding: 6px 0 6px 14px;
+      border-left: 2px solid transparent;
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      color: var(--text);
+    }
+
+    .toc a[aria-current='true'] {
+      border-left-color: var(--accent);
+      color: var(--text);
+    }
+
+    /* Diagrams in the reading column extend left over the nav column,
+       so they share the page's outer edges with the hero and the stage. */
+    .prose > :global(figure),
+    .prose > :global(.phone-only) {
+      width: calc(100% + var(--toc-width) + var(--body-gap));
+      margin-left: calc(-1 * (var(--toc-width) + var(--body-gap)));
+    }
   }
 </style>

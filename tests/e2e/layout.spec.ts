@@ -50,11 +50,10 @@ test.describe('light mode', () => {
   });
 });
 
-test('video slot shows the diagram until a video exists', async ({ page }) => {
+test('pages without an illustration open with their diagram in the stage', async ({ page }) => {
   await page.goto('/work/docupilot/');
-  const slot = page.locator('.video-slot');
-  await expect(slot.getByText('Video coming soon')).toBeVisible();
-  await expect(slot.locator('.key')).toBeVisible();
+  await expect(page.locator('.stage .key')).toBeVisible();
+  await expect(page.getByText('Video coming soon')).toHaveCount(0);
 });
 
 test.describe('mobile diagram stacks vertically', () => {
@@ -62,7 +61,7 @@ test.describe('mobile diagram stacks vertically', () => {
 
   test('steps sit on top of each other', async ({ page }) => {
     await page.goto('/work/docupilot/');
-    const steps = page.locator('.video-slot .lane').first().locator('.step');
+    const steps = page.locator('.stage .lane').first().locator('.step');
     const first = await steps.nth(0).boundingBox();
     const second = await steps.nth(1).boundingBox();
     expect(first && second).toBeTruthy();
@@ -74,7 +73,7 @@ test.describe('mobile diagram stacks vertically', () => {
 test('desktop diagram flows left to right', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/work/docupilot/');
-  const steps = page.locator('.video-slot .lane').first().locator('.step');
+  const steps = page.locator('.stage .lane').first().locator('.step');
   const first = await steps.nth(0).boundingBox();
   const second = await steps.nth(1).boundingBox();
   expect(second!.x).toBeGreaterThan(first!.x);
