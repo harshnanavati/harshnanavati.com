@@ -127,3 +127,25 @@ test.describe('case study on a phone', () => {
     expect(card.left).toBe(h1.left);
   });
 });
+
+test.describe('resume layout', () => {
+  test('desktop: experience on the left, facts in a side column', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/resume/');
+    const nav = await box(page, 'header nav');
+    const main = await box(page, '.resume-main');
+    const aside = await box(page, '.resume-aside');
+    expect(main.left).toBe(nav.left);
+    expect(aside.left).toBeGreaterThan(main.right);
+    await expect(page.getByRole('link', { name: 'Download PDF' })).toBeInViewport();
+  });
+
+  test('phone: one column, experience before the facts', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto('/resume/');
+    const main = await box(page, '.resume-main');
+    const aside = await box(page, '.resume-aside');
+    expect(aside.left).toBe(main.left);
+    expect(aside.top).toBeGreaterThan(main.top);
+  });
+});

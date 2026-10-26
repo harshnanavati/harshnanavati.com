@@ -110,10 +110,14 @@ describe('resume page', () => {
 
   it('shows the resume as readable text instead of an embedded PDF', () => {
     expect(resume().querySelector('object, embed, iframe')).toBeNull();
-    const sections = resume()
-      .querySelectorAll('h2')
-      .map((h) => h.text.trim());
-    expect(sections).toEqual(['Summary', 'Skills', 'Experience', 'Research', 'Education']);
+    const headings = (selector: string) =>
+      resume()
+        .querySelectorAll(`${selector} h2`)
+        .map((h) => h.text.trim());
+    // The story reads first; the facts sit in a side column.
+    expect(headings('.resume-main')).toEqual(['Summary', 'Experience']);
+    expect(headings('.resume-aside')).toEqual(['Skills', 'Education', 'Research']);
+    expect(resume().querySelectorAll('.resume-aside .skill-tags li').length).toBeGreaterThan(30);
     expect(resume().text).toContain('SDE – Artificial Intelligence');
     expect(resume().text).toContain('Deloitte Haskins & Sells LLP');
     expect(resume().text).toContain('DocuPilot – Enterprise RAG Platform');
