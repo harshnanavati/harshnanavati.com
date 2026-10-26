@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import VideoSlot from '../components/VideoSlot.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { INTRO_DIAGRAM, INTRO_VIDEO } from '../lib/intro';
+import { INTRO_VIDEO } from '../lib/intro';
 import { SITE } from '../lib/site';
 
 const headshots = import.meta.glob<{ default: ImageMetadata }>('../assets/headshot.{jpg,jpeg,png,webp}', {
@@ -62,7 +62,7 @@ const headshot = Object.values(headshots)[0]?.default;
       <a href="/resume">Resume</a>
     </p>
 
-    <VideoSlot title={INTRO_VIDEO.title} youtubeId={INTRO_VIDEO.youtubeId} diagram={INTRO_DIAGRAM} />
+    {INTRO_VIDEO.youtubeId && <VideoSlot title={INTRO_VIDEO.title} youtubeId={INTRO_VIDEO.youtubeId} />}
   </div>
 </BaseLayout>
 

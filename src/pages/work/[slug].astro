@@ -85,7 +85,7 @@ const Moment = MOMENTS[slug];
       {Moment ? <Moment /> : <Diagram diagram={DIAGRAMS[slug][0]} />}
     </section>
 
-    {data.youtubeId && <VideoSlot title={data.videoTitle} youtubeId={data.youtubeId} diagram={DIAGRAMS[slug][0]} />}
+    {data.youtubeId && <VideoSlot title={data.videoTitle} youtubeId={data.youtubeId} />}
 
     <div class="body">
       <nav class="toc" aria-label="On this page">

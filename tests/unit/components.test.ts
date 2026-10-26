@@ -4,7 +4,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import LinksOut from '../../src/components/LinksOut.astro';
 import ProjectRow from '../../src/components/ProjectRow.astro';
 import VideoSlot from '../../src/components/VideoSlot.astro';
-import { DIAGRAMS } from '../../src/diagrams';
 
 let container: AstroContainer;
 beforeAll(async () => {
@@ -15,18 +14,8 @@ const render = async (component: any, props: Record<string, unknown>) =>
   parse(await container.renderToString(component, { props }));
 
 describe('VideoSlot', () => {
-  const diagram = DIAGRAMS.docupilot[0];
-
-  it('shows the diagram and "Video coming soon" when there is no video', async () => {
-    const doc = await render(VideoSlot, { title: 'A video', diagram });
-    expect(doc.querySelector('.key')).not.toBeNull();
-    expect(doc.text).toContain('Video coming soon');
-    expect(doc.querySelector('lite-youtube')).toBeNull();
-    expect(doc.querySelector('iframe')).toBeNull();
-  });
-
-  it('shows a click-to-play embed with a plain link fallback when a video exists', async () => {
-    const doc = await render(VideoSlot, { title: 'A video', youtubeId: 'dQw4w9WgXcQ', diagram });
+  it('shows a click-to-play embed with a plain link fallback', async () => {
+    const doc = await render(VideoSlot, { title: 'A video', youtubeId: 'dQw4w9WgXcQ' });
     expect(doc.querySelector('lite-youtube[videoid="dQw4w9WgXcQ"]')).not.toBeNull();
     expect(doc.querySelector('a[href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"]')).not.toBeNull();
     expect(doc.querySelector('iframe')).toBeNull();

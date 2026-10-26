@@ -1,32 +1,22 @@
 ---
+// A YouTube video that loads only when clicked, with a plain link for no-JS visitors.
+// Pages render this only once a video exists; there is no placeholder state.
 import 'lite-youtube-embed/src/lite-yt-embed.css';
-import type { Diagram as DiagramData } from '../diagrams/types';
-import Diagram from './Diagram.astro';
 
 interface Props {
   title: string;
-  youtubeId?: string;
-  diagram: DiagramData;
+  youtubeId: string;
 }
 
-const { title, youtubeId, diagram } = Astro.props;
+const { title, youtubeId } = Astro.props;
 ---
 
 <section class="video-slot" aria-label={`Video: ${title}`}>
-  {
-    youtubeId ? (
-      <lite-youtube videoid={youtubeId} playlabel={title}>
-        <a class="lite-youtube-fallback" href={`https://www.youtube.com/watch?v=${youtubeId}`}>
-          Watch "{title}" on YouTube
-        </a>
-      </lite-youtube>
-    ) : (
-      <>
-        <Diagram diagram={diagram} />
-        <p class="soon muted">Video coming soon: {title}</p>
-      </>
-    )
-  }
+  <lite-youtube videoid={youtubeId} playlabel={title}>
+    <a class="lite-youtube-fallback" href={`https://www.youtube.com/watch?v=${youtubeId}`}>
+      Watch "{title}" on YouTube
+    </a>
+  </lite-youtube>
 </section>
 
 <script>
@@ -36,11 +26,6 @@ const { title, youtubeId, diagram } = Astro.props;
 <style>
   .video-slot {
     margin: 2rem 0;
-  }
-
-  .soon {
-    font-size: 14px;
-    margin: 0;
   }
 
   lite-youtube {

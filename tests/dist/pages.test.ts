@@ -18,6 +18,13 @@ describe('home page', () => {
     expect(rows[0].text).toContain('with a source for every answer');
   });
 
+  it('introduces Harsh in plain sentences, not a dot-separated tag line', () => {
+    const sub = home().querySelector('.hero .sub')!.text;
+    expect(sub).not.toContain('·');
+    expect(sub).toMatch(/India/);
+    expect(sub).toMatch(/remote/i);
+  });
+
   it('goes straight from the hero to the selected work, with no numbers strip', () => {
     expect(home().querySelector('.chips')).toBeNull();
     expect(home().text).not.toContain('users on one system');
@@ -50,8 +57,9 @@ describe('about page', () => {
     expect(about().querySelector('.contact')!.text.replace(/\s+/g, ' ').trim()).toBe('Email me · LinkedIn · Resume');
   });
 
-  it('has a video slot', () => {
-    expect(about().querySelector('.video-slot')).not.toBeNull();
+  it('shows no video placeholder until the intro video exists', () => {
+    expect(about().text).not.toContain('Video coming soon');
+    expect(about().querySelector('.video-slot figure.diagram')).toBeNull();
   });
 
   it('shows an HN placeholder when there is no headshot yet', () => {
