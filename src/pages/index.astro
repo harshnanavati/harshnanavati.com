@@ -18,7 +18,6 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   description="Applied AI engineer building production LLM systems: RAG with source-cited answers, agents that verify their own code, real-time LLM pipelines and GPU computer vision."
   path="/"
   ogImage="/og/index.png"
-  width="wide"
 >
   <div class="container wide">
     <section class:list={['hero', { 'with-photo': HEADSHOT }]}>
@@ -47,7 +46,7 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
         </p>
         <p class="ctas">
           <a class="primary" href="#work">View work</a>
-          <a href="/resume">Resume</a>
+          <a href="/resume/">Resume</a>
           <a href={`mailto:${SITE.email}`}>Email me</a>
         </p>
         <p class="cite-note muted">Claims on this site link to their evidence. Tap a small number to see it.</p>
@@ -218,14 +217,6 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
       gap: 28px;
     }
 
-    .principles {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .principles p {
-      margin-top: 0;
-    }
-
     .hero.with-photo {
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
@@ -234,6 +225,17 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     .photo {
       width: 220px;
       height: 220px;
+    }
+  }
+
+  /* Three columns only when each one still has a comfortable line length. */
+  @media (min-width: 900px) {
+    .principles {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .principles p {
+      margin-top: 0;
     }
   }
 

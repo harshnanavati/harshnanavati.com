@@ -1,7 +1,7 @@
 ---
 // Frame for a system architecture diagram: an 860-unit-wide SVG with a shared arrowhead,
-// the legend, and the styles every diagram uses. Desktop only; phones get the
-// step-by-step Diagram instead (see ProjectDiagram).
+// the legend, and the styles every diagram uses. Wide screens only; tablets and
+// phones get the step-by-step Diagram instead (see ProjectDiagram).
 interface Props {
   /** Full prose description for screen readers. */
   label: string;
@@ -12,7 +12,7 @@ const { label, height } = Astro.props;
 ---
 
 <figure class="architecture" role="img" aria-label={label}>
-  <svg viewBox={`0 0 860 ${height}`} xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox={`0 0 860 ${height}`} xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
         <path d="M0 0L10 5L0 10z" class="arrowhead"></path>
@@ -83,7 +83,7 @@ const { label, height } = Astro.props;
 
   .architecture .tech {
     font-family: var(--font-mono);
-    font-size: 10.5px;
+    font-size: 11.5px;
     fill: var(--muted);
   }
 
@@ -132,7 +132,7 @@ const { label, height } = Astro.props;
     border-top: 1.5px dashed var(--muted);
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 960px) {
     .architecture {
       display: none;
     }

@@ -24,8 +24,8 @@ describe('BaseLayout', () => {
     expect(links).toEqual([
       ['Harsh Nanavati', '/'],
       ['Work', '/#work'],
-      ['About', '/about'],
-      ['Resume', '/resume'],
+      ['About', '/about/'],
+      ['Resume', '/resume/'],
     ]);
   });
 

@@ -55,7 +55,7 @@ describe('home page', () => {
   it('has the "How I build" section and the three calls to action', () => {
     expect(home().querySelectorAll('h2').map((h) => h.text.trim())).toContain('How I build');
     const ctas = home().querySelectorAll('.ctas a').map((a) => a.getAttribute('href'));
-    expect(ctas).toEqual(['#work', '/resume', 'mailto:nanavatiharsh00@gmail.com']);
+    expect(ctas).toEqual(['#work', '/resume/', 'mailto:nanavatiharsh00@gmail.com']);
   });
 });
 

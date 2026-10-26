@@ -42,7 +42,7 @@ A scheduler finds new games and puts them on a job queue. Each player's roster p
 3. **Cache embeddings, and respect humans.** Roster embeddings are computed once and reused. When a game is re-run, manual corrections by staff are kept, not overwritten.
 4. **Thresholds belong to the business.** A 0–100 strictness setting in the database maps to the model's distance threshold, so staff can tune it without an engineer.
 
-**Extension to video:** frames sampled from game video → player detection with YOLOv8 (exported to ONNX, run with DirectML) → optional super-resolution on player crops → the same face-matching pipeline.
+**Extension to video:** frames are sampled from game video, players are detected with YOLOv8 (exported to ONNX, run with DirectML), player crops optionally go through super-resolution, and then the same face-matching pipeline runs.
 
 ## Results
 

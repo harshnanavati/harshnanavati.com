@@ -126,6 +126,11 @@ code,
   max-width: calc(var(--wide-width) + 2 * var(--gutter));
 }
 
+/* A reading column inside the wide frame: it starts at the same left edge as the header. */
+.measure {
+  max-width: var(--text-width);
+}
+
 .skip-link {
   position: absolute;
   left: -9999px;
@@ -141,4 +146,29 @@ code,
 img,
 svg {
   max-width: 100%;
+}
+
+/* Paper is always light, whatever theme is on screen. */
+@media print {
+  :root,
+  :root[data-theme='dark'],
+  :root:not([data-theme='light']) {
+    --bg: #ffffff;
+    --text: #111111;
+    --muted: #444444;
+    --border: #cccccc;
+    --accent: #1f3864;
+    --surface: #ffffff;
+    color-scheme: light;
+  }
+
+  body {
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  .container {
+    max-width: none;
+    padding: 0;
+  }
 }

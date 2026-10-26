@@ -11,6 +11,8 @@ const description = [
   ...diagram.lanes.map((lane) => `${lane.label ? `${lane.label}: ` : ''}${lane.steps.map((s) => s.label).join(', then ')}`),
 ]
   .filter(Boolean)
+  // Captions are sentences already; drop their full stop so the joins don't double it.
+  .map((part) => part.replace(/\.+$/, ''))
   .join('. ');
 ---
 
@@ -106,7 +108,7 @@ const description = [
     color: var(--muted);
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 960px) {
     .steps {
       flex-direction: column;
     }

@@ -18,7 +18,7 @@ test.describe('reduced motion', () => {
   test('turns off hover animations', async ({ page }) => {
     await page.goto('/');
     const duration = await page
-      .locator('#work li .arrow')
+      .locator('#work li > a')
       .first()
       .evaluate((el) => getComputedStyle(el).transitionDuration);
     expect(duration).toBe('0s');

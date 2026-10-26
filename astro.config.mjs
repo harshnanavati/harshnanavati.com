@@ -5,6 +5,8 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://harshnanavati.com',
+  // One request per page: the CSS is small, so it ships inside the HTML.
+  build: { inlineStylesheets: 'always' },
   integrations: [
     mdx(),
     sitemap({

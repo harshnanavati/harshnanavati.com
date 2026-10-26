@@ -11,7 +11,6 @@ const skills = RESUME.skills.map((s) => ({ group: s.group, tags: s.items.split('
   description="Resume of Harsh Nanavati, Applied AI Engineer: LLMs, RAG, agentic systems and evaluation."
   path="/resume/"
   ogImage="/og/resume.png"
-  width="wide"
 >
   <article class="container wide resume">
     <header class="top">
@@ -286,6 +285,34 @@ const skills = RESUME.skills.map((s) => ({ group: s.group, tags: s.items.split('
 
     .resume-aside .skill-tags li {
       background: var(--bg);
+    }
+  }
+
+  /* On paper: no download button, the facts beside the experience, compact spacing. */
+  @media print {
+    @page {
+      size: A4;
+      margin: 14mm 14mm;
+    }
+
+    .download {
+      display: none;
+    }
+
+    .columns {
+      grid-template-columns: minmax(0, 1fr) 190px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .resume-aside {
+      padding: 0;
+      border: 0;
+      background: none;
+    }
+
+    li {
+      break-inside: avoid;
     }
   }
 </style>

@@ -30,6 +30,22 @@ const cardId = `cite-${id}`;
 
 <script>
   const supported = typeof HTMLElement !== 'undefined' && 'popover' in HTMLElement.prototype;
+  const GAP = 8;
+  const EDGE = 12;
+
+  // Put the card under its marker, or above it when there isn't room below,
+  // always inside the screen.
+  function place(card: HTMLElement, button: HTMLElement) {
+    const r = button.getBoundingClientRect();
+    const width = Math.min(340, window.innerWidth - 2 * EDGE);
+    card.style.width = `${width}px`;
+    card.style.left = `${Math.min(Math.max(EDGE, r.left - 12), window.innerWidth - width - EDGE)}px`;
+    const height = card.offsetHeight;
+    const below = r.bottom + GAP;
+    const above = r.top - GAP - height;
+    const top = below + height <= window.innerHeight - EDGE || above < EDGE ? below : above;
+    card.style.top = `${Math.max(EDGE, Math.min(top, window.innerHeight - height - EDGE))}px`;
+  }
 
   for (const button of document.querySelectorAll<HTMLButtonElement>('button.cite')) {
     if (button.dataset.wired) continue;
@@ -39,21 +55,40 @@ const cardId = `cite-${id}`;
       continue;
     }
     const card = document.getElementById(button.getAttribute('popovertarget') ?? '');
-    // Place the card just under its marker, kept inside the screen.
-    card?.addEventListener('toggle', (event) => {
-      if ((event as ToggleEvent).newState !== 'open') return;
-      const r = button.getBoundingClientRect();
-      const width = Math.min(340, window.innerWidth - 32);
-      const left = Math.min(Math.max(16, r.left - 12), window.innerWidth - width - 16);
-      card.style.width = `${width}px`;
-      card.style.left = `${left}px`;
-      card.style.top = `${r.bottom + 8}px`;
+    if (!card) continue;
+    // beforetoggle fires right away; toggle comes later, after any scroll already queued.
+    card.addEventListener('beforetoggle', (event) => {
+      if ((event as ToggleEvent).newState === 'open') card.dataset.openedAt = String(window.scrollY);
+    });
+    card.addEventListener('toggle', (event) => {
+      if ((event as ToggleEvent).newState === 'open') place(card, button);
+    });
+  }
+
+  // A fixed card would drift away from its marker, so close it once the page really
+  // moves. The small nudge that brings a tapped marker into view doesn't count.
+  const DRIFT = 40;
+  const openCards = () => document.querySelectorAll<HTMLElement>('.cite-card:popover-open');
+  if (supported) {
+    window.addEventListener(
+      'scroll',
+      () => {
+        for (const card of openCards()) {
+          const openedAt = Number(card.dataset.openedAt ?? window.scrollY);
+          if (Math.abs(window.scrollY - openedAt) > DRIFT) card.hidePopover();
+        }
+      },
+      { passive: true },
+    );
+    window.addEventListener('resize', () => {
+      for (const card of openCards()) card.hidePopover();
     });
   }
 </script>
 
 <style>
   .cite {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -68,6 +103,13 @@ const cardId = `cite-${id}`;
     font: 600 11px/1 var(--font-sans);
     vertical-align: 0.35em;
     cursor: pointer;
+  }
+
+  /* A 26px tap area around the small visible marker. */
+  .cite::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
   }
 
   .cite:hover,

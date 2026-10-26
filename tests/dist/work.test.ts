@@ -117,11 +117,11 @@ describe('external product links', () => {
       .map((a) => ({ href: a.getAttribute('href'), text: a.text.trim() }));
 
   it('QuantumCopilot links to the live product', () => {
-    expect(external('quantumcopilot')).toEqual([{ href: QUANTUM, text: 'Try it live →' }]);
+    expect(external('quantumcopilot')).toEqual([{ href: QUANTUM, text: 'Try it live' }]);
   });
 
   it.each(['crickpal-intelligence-layer', 'crickpal-ai-summary'])('%s links to CrickPal', (slug) => {
-    expect(external(slug)).toEqual([{ href: CRICKPAL, text: 'CrickPal, the platform this runs on →' }]);
+    expect(external(slug)).toEqual([{ href: CRICKPAL, text: 'CrickPal, the platform this runs on' }]);
   });
 
   it.each(['docupilot', 'ai-face-matching', 'support-concierge-chatbots'])('%s has no product links', (slug) => {

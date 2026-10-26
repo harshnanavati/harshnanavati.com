@@ -40,67 +40,71 @@ const timeline = [
   path="/about/"
   ogImage="/og/about.png"
 >
-  <div class="container">
-    <div class="intro">
-      {
-        HEADSHOT ? (
-          <Image class="headshot" src={HEADSHOT} alt="Harsh Nanavati" width={224} height={224} loading="eager" />
-        ) : (
-          <div class="headshot placeholder" aria-hidden="true">
-            HN
-          </div>
-        )
-      }
-      <h1>About</h1>
-    </div>
-
-    <p>
-      I'm Harsh, an applied AI engineer from Ahmedabad, India. I build AI systems that run in production: assistants that
-      answer from company documents, agents that write and test their own code, real-time LLM pipelines and GPU computer
-      vision.
-    </p>
-
-    <h2 id="experience">Experience and education</h2>
-    <ol class="timeline">
-      {
-        timeline.map((item) => (
-          <li>
-            <span class="when">{item.when}</span>
-            <div class="entry">
-              <p class="role">{item.role}</p>
-              <p class="where">{item.where}</p>
-              {item.detail && <p class="detail">{item.detail}</p>}
+  <div class="container wide">
+    <div class="measure">
+      <div class="intro">
+        <h1>About</h1>
+        {
+          HEADSHOT ? (
+            <Image class="headshot" src={HEADSHOT} alt="Harsh Nanavati" width={224} height={224} loading="eager" />
+          ) : (
+            <div class="headshot placeholder" aria-hidden="true">
+              HN
             </div>
-          </li>
-        ))
-      }
-    </ol>
+          )
+        }
+      </div>
 
-    <h2>How I work</h2>
-    <p>
-      I care about the boring parts that make AI trustworthy: citations, verification, retries and logs. I'd rather ship
-      something smaller that works every time than a demo that works once.
-    </p>
+      <p>
+        I'm Harsh, an applied AI engineer from Ahmedabad, India. I build AI systems that run in production: assistants that
+        answer from company documents, agents that write and test their own code, real-time LLM pipelines and GPU computer
+        vision.
+      </p>
 
-    <h2>What I'm looking for</h2>
-    <p>
-      An Applied AI or GenAI engineering role, fully remote, full-time or contract, including through an employer of
-      record. I'm on IST (UTC+5:30) and comfortable with 4+ hours of overlap with Europe or the US East Coast.
-    </p>
-    <p class="contact">
-      <a href={`mailto:${SITE.email}`}>Email me</a>{' · '}
-      <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>{' · '}
-      <a href="/resume">Resume</a>
-    </p>
+      <h2 id="experience">Experience and education</h2>
+      <ol class="timeline">
+        {
+          timeline.map((item) => (
+            <li>
+              <span class="when">{item.when}</span>
+              <div class="entry">
+                <p class="role">{item.role}</p>
+                <p class="where">{item.where}</p>
+                {item.detail && <p class="detail">{item.detail}</p>}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
 
-    {INTRO_VIDEO.youtubeId && <VideoSlot title={INTRO_VIDEO.title} youtubeId={INTRO_VIDEO.youtubeId} />}
+      <h2>How I work</h2>
+      <p>
+        I care about the boring parts that make AI trustworthy: citations, verification, retries and logs. I'd rather ship
+        something smaller that works every time than a demo that works once.
+      </p>
+
+      <h2>What I'm looking for</h2>
+      <p>
+        An Applied AI or GenAI engineering role, fully remote, full-time or contract, including through an employer of
+        record. I'm on IST (UTC+5:30) and comfortable with 4+ hours of overlap with Europe or the US East Coast.
+      </p>
+      <p class="contact">
+        <a href={`mailto:${SITE.email}`}>Email me</a>{' · '}
+        <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>{' · '}
+        <a href="/resume/">Resume</a>
+      </p>
+
+      {INTRO_VIDEO.youtubeId && <VideoSlot title={INTRO_VIDEO.title} youtubeId={INTRO_VIDEO.youtubeId} />}
+    </div>
   </div>
 </BaseLayout>
 
 <style>
+  /* Heading on the left edge like every other page; the portrait sits to its right. */
   .intro {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 20px;
     margin-bottom: 1rem;
   }
