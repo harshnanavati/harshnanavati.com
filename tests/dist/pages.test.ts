@@ -15,7 +15,7 @@ describe('home page', () => {
     );
   });
 
-  it('lists the six projects in order, with their home summaries', () => {
+  it('lists the seven projects in order, with their home summaries', () => {
     const rows = home().querySelectorAll('#work li a');
     expect(rows.map((a) => a.getAttribute('href'))).toEqual(WORK_SLUGS.map((s) => `/work/${s}/`));
     expect(rows[0].text).toContain('with a source for every answer');
@@ -41,7 +41,7 @@ describe('home page', () => {
 
   it('shows a preview of each project’s illustration, hidden from screen readers', () => {
     const previews = home().querySelectorAll('#work li .preview');
-    expect(previews).toHaveLength(6);
+    expect(previews).toHaveLength(7);
     for (const p of previews) {
       expect(p.getAttribute('aria-hidden')).toBe('true');
       expect(p.querySelector('.product-moment')).not.toBeNull();

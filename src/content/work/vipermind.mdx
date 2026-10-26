@@ -1,0 +1,55 @@
+---
+title: ViperMind – Multi-Agent Python Tutor
+order: 7
+outcome: A Python tutor where a LangGraph router hands each request to one of four agents, the LLM writes lessons and questions, and plain code decides who passes.
+summary: Four LLM agents teach Python across 30 topics, while code, not the model, grades every answer
+kind: Personal project
+role: Solo, designed and built end to end
+chips:
+  - { value: '30', label: lesson topics, basis: 'Topics in the seeded curriculum: five per section, two sections per level, three levels.', evidence: how-it-works }
+  - { value: '7', label: services in one Compose stack, basis: 'Backend, frontend, PostgreSQL, Redis, Nginx, Prometheus and Grafana, in the production Docker Compose file.', evidence: results }
+  - { value: 'Code-graded', label: answers }
+  - { value: 'Offline', label: fallback lessons }
+tags: [langgraph, redis, docker]
+videoTitle: Why the LLM writes the quiz but never grades it
+stack: [Python, FastAPI, LangGraph, LangChain, OpenAI (GPT-4), PostgreSQL, SQLAlchemy + Alembic, Redis, React + TypeScript, Docker Compose, Nginx, Prometheus + Grafana]
+---
+
+import ProjectDiagram from '../../components/ProjectDiagram.astro';
+
+## The problem
+
+Learning Python alone usually means jumping between videos and exercises with nobody checking whether you actually understood the last topic before moving on. I wanted a tutor that teaches a topic, tests it, and only lets you continue once you've shown you know it.
+
+## Constraints
+
+- Pass or fail has to be exact and repeatable. A learner can't be held back, or pushed ahead, because a model graded generously one day.
+- Generated lessons cost time and money, so the same lesson shouldn't be generated twice.
+- The tutor has to keep teaching when OpenAI or the cache is down.
+
+## How it works
+
+<ProjectDiagram slug="vipermind" index={0} />
+
+The curriculum has three levels, Beginner, Intermediate and Advanced, each with two sections of five topics: 30 topics in all. Every request goes through a LangGraph router, which hands it to one of four agents: the tutor writes lessons, explanations and hints; the assessment agent writes quizzes, section tests and level finals; the content agent writes examples and practice problems; the progress agent reads the learner's results. GPT-4 is called through LangChain and asked for JSON.
+
+Each question comes with its answer key. When a learner submits, the code compares their answers with the key, scores the attempt, and checks it against the pass mark before progress is saved to PostgreSQL.
+
+## Key decisions
+
+1. **The LLM writes the questions, code grades the answers.** Every multiple-choice question is generated with its correct option. Scoring is a comparison with that key, so the same answers always get the same score.
+2. **Pass marks that rise with the stakes.** 70% to pass a topic quiz, 75% for a section test, 80% for a level final. Quizzes can be retaken freely; section tests and finals allow one retake. All of it lives in one configuration, adjustable without code changes.
+3. **Cache generated lessons by their context.** A lesson or explanation is stored in Redis under a hash of what it was generated from, so a repeat request is answered without calling the model. Lifetimes match how fast each kind of data changes: 24 hours for the curriculum, 1 hour for generated lessons and explanations, 5 minutes for a learner's progress.
+4. **Keep teaching when a dependency fails.** If OpenAI fails, the tutor serves a pre-written lesson, question set or hint instead of an error. If Redis is unreachable, the app carries on without the cache. If the model returns broken JSON, a safe default takes its place.
+
+## Results
+
+- A complete learning path: 30 topics across 3 levels, with quizzes, section tests and level finals.
+- Runs as a 7-service Docker Compose stack: the FastAPI backend, the React frontend, PostgreSQL, Redis, Nginx, and Prometheus with Grafana for monitoring.
+- JWT sign-in with bcrypt-hashed passwords, and database changes managed with Alembic migrations.
+
+## What I'd do next
+
+- Grade short code answers by running them against tests in a sandbox, not just multiple choice.
+- Use structured outputs instead of parsing JSON from free text.
+- Add an evaluation set that checks generated questions for one clearly correct option before they reach a learner.

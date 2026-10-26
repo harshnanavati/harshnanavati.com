@@ -21,7 +21,7 @@ export const RESUME = {
       group: 'ML and computer vision',
       items: 'PyTorch, scikit-learn, FaceNet/MTCNN, YOLOv8, ONNX, Elo and probabilistic models, backtesting',
     },
-    { group: 'Cloud and MLOps', items: 'AWS, Docker, Kubernetes, CI/CD (GitHub Actions)' },
+    { group: 'Deployment and MLOps', items: 'Docker, Docker Compose, Nginx, Prometheus and Grafana, CI/CD (GitHub Actions)' },
     {
       group: 'Engineering',
       items: 'Python, FastAPI, asyncio, REST APIs, SQL Server, PostgreSQL, MongoDB, Redis, Spark/Scala, Git, Angular',

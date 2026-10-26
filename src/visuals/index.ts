@@ -12,6 +12,8 @@ import QuantumCopilotArchitecture from '../components/visuals/QuantumCopilotArch
 import QuantumCopilotMoment from '../components/visuals/QuantumCopilotMoment.astro';
 import SupportBotArchitecture from '../components/visuals/SupportBotArchitecture.astro';
 import SupportConciergeMoment from '../components/visuals/SupportConciergeMoment.astro';
+import ViperMindArchitecture from '../components/visuals/ViperMindArchitecture.astro';
+import ViperMindMoment from '../components/visuals/ViperMindMoment.astro';
 import type { WorkSlug } from '../diagrams';
 
 type AstroComponent = typeof QuantumCopilotMoment;
@@ -23,6 +25,7 @@ export const MOMENTS: Partial<Record<WorkSlug, AstroComponent>> = {
   'ai-face-matching': FaceMatchingMoment,
   quantumcopilot: QuantumCopilotMoment,
   'support-concierge-chatbots': SupportConciergeMoment,
+  vipermind: ViperMindMoment,
 };
 
 export const ARCHITECTURES: Partial<Record<WorkSlug, AstroComponent>> = {
@@ -32,4 +35,5 @@ export const ARCHITECTURES: Partial<Record<WorkSlug, AstroComponent>> = {
   'ai-face-matching': FaceMatchingArchitecture,
   quantumcopilot: QuantumCopilotArchitecture,
   'support-concierge-chatbots': SupportBotArchitecture,
+  vipermind: ViperMindArchitecture,
 };

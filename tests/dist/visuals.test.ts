@@ -11,6 +11,7 @@ const KEY_IDEA: Record<(typeof WORK_SLUGS)[number], string> = {
   'ai-face-matching': 'Job queue',
   quantumcopilot: 'typed parameters',
   'support-concierge-chatbots': 'correction loop',
+  vipermind: 'graded by code',
 };
 
 describe.each(WORK_SLUGS)('visuals on %s', (slug) => {

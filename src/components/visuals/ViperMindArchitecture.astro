@@ -1,0 +1,54 @@
+---
+import ArchFigure from '../architecture/ArchFigure.astro';
+import ArchNode from '../architecture/ArchNode.astro';
+import ArchZone from '../architecture/ArchZone.astro';
+
+const label =
+  'ViperMind architecture. A learner uses a React app; requests pass through Nginx to a FastAPI backend, which checks the JWT sign-in. ' +
+  'A LangGraph router sends each request to one of four agents: tutor, content, progress or assessment. ' +
+  'The tutor checks a Redis cache keyed on a hash of the lesson context before calling GPT-4 through LangChain for JSON. ' +
+  'If OpenAI fails, pre-written lessons, questions and hints are served instead. ' +
+  'The assessment agent has the LLM write questions with an answer key; answers are graded by code against that key and the pass mark, and progress is saved to PostgreSQL. ' +
+  'The seven services run in one Docker Compose stack, monitored with Prometheus and Grafana.';
+---
+
+<ArchFigure label={label} height={480}>
+  <ArchZone x={150} y={20} w={690} h={350} label="Backend · FastAPI + LangGraph, behind Nginx" />
+  <ArchZone x={150} y={385} w={690} h={85} label="Storage" />
+  <text class="zone-label" x="70" y="46" text-anchor="middle">Learner</text>
+
+  <line class="flow" x1="130" y1="92" x2="168" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="300" y1="92" x2="338" y2="92" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="415,124 415,156"></polyline>
+  <polyline class="flow" points="245,156 755,156"></polyline>
+  <line class="flow" x1="245" y1="156" x2="245" y2="188" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="415" y1="156" x2="415" y2="188" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="585" y1="156" x2="585" y2="188" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="755" y1="156" x2="755" y2="188" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="245" y1="246" x2="245" y2="288" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="415" y1="246" x2="330" y2="288" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="755" y1="246" x2="755" y2="288" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="170,318 70,318 70,126" marker-end="url(#arch-arrow)"></polyline>
+  <text class="tech" x="120" y="310" text-anchor="middle">lesson</text>
+
+  <line class="data" x1="370" y1="318" x2="388" y2="318" marker-end="url(#arch-arrow)"></line>
+  <polyline class="data" points="330,393 330,372 162,372 162,218 168,218" marker-end="url(#arch-arrow)"></polyline>
+  <text class="tech" x="246" y="366" text-anchor="middle">cache hit · 1 h</text>
+  <polyline class="data" points="585,246 585,392" marker-end="url(#arch-arrow)"></polyline>
+  <text class="tech" x="579" y="270" text-anchor="end">reads results</text>
+  <polyline class="data" points="700,346 700,392" marker-end="url(#arch-arrow)"></polyline>
+  <text class="tech" x="706" y="370">save progress</text>
+
+  <ArchNode x={10} y={60} w={120} h={64} label="Learner" tech="react app" />
+  <ArchNode x={170} y={60} w={130} h={64} label="Sign-in check" tech="jwt · bcrypt" />
+  <ArchNode x={340} y={60} w={150} h={64} label="LangGraph router" tech="by request type" />
+  <ArchNode x={170} y={190} w={150} h={56} label="Tutor agent" tech="lessons · hints" />
+  <ArchNode x={340} y={190} w={150} h={56} label="Content agent" tech="examples · practice" />
+  <ArchNode x={510} y={190} w={150} h={56} label="Progress agent" tech="patterns · insights" />
+  <ArchNode x={680} y={190} w={150} h={56} label="Assessment agent" tech="questions + key" />
+  <ArchNode x={170} y={290} w={200} h={56} label="GPT-4 via LangChain" tech="asks for JSON" />
+  <ArchNode x={390} y={290} w={150} h={56} label="Pre-written fallback" tech="if OpenAI fails" />
+  <ArchNode x={610} y={290} w={220} h={56} label="Answers graded by code" tech="answer key · pass mark" keyIdea />
+  <ArchNode x={260} y={395} w={140} h={60} label="Redis" tech="hashed lesson cache" store />
+  <ArchNode x={540} y={395} w={200} h={60} label="PostgreSQL" tech="progress · attempts" store />
+</ArchFigure>

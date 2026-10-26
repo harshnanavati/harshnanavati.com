@@ -86,3 +86,21 @@ describe('case studies', () => {
     expect(og).toContain(main(`/work/${slug}/`).querySelector('h1')!.text.trim());
   });
 });
+
+describe('skills are backed by the work', () => {
+  it('lists no cloud platform that no project uses', () => {
+    const skills = main('/resume/').querySelector('.resume-aside')!.text;
+    expect(skills).not.toMatch(/AWS|Kubernetes/);
+  });
+
+  it('ViperMind shows the agent, cache, database and container stack it is cited for', () => {
+    const stack = main('/work/vipermind/').querySelector('.meta-card dd.stack')!.text;
+    for (const tool of ['LangGraph', 'LangChain', 'Redis', 'PostgreSQL', 'Docker Compose']) expect(stack).toContain(tool);
+  });
+
+  it('the hero counts only the Masterly Solutions systems', () => {
+    const basis = main('/').querySelector('#cite-hero-systems .cite-basis')!.text;
+    expect(basis).toContain('Masterly Solutions');
+    expect(basis).toContain('personal project');
+  });
+});

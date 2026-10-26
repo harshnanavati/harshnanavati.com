@@ -12,10 +12,11 @@ const SLUGS = [
   'ai-face-matching',
   'quantumcopilot',
   'support-concierge-chatbots',
+  'vipermind',
 ];
 
 describe('DIAGRAMS registry', () => {
-  it('has exactly the six project slugs', () => {
+  it('has exactly the seven project slugs', () => {
     expect(Object.keys(DIAGRAMS).sort()).toEqual([...SLUGS].sort());
   });
 

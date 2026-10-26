@@ -11,6 +11,7 @@ export const WORK_SLUGS = [
   'ai-face-matching',
   'quantumcopilot',
   'support-concierge-chatbots',
+  'vipermind',
 ] as const;
 
 export const ALL_PAGES = ['/', '/about/', '/resume/', ...WORK_SLUGS.map((s) => `/work/${s}/`)];

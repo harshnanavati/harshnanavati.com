@@ -16,7 +16,7 @@ const link = z.object({ label: z.string().min(1), href: z.url() });
 
 export const workSchema = z.object({
   title: z.string().min(1),
-  order: z.number().int().min(1).max(6),
+  order: z.number().int().min(1).max(7),
   outcome: z.string().min(1),
   summary: z.string().min(1),
   kind: z.string().min(1),

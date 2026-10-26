@@ -9,6 +9,7 @@ const TITLES: Record<(typeof WORK_SLUGS)[number], [string, string?]> = {
   'ai-face-matching': ['AI Face Matching System'],
   quantumcopilot: ['QuantumCopilot', 'AI Loan & Financial Assistant'],
   'support-concierge-chatbots': ['RAG Support & Concierge Chatbots'],
+  vipermind: ['ViperMind', 'Multi-Agent Python Tutor'],
 };
 
 const CHIP_VALUES: Record<(typeof WORK_SLUGS)[number], string[]> = {
@@ -18,6 +19,7 @@ const CHIP_VALUES: Record<(typeof WORK_SLUGS)[number], string[]> = {
   'ai-face-matching': ['~70%'],
   quantumcopilot: ['6', 'Up to 3', '~3x'],
   'support-concierge-chatbots': ['~60%'],
+  vipermind: ['30', '7'],
 };
 
 const SECTION_ORDER = [
@@ -38,6 +40,7 @@ const KINDS: Record<(typeof WORK_SLUGS)[number], string> = {
   'ai-face-matching': 'Client project',
   quantumcopilot: 'In-house product, live',
   'support-concierge-chatbots': 'Client project',
+  vipermind: 'Personal project',
 };
 
 const CRICKPAL = 'https://www.crickpal.com/';
@@ -131,7 +134,7 @@ describe('external product links', () => {
     expect(external(slug)).toEqual([{ href: CRICKPAL, text: 'CrickPal, the platform this runs on' }]);
   });
 
-  it.each(['docupilot', 'ai-face-matching', 'support-concierge-chatbots'])('%s has no product links', (slug) => {
+  it.each(['docupilot', 'ai-face-matching', 'support-concierge-chatbots', 'vipermind'])('%s has no product links', (slug) => {
     expect(external(slug)).toEqual([]);
   });
 });
@@ -164,6 +167,9 @@ describe('next project links', () => {
       '/work/crickpal-intelligence-layer/',
     );
     expect(main('support-concierge-chatbots').querySelector('a.next-project')?.getAttribute('href')).toBe(
+      '/work/vipermind/',
+    );
+    expect(main('vipermind').querySelector('a.next-project')?.getAttribute('href')).toBe(
       '/work/docupilot/',
     );
   });

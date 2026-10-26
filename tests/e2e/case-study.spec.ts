@@ -89,6 +89,7 @@ test.describe('architecture diagrams on a wide screen', () => {
     'ai-face-matching',
     'quantumcopilot',
     'support-concierge-chatbots',
+    'vipermind',
   ]) {
     test(`${slug} shows its architecture across the reading column`, async ({ page }) => {
       await page.goto(`/work/${slug}/`);

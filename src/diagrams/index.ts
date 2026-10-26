@@ -5,6 +5,7 @@ import { diagrams as crickpalIntelligenceLayer } from './crickpal-intelligence-l
 import { diagrams as docupilot } from './docupilot';
 import { diagrams as quantumcopilot } from './quantumcopilot';
 import { diagrams as supportConciergeChatbots } from './support-concierge-chatbots';
+import { diagrams as vipermind } from './vipermind';
 
 export type WorkSlug =
   | 'docupilot'
@@ -12,7 +13,8 @@ export type WorkSlug =
   | 'crickpal-ai-summary'
   | 'ai-face-matching'
   | 'quantumcopilot'
-  | 'support-concierge-chatbots';
+  | 'support-concierge-chatbots'
+  | 'vipermind';
 
 export const DIAGRAMS: Record<WorkSlug, Diagram[]> = {
   docupilot,
@@ -21,4 +23,5 @@ export const DIAGRAMS: Record<WorkSlug, Diagram[]> = {
   'ai-face-matching': aiFaceMatching,
   quantumcopilot,
   'support-concierge-chatbots': supportConciergeChatbots,
+  vipermind,
 };
