@@ -76,7 +76,7 @@ export const RESUME = {
           lead: '',
           text: 'Used Spark, Scala and SQL for entity-resolution and anomaly-detection analyses on large-scale financial datasets.',
         },
-        { lead: '', text: 'Improved audit reporting accuracy by 20% with Power BI dashboards for enterprise audit workflows.' },
+        { lead: '', text: 'Built Power BI dashboards for enterprise audit reporting workflows.' },
       ],
     },
   ],

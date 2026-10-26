@@ -78,6 +78,12 @@ describe('resume', () => {
     const deloitte = jobs.find((j) => j.text.includes('Deloitte'))!;
     expect(deloitte.querySelector('.points li')!.text.trim()).toMatch(/^Used Spark, Scala and SQL/);
   });
+
+  it('describes the Power BI work plainly, without an unbacked percentage', () => {
+    const deloitte = main('/resume/').querySelectorAll('.job').find((j) => j.text.includes('Deloitte'))!;
+    expect(deloitte.text).toContain('Built Power BI dashboards for enterprise audit reporting workflows.');
+    expect(deloitte.text).not.toMatch(/\d+%/);
+  });
 });
 
 describe('case studies', () => {
