@@ -11,18 +11,37 @@ const box = async (page: Page, selector: string) => {
 test.describe('case study on a wide screen', () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
 
-  test('hero, stage and architecture share the header’s left and right edges', async ({ page }) => {
+  test('hero and stage share the header’s edges; the architecture fills the reading column', async ({ page }) => {
     await page.goto('/work/quantumcopilot/');
     const nav = await box(page, 'header nav');
     const h1 = await box(page, 'main h1');
     const stage = await box(page, '.stage');
     const arch = await box(page, 'figure.architecture');
+    const text = await box(page, '.prose > p');
     expect(h1.left).toBe(nav.left);
     expect(stage.left).toBe(nav.left);
     expect(stage.right).toBe(nav.right);
-    expect(arch.left).toBe(stage.left);
-    expect(arch.right).toBe(stage.right);
+    expect(arch.left).toBe(text.left);
+    expect(arch.right).toBe(nav.right);
   });
+
+  for (const slug of ['quantumcopilot', 'support-concierge-chatbots', 'docupilot']) {
+    test(`the section nav is never covered while scrolling ${slug}`, async ({ page }) => {
+      await page.goto(`/work/${slug}/`);
+      const firstLink = page.locator('nav.toc a').first();
+      const figures = page.locator('.prose figure:visible');
+      const count = await figures.count();
+      for (let i = 0; i < count; i++) {
+        await figures.nth(i).evaluate((el) => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 40));
+        const b = (await firstLink.boundingBox())!;
+        const onTop = await page.evaluate(
+          ([x, y]) => document.elementFromPoint(x, y)?.closest('nav.toc') !== null,
+          [b.x + b.width / 2, b.y + b.height / 2],
+        );
+        expect(onTop).toBe(true);
+      }
+    });
+  }
 
   test('the meta card sits beside the title', async ({ page }) => {
     await page.goto('/work/quantumcopilot/');
@@ -50,11 +69,12 @@ test.describe('case study on a wide screen', () => {
     expect(b.x).toBeGreaterThan(a.x);
   });
 
-  test('the chatbots page’s second diagram also uses the full width', async ({ page }) => {
+  test('the chatbots page’s second diagram fills the reading column', async ({ page }) => {
     await page.goto('/work/support-concierge-chatbots/');
     const nav = await box(page, 'header nav');
+    const text = await box(page, '.prose > p');
     const second = await box(page, '.prose > figure.diagram');
-    expect(second.left).toBe(nav.left);
+    expect(second.left).toBe(text.left);
     expect(second.right).toBe(nav.right);
   });
 });
@@ -70,11 +90,12 @@ test.describe('architecture diagrams on a wide screen', () => {
     'quantumcopilot',
     'support-concierge-chatbots',
   ]) {
-    test(`${slug} shows its architecture aligned to the page edges`, async ({ page }) => {
+    test(`${slug} shows its architecture across the reading column`, async ({ page }) => {
       await page.goto(`/work/${slug}/`);
       const nav = await box(page, 'header nav');
+      const text = await box(page, '.prose > p');
       const arch = await box(page, 'figure.architecture');
-      expect(arch.left).toBe(nav.left);
+      expect(arch.left).toBe(text.left);
       expect(arch.right).toBe(nav.right);
     });
   }

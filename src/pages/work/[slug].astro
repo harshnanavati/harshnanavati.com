@@ -412,16 +412,7 @@ const Moment = MOMENTS[slug];
       color: var(--text);
     }
 
-    /* Diagrams in the reading column extend left over the nav column,
-       so they share the page's outer edges with the hero and the stage. */
-    .prose > :global(figure),
-    .prose > :global(.phone-only) {
-      position: relative;
-      z-index: 1;
-      width: calc(100% + var(--toc-width) + var(--body-gap));
-      margin-left: calc(-1 * (var(--toc-width) + var(--body-gap)));
-      padding: 8px 0;
-      background: var(--bg);
-    }
+    /* The nav column belongs to the nav alone: diagrams fill the reading column
+       (its left edge to the page's right edge) and never pass under the sticky nav. */
   }
 </style>
