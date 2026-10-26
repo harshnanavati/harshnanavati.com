@@ -3,6 +3,7 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/source-serif-4';
 import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
 import { SITE } from '../lib/site';
 
 interface Props {
@@ -10,9 +11,12 @@ interface Props {
   description: string;
   path: string;
   ogImage?: string;
+  /** Page content width; the header and footer line up with it. */
+  width?: 'text' | 'wide';
 }
 
-const { title, description, path, ogImage = '/og/index.png' } = Astro.props;
+const { title, description, path, ogImage = '/og/index.png', width = 'text' } = Astro.props;
+const frame = width === 'wide' ? 'container wide' : 'container';
 const fullTitle = path === '/' ? `${SITE.name} · ${SITE.role}` : `${title} · ${SITE.name}`;
 const canonical = new URL(path, SITE.url).href;
 const ogImageUrl = new URL(ogImage, SITE.url).href;
@@ -31,6 +35,13 @@ const person = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Apply a saved theme choice before the first paint, so there's no flash.
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -56,20 +67,21 @@ const person = {
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="container wide site-header">
+    <header class:list={[frame, 'site-header']}>
       <nav aria-label="Main">
         <a class="name" href="/">{SITE.name}</a>
         <span class="links">
           <a href="/#work">Work</a>
           <a href="/about">About</a>
           <a href="/resume">Resume</a>
+          <ThemeToggle />
         </span>
       </nav>
     </header>
     <main id="main">
       <slot />
     </main>
-    <footer class="container wide site-footer">
+    <footer class:list={[frame, 'site-footer']}>
       <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
       <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>
       <a href="/resume">Resume</a>
@@ -104,6 +116,7 @@ const person = {
 
   .links {
     display: flex;
+    align-items: center;
     gap: 20px;
   }
 

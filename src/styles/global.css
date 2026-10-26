@@ -10,17 +10,29 @@
   --text-width: 680px;
   --wide-width: 960px;
   --gutter: 16px;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
+/* Dark theme: the visitor's system setting, unless they picked light with the toggle. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #121212;
     --text: #ececec;
     --muted: #a3a29c;
     --border: #2c2c2a;
     --accent: #8fb0e6;
+    color-scheme: dark;
   }
+}
+
+/* Dark theme picked with the toggle. */
+:root[data-theme='dark'] {
+  --bg: #121212;
+  --text: #ececec;
+  --muted: #a3a29c;
+  --border: #2c2c2a;
+  --accent: #8fb0e6;
+  color-scheme: dark;
 }
 
 *,

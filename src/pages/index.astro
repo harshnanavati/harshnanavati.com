@@ -14,8 +14,9 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   description="Applied AI engineer building production LLM systems: RAG with source-cited answers, agents that verify their own code, real-time LLM pipelines and GPU computer vision."
   path="/"
   ogImage="/og/index.png"
+  width="wide"
 >
-  <div class="container">
+  <div class="container wide">
     <section class="hero">
       <h1>I build production AI systems that people actually use.</h1>
       <p class="sub muted">
@@ -63,18 +64,20 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
 
     <section>
       <h2>How I build</h2>
-      <p>
-        <strong>Answers you can check.</strong> If an AI system can't show where an answer came from, people can't trust
-        it. My systems cite their sources, down to the page.
-      </p>
-      <p>
-        <strong>Verify before shipping.</strong> Generated code, retrieved context and model output all pass automated
-        checks before they reach a user.
-      </p>
-      <p>
-        <strong>Built to keep running.</strong> Retries, job queues, circuit breakers and logging aren't extras. Production
-        AI fails in boring ways, and I design for that from day one.
-      </p>
+      <div class="principles">
+        <p>
+          <strong>Answers you can check.</strong> If an AI system can't show where an answer came from, people can't
+          trust it. My systems cite their sources, down to the page.
+        </p>
+        <p>
+          <strong>Verify before shipping.</strong> Generated code, retrieved context and model output all pass automated
+          checks before they reach a user.
+        </p>
+        <p>
+          <strong>Built to keep running.</strong> Retries, job queues, circuit breakers and logging aren't extras.
+          Production AI fails in boring ways, and I design for that from day one.
+        </p>
+      </div>
     </section>
 
     <p class="closing">
@@ -91,10 +94,12 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   }
 
   .hero h1 {
-    font-size: clamp(2.1rem, 6vw, 3rem);
+    max-width: 780px;
+    font-size: clamp(2.1rem, 6vw, 3.2rem);
   }
 
   .sub {
+    max-width: var(--text-width);
     font-size: 1.05rem;
   }
 
@@ -126,10 +131,32 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
   }
 
   .rows {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 48px;
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--border);
+  }
+
+  .principles {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0 40px;
+  }
+
+  @media (min-width: 760px) {
+    .rows {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .principles {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .principles p {
+      margin-top: 0;
+    }
   }
 
   .closing {
