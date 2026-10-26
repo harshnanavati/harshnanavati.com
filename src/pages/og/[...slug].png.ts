@@ -13,7 +13,7 @@ const font = (weight: 400 | 500) =>
 export const getStaticPaths = (async () => {
   const work = await getCollection('work');
   return [
-    { params: { slug: 'index' }, props: { title: SITE.name, subtitle: 'Applied AI Engineer. I build LLM systems that cite their sources and test their own code.' } },
+    { params: { slug: 'index' }, props: { title: SITE.name, subtitle: 'Applied AI Engineer. I build production LLM systems: RAG, AI agents and evaluation.' } },
     { params: { slug: 'about' }, props: { title: `About ${SITE.name}`, subtitle: 'Applied AI engineer from India, looking for a remote role.' } },
     { params: { slug: 'resume' }, props: { title: 'Resume', subtitle: `${SITE.name} · ${SITE.role}` } },
     ...work.map((entry) => ({

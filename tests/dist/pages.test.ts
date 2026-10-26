@@ -11,7 +11,7 @@ describe('home page', () => {
   it('names Harsh above a headline that says what his systems do', () => {
     expect(home().querySelector('.hero .kicker')?.text.trim()).toBe('Harsh Nanavati, Applied AI Engineer');
     expect(home().querySelector('h1')?.text.trim()).toBe(
-      'I build LLM systems that cite their sources and test their own code.',
+      'I build production LLM systems: RAG, AI agents and evaluation.',
     );
   });
 
