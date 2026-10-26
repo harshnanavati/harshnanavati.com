@@ -5,6 +5,7 @@ import MetricChips from '../../components/MetricChips.astro';
 import VideoSlot from '../../components/VideoSlot.astro';
 import { DIAGRAMS, type WorkSlug } from '../../diagrams';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { MOMENTS } from '../../visuals';
 
 export async function getStaticPaths() {
   const entries = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
@@ -23,6 +24,7 @@ const { entry, next } = Astro.props;
 const { data } = entry;
 const slug = entry.id as WorkSlug;
 const { Content } = await render(entry);
+const Moment = MOMENTS[slug];
 ---
 
 <BaseLayout title={data.title} description={data.outcome} path={`/work/${slug}/`} ogImage={`/og/${slug}.png`}>
@@ -32,6 +34,7 @@ const { Content } = await render(entry);
     <MetricChips chips={data.chips} />
     {data.links && <LinksOut links={data.links} />}
     {data.privacyNote && <p class="privacy-note muted"><em>{data.privacyNote}</em></p>}
+    {Moment && <Moment />}
     <VideoSlot title={data.videoTitle} youtubeId={data.youtubeId} diagram={DIAGRAMS[slug][0]} />
     <Content />
     <h2>Stack</h2>

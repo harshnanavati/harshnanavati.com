@@ -69,6 +69,35 @@ test.describe('desktop layout', () => {
   });
 });
 
+test.describe('QuantumCopilot visuals', () => {
+  test('desktop shows the architecture diagram and the product moment', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/work/quantumcopilot/');
+    await expect(page.locator('.product-moment')).toBeVisible();
+    await expect(page.locator('figure.architecture')).toBeVisible();
+  });
+
+  test('phones hide the wide architecture diagram but keep the product moment', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto('/work/quantumcopilot/');
+    await expect(page.locator('.product-moment')).toBeVisible();
+    await expect(page.locator('figure.architecture')).toBeHidden();
+  });
+});
+
+test.describe('QuantumCopilot visuals in dark mode', () => {
+  test.use({ colorScheme: 'dark', viewport: { width: 1280, height: 900 } });
+
+  test('architecture key component uses the dark accent', async ({ page }) => {
+    await page.goto('/work/quantumcopilot/');
+    const stroke = await page
+      .locator('figure.architecture .key rect')
+      .first()
+      .evaluate((el) => getComputedStyle(el).stroke);
+    expect(stroke).toBe('rgb(143, 176, 230)');
+  });
+});
+
 test.describe('phone layout', () => {
   test.use({ viewport: { width: 360, height: 800 } });
 

@@ -1,9 +1,11 @@
 ---
 // A project's diagrams inside its "How it works" section.
-// Until a video exists, the first diagram is already shown in the video slot
-// at the top of the page, so it isn't repeated here.
+// Until a video exists, the first step-by-step diagram is already shown in the video slot
+// at the top of the page, so it isn't repeated here. Projects with a system architecture
+// diagram show it on desktop; phones fall back to the step-by-step version.
 import { getEntry } from 'astro:content';
 import { DIAGRAMS, type WorkSlug } from '../diagrams';
+import { ARCHITECTURES } from '../visuals';
 import Diagram from './Diagram.astro';
 
 interface Props {
@@ -14,19 +16,29 @@ interface Props {
 const { slug, index } = Astro.props;
 const entry = await getEntry('work', slug);
 const shownInVideoSlot = index === 0 && !entry?.data.youtubeId;
+const Architecture = index === 0 ? ARCHITECTURES[slug] : undefined;
 ---
 
-{
-  shownInVideoSlot ? (
-    <p class="muted see-above">The architecture diagram is at the top of this page.</p>
-  ) : (
-    <Diagram diagram={DIAGRAMS[slug][index]} />
-  )
-}
+{Architecture && <Architecture />}
+<div class:list={[{ 'phone-only': Architecture }]}>
+  {
+    shownInVideoSlot ? (
+      <p class="muted see-above">The step-by-step diagram is at the top of this page.</p>
+    ) : (
+      <Diagram diagram={DIAGRAMS[slug][index]} />
+    )
+  }
+</div>
 
 <style>
   .see-above {
     font-size: 14px;
     font-style: italic;
+  }
+
+  @media (min-width: 721px) {
+    .phone-only {
+      display: none;
+    }
   }
 </style>

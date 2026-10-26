@@ -4,6 +4,7 @@
   --muted: #5f5e5a;
   --border: #e5e3dc;
   --accent: #1f3864;
+  --surface: #f7f6f2;
   --font-serif: 'Source Serif 4 Variable', Georgia, serif;
   --font-sans: 'Inter Variable', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
@@ -21,6 +22,7 @@
     --muted: #a3a29c;
     --border: #2c2c2a;
     --accent: #8fb0e6;
+    --surface: #1c1c1c;
     color-scheme: dark;
   }
 }
@@ -32,6 +34,7 @@
   --muted: #a3a29c;
   --border: #2c2c2a;
   --accent: #8fb0e6;
+  --surface: #1c1c1c;
   color-scheme: dark;
 }
 

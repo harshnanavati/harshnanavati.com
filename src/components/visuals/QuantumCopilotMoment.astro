@@ -1,0 +1,190 @@
+---
+// Illustration of a QuantumCopilot answer. Example numbers only, computed here with
+// the standard EMI formula; not a screenshot of the live product.
+const PRINCIPAL = 2_000_000;
+const YEARS = 15;
+const RATES = [9, 8.5, 8];
+
+function emi(principal: number, annualRate: number, years: number) {
+  const r = annualRate / 1200;
+  const n = years * 12;
+  const f = (1 + r) ** n;
+  return (principal * r * f) / (f - 1);
+}
+
+const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
+const scenarios = RATES.map((rate) => {
+  const monthly = emi(PRINCIPAL, rate, YEARS);
+  return { rate, monthly, interest: monthly * YEARS * 12 - PRINCIPAL };
+});
+const saving = scenarios[0].interest - scenarios[scenarios.length - 1].interest;
+---
+
+<figure class="product-moment">
+  <div class="window">
+    <div class="bar">
+      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="mono">QuantumCopilot</span>
+    </div>
+    <div class="chat">
+      <p class="user">What's my EMI on a ₹20 lakh home loan over 15 years? And what if the rate drops?</p>
+      <div class="reply">
+        <p>Here are three rate scenarios for a ₹20,00,000 home loan over 15 years:</p>
+        <table>
+          <thead>
+            <tr><th scope="col">Rate</th><th scope="col">Monthly EMI</th><th scope="col">Total interest</th></tr>
+          </thead>
+          <tbody>
+            {
+              scenarios.map((s) => (
+                <tr>
+                  <td>{s.rate.toFixed(1)}%</td>
+                  <td>{inr(s.monthly)}</td>
+                  <td>{inr(s.interest)}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+        <p>Dropping from 9.0% to 8.0% saves you {inr(saving)} in interest.</p>
+        <p class="follow-ups">
+          <span class="chip mono">Make it 20 years</span>
+          <span class="chip mono">Compare a car loan</span>
+        </p>
+      </div>
+    </div>
+  </div>
+  <figcaption class="muted">
+    Illustration with example numbers, calculated with the standard EMI formula. Not a screenshot of the live product.
+  </figcaption>
+</figure>
+
+<style>
+  .product-moment {
+    margin: 2rem 0;
+  }
+
+  .window {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .dots {
+    display: flex;
+    gap: 5px;
+  }
+
+  .dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .chat {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+
+  .chat p {
+    margin: 0;
+  }
+
+  .user {
+    align-self: flex-end;
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 12px 12px 2px 12px;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+
+  .reply {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 95%;
+    padding: 12px 14px;
+    border-radius: 12px 12px 12px 2px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13.5px;
+  }
+
+  th,
+  td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: left;
+  }
+
+  th {
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  td {
+    font-variant-numeric: tabular-nums;
+  }
+
+  tbody tr:last-child td {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .follow-ups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+  }
+
+  figcaption {
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 420px) {
+    .chat {
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 5px 4px;
+      font-size: 12.5px;
+    }
+  }
+</style>

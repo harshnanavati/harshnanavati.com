@@ -1,0 +1,234 @@
+---
+// System architecture for QuantumCopilot, drawn for desktop widths.
+// Phones get the step-by-step Diagram instead (see ProjectDiagram).
+const description =
+  'QuantumCopilot architecture. A plain-English question reaches a FastAPI service on IIS with 8 Uvicorn workers. ' +
+  'It checks the API key with a constant-time compare, loads conversation memory from SQL Server, and an LLM extracts typed loan parameters. ' +
+  'Up to three scenarios are built and sent to the calculation engine in parallel, with retries and backoff. ' +
+  'An LLM writes a comparison table, the answer goes back to the user, and a memory summary is saved to SQL Server. ' +
+  'If no loan details are found, the question goes to a general finance chat instead.';
+---
+
+<figure class="architecture" role="img" aria-label={description}>
+  <svg viewBox="0 0 860 460" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="qc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0 0L10 5L0 10z" class="arrowhead"></path>
+      </marker>
+    </defs>
+
+    <!-- Zones -->
+    <rect class="zone" x="150" y="20" width="690" height="345" rx="10"></rect>
+    <text class="zone-label" x="164" y="42">API · FastAPI on IIS · 8 Uvicorn workers</text>
+    <rect class="zone" x="150" y="375" width="690" height="75" rx="10"></rect>
+    <text class="zone-label" x="164" y="397">Storage</text>
+    <text class="zone-label" x="70" y="46" text-anchor="middle">User</text>
+
+    <!-- Connectors (drawn first so boxes sit on top) -->
+    <line class="flow" x1="130" y1="92" x2="168" y2="92" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="320" y1="92" x2="333" y2="92" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="445" y1="92" x2="458" y2="92" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="620" y1="92" x2="638" y2="92" marker-end="url(#qc-arrow)"></line>
+    <polyline class="flow" points="730,124 730,150"></polyline>
+    <line class="flow" x1="730" y1="150" x2="598" y2="188" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="730" y1="150" x2="690" y2="188" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="730" y1="150" x2="782" y2="188" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="598" y1="246" x2="672" y2="278" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="690" y1="246" x2="686" y2="278" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="782" y1="246" x2="700" y2="278" marker-end="url(#qc-arrow)"></line>
+    <line class="flow" x1="560" y1="308" x2="132" y2="308" marker-end="url(#qc-arrow)"></line>
+    <polyline class="fallback" points="500,124 500,160 255,160 255,188" marker-end="url(#qc-arrow)"></polyline>
+    <text class="tech" x="310" y="154" text-anchor="middle">no loan details</text>
+    <polyline class="fallback" points="170,218 70,218 70,278" marker-end="url(#qc-arrow)"></polyline>
+    <polyline class="data" points="390,124 390,382"></polyline>
+    <polyline class="data" points="685,336 685,412 447,412" marker-end="url(#qc-arrow)"></polyline>
+    <text class="tech" x="566" y="404" text-anchor="middle">save summary</text>
+
+    <!-- Parallel label -->
+    <text class="tech" x="548" y="212" text-anchor="end">in parallel</text>
+    <text class="tech" x="548" y="228" text-anchor="end">asyncio.gather · retries</text>
+
+    <!-- Nodes -->
+    <g class="node">
+      <rect x="10" y="60" width="120" height="64" rx="6"></rect>
+      <text class="label" x="70" y="88" text-anchor="middle">Question</text>
+      <text class="tech" x="70" y="106" text-anchor="middle">plain English</text>
+    </g>
+    <g class="node">
+      <rect x="170" y="60" width="150" height="64" rx="6"></rect>
+      <text class="label" x="245" y="88" text-anchor="middle">API key check</text>
+      <text class="tech" x="245" y="106" text-anchor="middle">constant-time compare</text>
+    </g>
+    <g class="node">
+      <rect x="335" y="60" width="110" height="64" rx="6"></rect>
+      <text class="label" x="390" y="88" text-anchor="middle">Load memory</text>
+      <text class="tech" x="390" y="106" text-anchor="middle">last 5 summaries</text>
+    </g>
+    <g class="node key">
+      <rect x="460" y="60" width="160" height="64" rx="6"></rect>
+      <text class="label" x="540" y="82" text-anchor="middle">LLM extracts</text>
+      <text class="label" x="540" y="99" text-anchor="middle">typed parameters</text>
+      <text class="tech" x="540" y="116" text-anchor="middle">gpt-4.1-nano</text>
+    </g>
+    <g class="node">
+      <rect x="640" y="60" width="180" height="64" rx="6"></rect>
+      <text class="label" x="730" y="88" text-anchor="middle">Build scenarios</text>
+      <text class="tech" x="730" y="106" text-anchor="middle">up to 3 · product defaults</text>
+    </g>
+    <g class="node">
+      <rect x="170" y="190" width="170" height="56" rx="6"></rect>
+      <text class="label" x="255" y="214" text-anchor="middle">General finance chat</text>
+      <text class="tech" x="255" y="232" text-anchor="middle">fallback</text>
+    </g>
+    {
+      [556, 648, 740].map((x, i) => (
+        <g class="node">
+          <rect x={x} y="190" width="84" height="56" rx="6" />
+          <text class="label" x={x + 42} y="213" text-anchor="middle">
+            Calculation
+          </text>
+          <text class="tech" x={x + 42} y="231" text-anchor="middle">
+            {`scenario ${i + 1}`}
+          </text>
+        </g>
+      ))
+    }
+    <g class="node">
+      <rect x="560" y="280" width="250" height="56" rx="6"></rect>
+      <text class="label" x="685" y="304" text-anchor="middle">LLM writes comparison table</text>
+      <text class="tech" x="685" y="322" text-anchor="middle">markdown table + memory summary</text>
+    </g>
+    <g class="node">
+      <rect x="10" y="280" width="120" height="56" rx="6"></rect>
+      <text class="label" x="70" y="304" text-anchor="middle">Answer</text>
+      <text class="tech" x="70" y="322" text-anchor="middle">table + follow-ups</text>
+    </g>
+    <g class="node store">
+      <path d="M335 392 a55 8 0 0 0 110 0 v44 a55 8 0 0 1 -110 0 z"></path>
+      <ellipse cx="390" cy="392" rx="55" ry="8"></ellipse>
+      <text class="label" x="390" y="418" text-anchor="middle">SQL Server</text>
+      <text class="tech" x="390" y="432" text-anchor="middle">memory · logs</text>
+    </g>
+  </svg>
+  <figcaption class="legend muted">
+    <span><i class="swatch key-swatch"></i>Key idea</span>
+    <span><i class="swatch line"></i>Request flow</span>
+    <span><i class="swatch dashed"></i>Fallback and storage</span>
+  </figcaption>
+</figure>
+
+<style>
+  .architecture {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(var(--wide-width), calc(100vw - 2 * var(--gutter)));
+    margin: 1.5rem 0;
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .zone {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 5;
+  }
+
+  .zone-label {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    fill: var(--muted);
+  }
+
+  .node rect,
+  .node path,
+  .node ellipse {
+    fill: var(--bg);
+    stroke: var(--border);
+    stroke-width: 1.2;
+  }
+
+  .store path,
+  .store ellipse {
+    fill: var(--surface);
+  }
+
+  .node.key rect {
+    stroke: var(--accent);
+    stroke-width: 2.2;
+  }
+
+  .label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    fill: var(--text);
+  }
+
+  .key .label {
+    fill: var(--accent);
+    font-weight: 500;
+  }
+
+  .tech {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--muted);
+  }
+
+  .flow,
+  .fallback,
+  .data {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 1.3;
+  }
+
+  .fallback,
+  .data {
+    stroke-dasharray: 4 4;
+  }
+
+  .arrowhead {
+    fill: var(--muted);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .swatch {
+    display: inline-block;
+    width: 18px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .key-swatch {
+    height: 10px;
+    border: 2px solid var(--accent);
+    border-radius: 3px;
+  }
+
+  .line {
+    border-top: 1.5px solid var(--muted);
+  }
+
+  .dashed {
+    border-top: 1.5px dashed var(--muted);
+  }
+
+  @media (max-width: 720px) {
+    .architecture {
+      display: none;
+    }
+  }
+</style>
