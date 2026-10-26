@@ -4,6 +4,7 @@ order: 4
 outcome: 'Automatic player tagging for tournament photos: a GPU face-recognition pipeline that runs unattended.'
 summary: GPU face recognition that tags players in tournament photos, unattended
 kind: Client project
+role: Solo, designed and built end to end
 chips:
   - { value: '~70%', label: less manual tagging, basis: 'An estimate: tagging used to be fully manual; now staff review only the matches below the confidence threshold.', evidence: results }
   - { value: '512-D', label: face embeddings, basis: 'Each face becomes 512 numbers (a FaceNet embedding) that are compared to find matches.', evidence: how-it-works }
@@ -11,7 +12,7 @@ chips:
   - { value: 'Extended', label: to video }
 tags: [pytorch, facenet, cuda]
 videoTitle: A face-recognition pipeline that recovers from its own failures
-privacyNote: No real photos are shown on this page. The system processes images of real people, so everything here is a diagram.
+privacyNote: No real photos are shown on this page. The system processes images of real people, so everything here is a diagram, and the case study is shared with the client's approval.
 stack: [Python, PyTorch (CUDA), 'facenet-pytorch (MTCNN, FaceNet)', YOLOv8, ONNX Runtime (DirectML), SQL Server, APScheduler]
 ---
 

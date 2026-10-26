@@ -137,10 +137,15 @@ describe('external product links', () => {
 });
 
 describe('roles', () => {
-  it('QuantumCopilot states Harsh’s role', () => {
-    expect(main('quantumcopilot').querySelector('.meta-card')!.text).toContain(
-      'Designed and built the backend and LLM pipeline',
-    );
+  it.each(WORK_SLUGS)('%s says Harsh built it solo', (slug) => {
+    const role = main(slug)
+      .querySelectorAll('.meta-card dl > div')
+      .find((d) => d.querySelector('dt')?.text.trim() === 'Role');
+    expect(role?.querySelector('dd')?.text).toMatch(/^Solo/);
+  });
+
+  it('QuantumCopilot keeps the scope Harsh owned', () => {
+    expect(main('quantumcopilot').querySelector('.meta-card')!.text).toContain('backend and LLM pipeline');
   });
 });
 
@@ -148,6 +153,7 @@ describe('face matching privacy', () => {
   it('shows the privacy note and no images', () => {
     const m = main('ai-face-matching');
     expect(m.text).toContain('No real photos are shown on this page.');
+    expect(m.querySelector('.privacy-note')!.text).toContain("shared with the client's approval");
     expect(m.querySelectorAll('img')).toHaveLength(0);
   });
 });
