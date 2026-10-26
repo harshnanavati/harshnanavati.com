@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import MetricChips from '../components/MetricChips.astro';
 import ProjectRow from '../components/ProjectRow.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { INTRO_VIDEO } from '../lib/intro';
@@ -37,14 +36,6 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
         )
       }
     </section>
-
-    <MetricChips
-      chips={[
-        { value: '600+', label: 'users on one system' },
-        { value: '~70%', label: 'less manual work' },
-        { value: '~800', label: 'automated tests on an agentic pipeline' },
-      ]}
-    />
 
     <section id="work">
       <h2>Selected work</h2>

@@ -2,7 +2,6 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { parse } from 'node-html-parser';
 import { beforeAll, describe, expect, it } from 'vitest';
 import LinksOut from '../../src/components/LinksOut.astro';
-import MetricChips from '../../src/components/MetricChips.astro';
 import ProjectRow from '../../src/components/ProjectRow.astro';
 import VideoSlot from '../../src/components/VideoSlot.astro';
 import { DIAGRAMS } from '../../src/diagrams';
@@ -50,18 +49,6 @@ describe('LinksOut', () => {
       expect(a.getAttribute('rel')).toBe('noopener');
     }
     expect(links[0].text).toContain('Try it live →');
-  });
-});
-
-describe('MetricChips', () => {
-  it('renders the values in order', async () => {
-    const doc = await render(MetricChips, {
-      chips: [
-        { value: '600+', label: 'staff' },
-        { value: '~40%', label: 'fewer queries' },
-      ],
-    });
-    expect(doc.querySelectorAll('.value').map((v) => v.text)).toEqual(['600+', '~40%']);
   });
 });
 

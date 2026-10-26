@@ -18,8 +18,9 @@ describe('home page', () => {
     expect(rows[0].text).toContain('with a source for every answer');
   });
 
-  it('shows the three proof numbers', () => {
-    expect(home().querySelectorAll('.chips .value').map((v) => v.text.trim())).toEqual(['600+', '~70%', '~800']);
+  it('goes straight from the hero to the selected work, with no numbers strip', () => {
+    expect(home().querySelector('.chips')).toBeNull();
+    expect(home().text).not.toContain('users on one system');
   });
 
   it('has a correctly spaced closing line', () => {
