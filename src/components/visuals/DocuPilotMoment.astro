@@ -1,0 +1,148 @@
+---
+// Illustration of a DocuPilot answer with citations and the highlighted source page.
+// The document and question are made up; nothing comes from the client's material.
+import MomentFrame from './MomentFrame.astro';
+---
+
+<MomentFrame
+  title="DocuPilot"
+  caption="Illustration with a made-up document and question. Not client material or a screenshot."
+>
+  <div class="split">
+    <div class="chat">
+      <p class="user">What do I do if the cash drawer count is short at closing?</p>
+      <div class="reply">
+        <p>
+          Recount the drawer with a second staff member present, then record the difference on the closing sheet<sup
+            >1</sup
+          >. Tell your supervisor before you leave; differences over the limit need a short written note<sup>2</sup>.
+        </p>
+        <p class="sources">
+          <span class="source active"><b>1</b> Cash Handling SOP, page 14</span>
+          <span class="source"><b>2</b> Closing Checklist, page 3</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="page" aria-hidden="true">
+      <p class="page-title">Cash Handling SOP · page 14</p>
+      <span class="ln" style="width: 92%"></span>
+      <span class="ln" style="width: 78%"></span>
+      <span class="ln" style="width: 85%"></span>
+      <p class="highlight">
+        If the closing count is short, recount with a second staff member present and record the variance on the closing
+        sheet.
+      </p>
+      <span class="ln" style="width: 88%"></span>
+      <span class="ln" style="width: 64%"></span>
+      <span class="ln" style="width: 90%"></span>
+      <span class="ln" style="width: 72%"></span>
+    </div>
+  </div>
+</MomentFrame>
+
+<style>
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .chat {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .chat p {
+    margin: 0;
+  }
+
+  .user {
+    align-self: flex-end;
+    max-width: 90%;
+    padding: 8px 12px;
+    border-radius: 12px 12px 2px 12px;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+
+  .reply {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px 12px 12px 2px;
+    background: var(--surface);
+  }
+
+  sup {
+    color: var(--accent);
+    font-weight: 600;
+    margin-left: 1px;
+  }
+
+  .sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .source {
+    padding: 3px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+    background: var(--bg);
+  }
+
+  .source b {
+    color: var(--accent);
+    margin-right: 4px;
+  }
+
+  .source.active {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+  }
+
+  .page-title {
+    margin: 0 0 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .ln {
+    display: block;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+  }
+
+  .highlight {
+    margin: 2px 0;
+    padding: 8px 10px;
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 640px) {
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

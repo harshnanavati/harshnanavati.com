@@ -50,10 +50,12 @@ test.describe('light mode', () => {
   });
 });
 
-test('pages without an illustration open with their diagram in the stage', async ({ page }) => {
-  await page.goto('/work/docupilot/');
-  await expect(page.locator('.stage .key')).toBeVisible();
-  await expect(page.getByText('Video coming soon')).toHaveCount(0);
+test('every case study opens with an illustration and no video placeholder', async ({ page }) => {
+  for (const path of PAGES.filter((p) => p.startsWith('/work/'))) {
+    await page.goto(path);
+    await expect(page.locator('.stage .product-moment')).toBeVisible();
+    await expect(page.getByText('Video coming soon')).toHaveCount(0);
+  }
 });
 
 test.describe('mobile diagram stacks vertically', () => {
@@ -61,7 +63,8 @@ test.describe('mobile diagram stacks vertically', () => {
 
   test('steps sit on top of each other', async ({ page }) => {
     await page.goto('/work/docupilot/');
-    const steps = page.locator('.stage .lane').first().locator('.step');
+    await expect(page.locator('figure.architecture')).toBeHidden();
+    const steps = page.locator('.prose .phone-only .lane').first().locator('.step');
     const first = await steps.nth(0).boundingBox();
     const second = await steps.nth(1).boundingBox();
     expect(first && second).toBeTruthy();
@@ -72,8 +75,8 @@ test.describe('mobile diagram stacks vertically', () => {
 
 test('desktop diagram flows left to right', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto('/work/docupilot/');
-  const steps = page.locator('.stage .lane').first().locator('.step');
+  await page.goto('/work/support-concierge-chatbots/');
+  const steps = page.locator('.prose > figure.diagram .lane').first().locator('.step');
   const first = await steps.nth(0).boundingBox();
   const second = await steps.nth(1).boundingBox();
   expect(second!.x).toBeGreaterThan(first!.x);

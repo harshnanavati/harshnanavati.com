@@ -1,0 +1,56 @@
+---
+import ArchFigure from '../architecture/ArchFigure.astro';
+import ArchNode from '../architecture/ArchNode.astro';
+import ArchZone from '../architecture/ArchZone.astro';
+
+const label =
+  'CrickPal Intelligence Layer architecture. An analyst writes a feature request in plain English with worked examples. ' +
+  'An LLM agent writes the feature code, and a verification harness runs four checks: golden examples, mirror symmetry, replay leakage and determinism. ' +
+  'Failures go back to the agent, which may repair its code or spec but never the analyst’s examples. Passing features need human approval before they go live. ' +
+  'Live features feed the model pipeline: match history from MongoDB is replayed in date order with only the data legal at each prediction moment, ' +
+  'Elo ratings and features feed a logistic regression trained on chronological splits, and backtests count how often the test window has been scored. ' +
+  'State and an LLM call ledger are kept in SQL Server or SQLite. The platform is served through FastAPI and a Streamlit studio.';
+---
+
+<ArchFigure label={label} height={450}>
+  <ArchZone x={150} y={20} w={690} h={170} label="Feature agent" />
+  <ArchZone x={150} y={210} w={690} h={120} label="Model pipeline · FastAPI + Streamlit studio" />
+  <ArchZone x={150} y={340} w={690} h={100} label="Storage" />
+
+  <line class="flow" x1="130" y1="96" x2="168" y2="96" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="320" y1="96" x2="343" y2="96" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="555" y1="96" x2="578" y2="96" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="700" y1="96" x2="718" y2="96" marker-end="url(#arch-arrow)"></line>
+  <polyline class="data" points="450,132 450,160 245,160 245,134" marker-end="url(#arch-arrow)"></polyline>
+  <text class="tech" x="348" y="178" text-anchor="middle">fails: repair code or spec, never the examples</text>
+
+  <polyline class="flow" points="775,132 775,200 400,200 400,248" marker-end="url(#arch-arrow)"></polyline>
+  <line class="flow" x1="320" y1="282" x2="338" y2="282" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="460" y1="282" x2="478" y2="282" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="640" y1="282" x2="658" y2="282" marker-end="url(#arch-arrow)"></line>
+  <polyline class="data" points="245,372 245,316" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="data" points="745,314 745,405 642,405" marker-end="url(#arch-arrow)"></polyline>
+
+  <text class="zone-label" x="70" y="50" text-anchor="middle">Analyst</text>
+  <ArchNode x={10} y={60} w={120} h={72} label="Feature request" tech={['plain English', '+ worked examples']} />
+  <ArchNode x={170} y={60} w={150} h={72} label={['LLM writes', 'feature code']} tech="openai" />
+  <ArchNode
+    x={345}
+    y={60}
+    w={210}
+    h={72}
+    label="Verification harness"
+    tech={['golden · mirror symmetry', 'replay leakage · determinism']}
+    keyIdea
+  />
+  <ArchNode x={580} y={60} w={120} h={72} label={['Human', 'approval']} />
+  <ArchNode x={720} y={60} w={110} h={72} label={['Feature', 'goes live']} />
+
+  <ArchNode x={170} y={250} w={150} h={64} label="Chronological replay" tech="legal data per moment" />
+  <ArchNode x={340} y={250} w={120} h={64} label={['Elo ratings', '+ features']} />
+  <ArchNode x={480} y={250} w={160} h={64} label="Logistic regression" tech="chronological splits" />
+  <ArchNode x={660} y={250} w={170} h={64} label="Backtests" tech="test-window counter" />
+
+  <ArchNode x={180} y={372} w={130} h={66} label="MongoDB" tech="match history" store />
+  <ArchNode x={482} y={372} w={160} h={66} label="SQL Server / SQLite" tech="state · LLM ledger" store />
+</ArchFigure>

@@ -53,10 +53,31 @@ test.describe('case study on a wide screen', () => {
   test('the chatbots page’s second diagram also uses the full width', async ({ page }) => {
     await page.goto('/work/support-concierge-chatbots/');
     const nav = await box(page, 'header nav');
-    const second = await box(page, '.prose figure.diagram');
+    const second = await box(page, '.prose > figure.diagram');
     expect(second.left).toBe(nav.left);
     expect(second.right).toBe(nav.right);
   });
+});
+
+test.describe('architecture diagrams on a wide screen', () => {
+  test.use({ viewport: { width: 1440, height: 1000 } });
+
+  for (const slug of [
+    'docupilot',
+    'crickpal-intelligence-layer',
+    'crickpal-ai-summary',
+    'ai-face-matching',
+    'quantumcopilot',
+    'support-concierge-chatbots',
+  ]) {
+    test(`${slug} shows its architecture aligned to the page edges`, async ({ page }) => {
+      await page.goto(`/work/${slug}/`);
+      const nav = await box(page, 'header nav');
+      const arch = await box(page, 'figure.architecture');
+      expect(arch.left).toBe(nav.left);
+      expect(arch.right).toBe(nav.right);
+    });
+  }
 });
 
 test.describe('case study on a tablet', () => {

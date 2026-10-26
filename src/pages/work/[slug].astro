@@ -261,7 +261,7 @@ const Moment = MOMENTS[slug];
   }
 
   .stage :global(.product-moment) {
-    max-width: 720px;
+    max-width: 800px;
     margin: 0 auto;
   }
 
@@ -291,12 +291,14 @@ const Moment = MOMENTS[slug];
     margin-top: 0;
   }
 
-  .prose :global(ol),
-  .prose :global(ul) {
+  /* Only the article's own lists; diagrams inside .prose are lists too. */
+  .prose > :global(ol),
+  .prose > :global(ul) {
     padding-left: 1.25rem;
   }
 
-  .prose :global(li + li) {
+  .prose > :global(ol > li + li),
+  .prose > :global(ul > li + li) {
     margin-top: 0.4rem;
   }
 
@@ -414,8 +416,12 @@ const Moment = MOMENTS[slug];
        so they share the page's outer edges with the hero and the stage. */
     .prose > :global(figure),
     .prose > :global(.phone-only) {
+      position: relative;
+      z-index: 1;
       width: calc(100% + var(--toc-width) + var(--body-gap));
       margin-left: calc(-1 * (var(--toc-width) + var(--body-gap)));
+      padding: 8px 0;
+      background: var(--bg);
     }
   }
 </style>

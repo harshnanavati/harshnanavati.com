@@ -1,0 +1,102 @@
+---
+// Illustration of the two assistants side by side. Questions, answers and places are invented.
+import MomentFrame from './MomentFrame.astro';
+---
+
+<MomentFrame title="Visitor help" caption="Illustration with made-up questions and answers. Not client content.">
+  <div class="pair">
+    <section class="bot" aria-label="Support bot example">
+      <p class="bot-name">Support bot · RAG</p>
+      <p class="user">When does my team play next?</p>
+      <div class="reply">
+        <p>Your team plays on Field 4 tomorrow at 2:30 PM. Check in at the field desk 45 minutes before.</p>
+        <span class="chip">From your team’s schedule</span>
+      </div>
+    </section>
+
+    <section class="bot" aria-label="Concierge bot example">
+      <p class="bot-name">Concierge · cached prompt</p>
+      <p class="user">Anywhere good to eat near the fields?</p>
+      <div class="reply">
+        <p>Three family places are within a 10-minute walk, and two of them take large groups without a booking.</p>
+        <span class="follow">
+          <span class="chip">Late-night food</span>
+          <span class="chip">Parking nearby</span>
+        </span>
+      </div>
+    </section>
+  </div>
+</MomentFrame>
+
+<style>
+  p {
+    margin: 0;
+  }
+
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .bot {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .bot + .bot {
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+  }
+
+  .bot-name {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .user {
+    align-self: flex-end;
+    max-width: 92%;
+    padding: 8px 12px;
+    border-radius: 12px 12px 2px 12px;
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+
+  .reply {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: 12px 12px 12px 2px;
+    background: var(--surface);
+  }
+
+  .follow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    padding: 3px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+    background: var(--bg);
+  }
+
+  @media (max-width: 640px) {
+    .pair {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .bot + .bot {
+      padding: 16px 0 0;
+      border-left: 0;
+      border-top: 1px solid var(--border);
+    }
+  }
+</style>

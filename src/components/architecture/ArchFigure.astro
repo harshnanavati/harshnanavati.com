@@ -1,0 +1,140 @@
+---
+// Frame for a system architecture diagram: an 860-unit-wide SVG with a shared arrowhead,
+// the legend, and the styles every diagram uses. Desktop only; phones get the
+// step-by-step Diagram instead (see ProjectDiagram).
+interface Props {
+  /** Full prose description for screen readers. */
+  label: string;
+  height: number;
+}
+
+const { label, height } = Astro.props;
+---
+
+<figure class="architecture" role="img" aria-label={label}>
+  <svg viewBox={`0 0 860 ${height}`} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0 0L10 5L0 10z" class="arrowhead"></path>
+      </marker>
+    </defs>
+    <slot />
+  </svg>
+  <figcaption class="legend">
+    <span><i class="swatch key-swatch"></i>Key idea</span>
+    <span><i class="swatch line"></i>Request flow</span>
+    <span><i class="swatch dashed"></i>Data, storage and fallbacks</span>
+  </figcaption>
+</figure>
+
+<style is:global>
+  .architecture {
+    width: 100%;
+    margin: 1.5rem 0;
+  }
+
+  .architecture svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .architecture .zone {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 5;
+  }
+
+  .architecture .zone-label {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    fill: var(--muted);
+  }
+
+  .architecture .node rect,
+  .architecture .node path,
+  .architecture .node ellipse {
+    fill: var(--bg);
+    stroke: var(--border);
+    stroke-width: 1.2;
+  }
+
+  .architecture .store path,
+  .architecture .store ellipse {
+    fill: var(--surface);
+  }
+
+  .architecture .node.key rect {
+    stroke: var(--accent);
+    stroke-width: 2.2;
+  }
+
+  .architecture .label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    fill: var(--text);
+  }
+
+  .architecture .key .label {
+    fill: var(--accent);
+    font-weight: 500;
+  }
+
+  .architecture .tech {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--muted);
+  }
+
+  .architecture .flow,
+  .architecture .data {
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 1.3;
+  }
+
+  .architecture .data {
+    stroke-dasharray: 4 4;
+  }
+
+  .architecture .arrowhead {
+    fill: var(--muted);
+  }
+
+  .architecture .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .architecture .swatch {
+    display: inline-block;
+    width: 18px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .architecture .key-swatch {
+    height: 10px;
+    border: 2px solid var(--accent);
+    border-radius: 3px;
+  }
+
+  .architecture .line {
+    border-top: 1.5px solid var(--muted);
+  }
+
+  .architecture .dashed {
+    border-top: 1.5px dashed var(--muted);
+  }
+
+  @media (max-width: 720px) {
+    .architecture {
+      display: none;
+    }
+  }
+</style>

@@ -84,11 +84,8 @@ describe.each(WORK_SLUGS)('work page %s', (slug) => {
     expect(tocTargets.length).toBeGreaterThanOrEqual(5);
   });
 
-  it('opens with a visual in the stage panel', () => {
-    const stage = main(slug).querySelector('.stage')!;
-    expect(stage).not.toBeNull();
-    const expected = slug === 'quantumcopilot' ? '.product-moment' : 'figure.diagram';
-    expect(stage.querySelector(expected)).not.toBeNull();
+  it('opens with a product illustration in the stage panel', () => {
+    expect(main(slug).querySelector('.stage .product-moment')).not.toBeNull();
   });
 
   it('has no video placeholder', () => {

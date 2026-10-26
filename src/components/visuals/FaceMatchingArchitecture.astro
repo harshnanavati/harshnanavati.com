@@ -1,0 +1,50 @@
+---
+import ArchFigure from '../architecture/ArchFigure.astro';
+import ArchNode from '../architecture/ArchNode.astro';
+import ArchZone from '../architecture/ArchZone.astro';
+
+const label =
+  'AI Face Matching architecture. A scheduler runs every 20 minutes and finds new games using a high-water mark. ' +
+  'Each game goes onto a job queue with a retry budget, a lease that expires if a run crashes, and parking for games with missing data. ' +
+  'A worker claims one game at a time. Roster photos are turned once into face embeddings (MTCNN detection, alignment, FaceNet) and cached. ' +
+  'Every face in the game photos is detected, embedded and compared with that game’s team rosters, using a strictness threshold stored in the database. ' +
+  'Game video can enter the same pipeline through YOLOv8 player detection exported to ONNX. ' +
+  'Data lives in three SQL Server databases for photos, rosters and results, and staff review the matches, with their corrections kept on re-runs.';
+---
+
+<ArchFigure label={label} height={410}>
+  <ArchZone x={150} y={20} w={690} h={250} label="Matching engine · runs unattended" />
+  <ArchZone x={150} y={280} w={690} h={108} label="Storage" />
+
+  <line class="flow" x1="130" y1="92" x2="168" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="310" y1="92" x2="328" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="520" y1="92" x2="538" y2="92" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="605,124 605,168" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="flow" points="605,148 255,148 255,168" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="flow" points="760,124 760,148 665,148 665,168" marker-end="url(#arch-arrow)"></polyline>
+  <line class="flow" x1="330" y1="202" x2="348" y2="202" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="690" y1="202" x2="708" y2="202" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="420,234 420,252 745,252 745,236" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="flow" points="795,234 795,310" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="data" points="255,312 255,236" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="data" points="605,312 605,236" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="data" points="795,380 795,398 70,398 70,358" marker-end="url(#arch-arrow)"></polyline>
+
+  <text class="zone-label" x="70" y="50" text-anchor="middle">Schedule</text>
+  <ArchNode x={10} y={60} w={120} h={64} label="Scheduler" tech="every 20 min" />
+  <ArchNode x={170} y={60} w={140} h={64} label="Find new games" tech="high-water mark" />
+  <ArchNode x={330} y={60} w={190} h={64} label="Job queue" tech={['retry budget · lease', 'parks missing data']} keyIdea />
+  <ArchNode x={540} y={60} w={130} h={64} label="Worker" tech="claims one game" />
+  <ArchNode x={690} y={60} w={140} h={64} label="Game video" tech={['yolov8 players', 'onnx · directml']} />
+
+  <ArchNode x={170} y={170} w={160} h={64} label="Roster photos" tech={['mtcnn · align', 'facenet · 512-d']} />
+  <ArchNode x={350} y={170} w={140} h={64} label="Embedding cache" tech="computed once" />
+  <ArchNode x={540} y={170} w={150} h={64} label="Game photos" tech="detect every face" />
+  <ArchNode x={710} y={170} w={120} h={64} label="Compare" tech="threshold from db" />
+
+  <ArchNode x={195} y={312} w={120} h={68} label="Roster DB" tech={['sql server', 'team photos']} store />
+  <ArchNode x={545} y={312} w={120} h={68} label="Photo DB" tech={['sql server', 'game photos']} store />
+  <ArchNode x={735} y={312} w={100} h={68} label="Results DB" tech={['sql server', 'matches']} store />
+  <text class="zone-label" x="70" y="290" text-anchor="middle">Staff</text>
+  <ArchNode x={10} y={300} w={120} h={58} label="Review matches" tech="fixes are kept" />
+</ArchFigure>

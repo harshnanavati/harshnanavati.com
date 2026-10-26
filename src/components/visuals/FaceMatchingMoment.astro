@@ -1,0 +1,180 @@
+---
+// Illustration of the photo-tagging review screen, drawn with silhouettes only.
+// No real photos, faces or players: everything here is a vector drawing with invented numbers.
+import MomentFrame from './MomentFrame.astro';
+
+type Person = { x: number; scale?: number; match?: { label: string; review?: boolean } };
+const tiles: { people: Person[]; note?: string }[] = [
+  { people: [{ x: 38, match: { label: '#7 · 0.91' } }, { x: 82, scale: 0.85, match: { label: '#12 · 0.88' } }] },
+  { people: [{ x: 60, match: { label: 'Review · 0.62', review: true } }] },
+  { people: [{ x: 30, scale: 0.8, match: { label: '#3 · 0.94' } }, { x: 66 }, { x: 98, scale: 0.75 }] },
+  { people: [], note: 'No face found' },
+];
+
+// Round to one decimal so the SVG has clean coordinates (long float strings would also
+// trip the site's phone-number guard).
+const r1 = (n: number) => Math.round(n * 10) / 10;
+const shape = (p: Person) => {
+  const s = p.scale ?? 1;
+  const head = 34 * s + (1 - s) * 30;
+  return {
+    head: r1(head),
+    radius: r1(11 * s),
+    body: `M${r1(p.x - 22 * s)} 90 Q${r1(p.x - 20 * s)} ${r1(head + 16 * s)} ${p.x} ${r1(head + 15 * s)} Q${r1(p.x + 20 * s)} ${r1(head + 16 * s)} ${r1(p.x + 22 * s)} 90 Z`,
+    box: { x: r1(p.x - 15 * s), y: r1(head - 15 * s), size: r1(30 * s) },
+    tagY: r1(head - 18 * s),
+  };
+};
+---
+
+<MomentFrame
+  title="Photo tagging · Game 214"
+  caption="Illustration with silhouettes only. No real photos or people are shown."
+>
+  <div class="layout">
+    <div class="grid" aria-hidden="true">
+      {
+        tiles.map((tile) => (
+          <svg class="tile" viewBox="0 0 130 90">
+            <rect class="photo" x="0" y="0" width="130" height="90" rx="6" />
+            {tile.people.map((p) => {
+              const g = shape(p);
+              return (
+                <g>
+                  <circle class="silhouette" cx={p.x} cy={g.head} r={g.radius} />
+                  <path class="silhouette" d={g.body} />
+                  {p.match && (
+                    <>
+                      <rect
+                        class:list={['box', { review: p.match.review }]}
+                        x={g.box.x}
+                        y={g.box.y}
+                        width={g.box.size}
+                        height={g.box.size}
+                        rx="3"
+                      />
+                      <text class:list={['tag', { review: p.match.review }]} x={p.x} y={g.tagY} text-anchor="middle">
+                        {p.match.label}
+                      </text>
+                    </>
+                  )}
+                </g>
+              );
+            })}
+            {tile.note && (
+              <text class="note" x="65" y="49" text-anchor="middle">
+                {tile.note}
+              </text>
+            )}
+          </svg>
+        ))
+      }
+    </div>
+
+    <div class="queue">
+      <p class="queue-title">Today's queue</p>
+      <dl>
+        <div><dt>Tagged</dt><dd>128 games</dd></div>
+        <div><dt>Retrying</dt><dd>2 games</dd></div>
+        <div><dt>Parked</dt><dd>1 game, roster missing</dd></div>
+        <div><dt>For review</dt><dd>14 faces</dd></div>
+      </dl>
+    </div>
+  </div>
+</MomentFrame>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .tile {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .photo {
+    fill: var(--surface);
+    stroke: var(--border);
+  }
+
+  .silhouette {
+    fill: color-mix(in srgb, var(--muted) 45%, transparent);
+  }
+
+  .box {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.6;
+  }
+
+  .box.review {
+    stroke: var(--muted);
+    stroke-dasharray: 3 2;
+  }
+
+  .tag {
+    font-family: var(--font-sans);
+    font-size: 8.5px;
+    font-weight: 600;
+    fill: var(--accent);
+  }
+
+  .tag.review {
+    fill: var(--muted);
+  }
+
+  .note {
+    font-family: var(--font-sans);
+    font-size: 9px;
+    fill: var(--muted);
+  }
+
+  .queue {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .queue-title {
+    margin: 0 0 8px;
+    font-weight: 500;
+  }
+
+  dl {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+
+  dl div {
+    display: grid;
+    gap: 1px;
+  }
+
+  dt {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  @media (max-width: 640px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

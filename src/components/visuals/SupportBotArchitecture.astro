@@ -1,0 +1,43 @@
+---
+import ArchFigure from '../architecture/ArchFigure.astro';
+import ArchNode from '../architecture/ArchNode.astro';
+import ArchZone from '../architecture/ArchZone.astro';
+
+const label =
+  'Support bot architecture. A visitor’s question is matched against a question-and-answer knowledge base in a FAISS index. ' +
+  'The best passages are combined with the chat history and the visitor’s own team and schedule from SQL Server, and GPT-5-mini writes the reply. ' +
+  'When staff mark an answer as partly or fully wrong, their correction is written back into the knowledge base and the index is rebuilt ' +
+  'with chunks that follow question-and-answer boundaries, so the bot stops repeating the mistake.';
+---
+
+<ArchFigure label={label} height={382}>
+  <ArchZone x={150} y={20} w={690} h={120} label="Answer · FastAPI" />
+  <ArchZone x={150} y={150} w={690} h={110} label="Storage" />
+  <ArchZone x={150} y={272} w={690} h={100} label="Learn from staff" />
+
+  <line class="flow" x1="130" y1="92" x2="168" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="320" y1="92" x2="338" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="510" y1="92" x2="528" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="670" y1="92" x2="688" y2="92" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="720,124 720,134 70,134 70,126" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="data" points="245,182 245,126" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="data" points="425,182 425,126" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="data" points="800,124 800,300" marker-end="url(#arch-arrow)"></polyline>
+  <line class="flow" x1="690" y1="330" x2="672" y2="330" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="470" y1="330" x2="332" y2="330" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="300,302 300,250" marker-end="url(#arch-arrow)"></polyline>
+
+  <text class="zone-label" x="70" y="50" text-anchor="middle">Visitor</text>
+  <ArchNode x={10} y={60} w={120} h={64} label="Question" tech="often personal" />
+  <ArchNode x={170} y={60} w={150} h={64} label="Search knowledge" tech="faiss · top 8" />
+  <ArchNode x={340} y={60} w={170} h={64} label="Add context" tech={['history + team', '+ schedule']} />
+  <ArchNode x={530} y={60} w={140} h={64} label="Write the reply" tech="gpt-5-mini" />
+  <ArchNode x={690} y={60} w={140} h={64} label="Reply" tech="html answer" />
+
+  <ArchNode x={175} y={182} w={140} h={66} label="Knowledge base" tech="q&a · faiss index" store />
+  <ArchNode x={355} y={182} w={140} h={66} label="SQL Server" tech="history · schedules" store />
+
+  <ArchNode x={690} y={302} w={140} h={56} label="Staff flag answer" tech="partly or fully wrong" />
+  <ArchNode x={470} y={302} w={200} h={56} label="Staff correction loop" tech="correction written to KB" keyIdea />
+  <ArchNode x={170} y={302} w={160} h={56} label="Rebuild index" tech="q&a-aware chunks" />
+</ArchFigure>

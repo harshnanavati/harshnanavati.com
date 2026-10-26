@@ -1,6 +1,8 @@
 ---
 // Illustration of a QuantumCopilot answer. Example numbers only, computed here with
 // the standard EMI formula; not a screenshot of the live product.
+import MomentFrame from './MomentFrame.astro';
+
 const PRINCIPAL = 2_000_000;
 const YEARS = 15;
 const RATES = [9, 8.5, 8];
@@ -20,85 +22,44 @@ const scenarios = RATES.map((rate) => {
 const saving = scenarios[0].interest - scenarios[scenarios.length - 1].interest;
 ---
 
-<figure class="product-moment">
-  <div class="window">
-    <div class="bar">
-      <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="mono">QuantumCopilot</span>
-    </div>
-    <div class="chat">
-      <p class="user">What's my EMI on a ₹20 lakh home loan over 15 years? And what if the rate drops?</p>
-      <div class="reply">
-        <p>Here are three rate scenarios for a ₹20,00,000 home loan over 15 years:</p>
-        <table>
-          <thead>
-            <tr><th scope="col">Rate</th><th scope="col">Monthly EMI</th><th scope="col">Total interest</th></tr>
-          </thead>
-          <tbody>
-            {
-              scenarios.map((s) => (
-                <tr>
-                  <td>{s.rate.toFixed(1)}%</td>
-                  <td>{inr(s.monthly)}</td>
-                  <td>{inr(s.interest)}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-        <p>Dropping from 9.0% to 8.0% saves you {inr(saving)} in interest.</p>
-        <p class="follow-ups">
-          <span class="chip mono">Make it 20 years</span>
-          <span class="chip mono">Compare a car loan</span>
-        </p>
-      </div>
+<MomentFrame
+  title="QuantumCopilot"
+  caption="Illustration with example numbers, calculated with the standard EMI formula. Not a screenshot of the live product."
+>
+  <div class="chat">
+    <p class="user">What's my EMI on a ₹20 lakh home loan over 15 years? And what if the rate drops?</p>
+    <div class="reply">
+      <p>Here are three rate scenarios for a ₹20,00,000 home loan over 15 years:</p>
+      <table>
+        <thead>
+          <tr><th scope="col">Rate</th><th scope="col">Monthly EMI</th><th scope="col">Total interest</th></tr>
+        </thead>
+        <tbody>
+          {
+            scenarios.map((s) => (
+              <tr>
+                <td>{s.rate.toFixed(1)}%</td>
+                <td>{inr(s.monthly)}</td>
+                <td>{inr(s.interest)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+      <p>Dropping from 9.0% to 8.0% saves you {inr(saving)} in interest.</p>
+      <p class="follow-ups">
+        <span class="chip">Make it 20 years</span>
+        <span class="chip">Compare a car loan</span>
+      </p>
     </div>
   </div>
-  <figcaption class="muted">
-    Illustration with example numbers, calculated with the standard EMI formula. Not a screenshot of the live product.
-  </figcaption>
-</figure>
+</MomentFrame>
 
 <style>
-  .product-moment {
-    margin: 2rem 0;
-  }
-
-  .window {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--surface);
-  }
-
-  .bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--muted);
-  }
-
-  .dots {
-    display: flex;
-    gap: 5px;
-  }
-
-  .dots i {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--border);
-  }
-
   .chat {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px;
-    font-size: 14.5px;
-    line-height: 1.55;
   }
 
   .chat p {
@@ -117,11 +78,9 @@ const saving = scenarios[0].interest - scenarios[scenarios.length - 1].interest;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-width: 95%;
     padding: 12px 14px;
     border-radius: 12px 12px 12px 2px;
-    border: 1px solid var(--border);
-    background: var(--bg);
+    background: var(--surface);
   }
 
   table {
@@ -164,23 +123,15 @@ const saving = scenarios[0].interest - scenarios[scenarios.length - 1].interest;
   }
 
   .chip {
-    padding: 3px 8px;
+    padding: 3px 9px;
     border: 1px solid var(--border);
     border-radius: 6px;
-    color: var(--muted);
-  }
-
-  figcaption {
-    margin-top: 8px;
     font-size: 13px;
+    color: var(--muted);
+    background: var(--bg);
   }
 
   @media (max-width: 420px) {
-    .chat {
-      padding: 12px;
-      font-size: 14px;
-    }
-
     th,
     td {
       padding: 5px 4px;

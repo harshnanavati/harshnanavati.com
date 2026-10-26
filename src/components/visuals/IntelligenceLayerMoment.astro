@@ -1,0 +1,140 @@
+---
+// Illustration of the feature studio: an analyst's request and the harness verdict.
+// The feature and results are an example, not output from the real system.
+import MomentFrame from './MomentFrame.astro';
+
+const checks = [
+  { name: 'Golden examples', detail: 'All 3 worked examples reproduced', status: 'pass' },
+  { name: 'Mirror symmetry', detail: 'Swapping the teams flips the value', status: 'pass' },
+  {
+    name: 'Replay leakage',
+    detail: 'First draft read a result from after the toss; repaired and re-run',
+    status: 'repaired',
+  },
+  { name: 'Determinism', detail: '5 runs, identical output', status: 'pass' },
+] as const;
+---
+
+<MomentFrame title="Feature studio" caption="Illustration with an example feature request. Not output from the live system.">
+  <div class="request">
+    <p class="who">Analyst request</p>
+    <p class="ask">“Home team’s win rate at this venue over the last two years, before the toss.”</p>
+    <p class="meta">3 worked examples attached</p>
+  </div>
+
+  <ul class="checks">
+    {
+      checks.map((c) => (
+        <li class:list={['check', c.status]}>
+          <svg class="mark" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+            <circle cx="10" cy="10" r="9" />
+            {c.status === 'pass' ? <path d="M6 10.5l2.6 2.6L14 7.6" /> : <path d="M6.5 10a3.5 3.5 0 1 0 1.2-2.6M6.2 5.8v2.8h2.8" />}
+          </svg>
+          <span class="name">{c.name}</span>
+          <span class="detail">{c.detail}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="verdict">
+    <p>All checks passed. Waiting for a human to approve.</p>
+    <span class="approve">Approve feature</span>
+  </div>
+</MomentFrame>
+
+<style>
+  p {
+    margin: 0;
+  }
+
+  .request {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .who,
+  .meta {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .ask {
+    margin: 4px 0;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 1.45;
+  }
+
+  .checks {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+  }
+
+  .check {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 150px) minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    padding: 9px 2px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mark circle {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.6;
+  }
+
+  .mark path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .name {
+    font-weight: 500;
+  }
+
+  .detail {
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  .repaired .detail {
+    color: var(--text);
+  }
+
+  .verdict {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 14px;
+    font-size: 14px;
+  }
+
+  .approve {
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 500;
+    font-size: 13.5px;
+  }
+
+  @media (max-width: 520px) {
+    .check {
+      grid-template-columns: 20px minmax(0, 1fr);
+    }
+
+    .detail {
+      grid-column: 2;
+    }
+  }
+</style>

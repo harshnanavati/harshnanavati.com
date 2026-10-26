@@ -1,0 +1,127 @@
+---
+// Illustration of a live match page with the AI headline and narrative.
+// Teams, players and scores are invented.
+import MomentFrame from './MomentFrame.astro';
+
+const updates = ['After over 6', 'After over 12', 'After over 16'];
+---
+
+<MomentFrame title="Live match" caption="Illustration with a made-up match. Teams and scores are invented.">
+  <div class="scoreline">
+    <span class="team">Northern Hawks</span>
+    <span class="score">132/4 <small>(16.0 ov)</small></span>
+    <span class="vs">vs Coastal Kings</span>
+  </div>
+
+  <div class="summary">
+    <p class="tier">AI headline</p>
+    <p class="headline">Hawks recover from 42 for 3 with a 90-run stand</p>
+    <p class="tier">AI summary</p>
+    <p class="narrative">
+      Early wickets left the Hawks wobbling at 42 for 3 inside the powerplay. A patient fourth-wicket partnership turned
+      the innings around, rotating strike against spin and cashing in on short deliveries late. They reach the final
+      four overs with wickets in hand and a total above par in sight.
+    </p>
+  </div>
+
+  <ol class="timeline" aria-label="Summary updates">
+    {
+      updates.map((u, i) => (
+        <li class:list={{ latest: i === updates.length - 1 }}>
+          {u}
+          {i === updates.length - 1 && <span class="badge">latest</span>}
+        </li>
+      ))
+    }
+  </ol>
+</MomentFrame>
+
+<style>
+  p {
+    margin: 0;
+  }
+
+  .scoreline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .team {
+    font-weight: 500;
+  }
+
+  .score {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    color: var(--accent);
+  }
+
+  .score small {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .vs {
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+
+  .summary {
+    display: grid;
+    gap: 4px;
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .tier {
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .headline {
+    margin-bottom: 10px;
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+
+  .narrative {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .timeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .timeline li {
+    padding: 3px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .timeline .latest {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .badge {
+    margin-left: 6px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+</style>

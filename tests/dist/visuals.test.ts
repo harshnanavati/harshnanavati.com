@@ -1,7 +1,47 @@
 import { describe, expect, it } from 'vitest';
-import { loadPage } from './helpers';
+import { loadPage, WORK_SLUGS } from './helpers';
 
-const main = () => loadPage('/work/quantumcopilot/').querySelector('main')!;
+const main = (slug: string) => loadPage(`/work/${slug}/`).querySelector('main')!;
+
+// What each architecture diagram must single out as the project's key idea.
+const KEY_IDEA: Record<(typeof WORK_SLUGS)[number], string> = {
+  docupilot: 'citation gate',
+  'crickpal-intelligence-layer': 'Verification harness',
+  'crickpal-ai-summary': 'new balls only',
+  'ai-face-matching': 'Job queue',
+  quantumcopilot: 'typed parameters',
+  'support-concierge-chatbots': 'correction loop',
+};
+
+describe.each(WORK_SLUGS)('visuals on %s', (slug) => {
+  it('opens with a product illustration that is labelled as one', () => {
+    const moment = main(slug).querySelector('.stage .product-moment');
+    expect(moment).not.toBeNull();
+    expect(moment!.querySelector('figcaption')!.text).toContain('Illustration');
+  });
+
+  it('has an accessible architecture diagram with exactly one key component', () => {
+    const fig = main(slug).querySelector('figure.architecture');
+    expect(fig).not.toBeNull();
+    expect(fig!.getAttribute('role')).toBe('img');
+    expect(fig!.getAttribute('aria-label')!.length).toBeGreaterThan(80);
+    const keys = fig!.querySelectorAll('.key');
+    expect(keys).toHaveLength(1);
+    expect(keys[0].text).toContain(KEY_IDEA[slug]);
+  });
+
+  it('makes no HMAC claim', () => {
+    expect(main(slug).querySelector('figure.architecture')!.toString()).not.toMatch(/hmac/i);
+  });
+});
+
+describe('face matching illustration', () => {
+  it('uses silhouettes only, never images', () => {
+    const m = main('ai-face-matching');
+    expect(m.querySelectorAll('img')).toHaveLength(0);
+    expect(m.querySelector('.product-moment figcaption')!.text).toContain('silhouettes');
+  });
+});
 
 // Standard EMI formula, computed independently of the site's code.
 function emi(principal: number, annualRate: number, years: number) {
@@ -12,15 +52,9 @@ function emi(principal: number, annualRate: number, years: number) {
 }
 const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 
-describe('QuantumCopilot product moment', () => {
-  it('is labelled as an illustration', () => {
-    const moment = main().querySelector('.product-moment');
-    expect(moment).not.toBeNull();
-    expect(moment!.text).toContain('Illustration');
-  });
-
+describe('QuantumCopilot illustration', () => {
   it('shows three scenarios whose EMIs and interest are mathematically correct', () => {
-    const rows = main().querySelectorAll('.product-moment tbody tr');
+    const rows = main('quantumcopilot').querySelectorAll('.product-moment tbody tr');
     expect(rows).toHaveLength(3);
     const rates = [9, 8.5, 8];
     rows.forEach((row, i) => {
@@ -30,28 +64,5 @@ describe('QuantumCopilot product moment', () => {
       expect(cells[1]).toBe(inr(monthly));
       expect(cells[2]).toBe(inr(monthly * 180 - 2_000_000));
     });
-  });
-});
-
-describe('QuantumCopilot architecture diagram', () => {
-  it('is an accessible figure with exactly one key component', () => {
-    const fig = main().querySelector('figure.architecture');
-    expect(fig).not.toBeNull();
-    expect(fig!.getAttribute('role')).toBe('img');
-    expect(fig!.getAttribute('aria-label')!.length).toBeGreaterThan(40);
-    expect(fig!.querySelectorAll('.key')).toHaveLength(1);
-    expect(fig!.querySelector('.key')!.text).toContain('typed parameters');
-  });
-
-  it('makes no HMAC claim', () => {
-    expect(main().querySelector('figure.architecture')!.toString()).not.toMatch(/hmac/i);
-  });
-});
-
-describe('pages without new visuals yet', () => {
-  it('DocuPilot has no product moment or architecture figure', () => {
-    const m = loadPage('/work/docupilot/').querySelector('main')!;
-    expect(m.querySelector('.product-moment')).toBeNull();
-    expect(m.querySelector('figure.architecture')).toBeNull();
   });
 });

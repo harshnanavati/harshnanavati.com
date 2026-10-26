@@ -1,0 +1,15 @@
+---
+// A dashed boundary grouping components that run together (a service, a store).
+interface Props {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  label: string;
+}
+
+const { x, y, w, h, label } = Astro.props;
+---
+
+<rect class="zone" x={x} y={y} width={w} height={h} rx="10"></rect>
+<text class="zone-label" x={x + 14} y={y + 20}>{label}</text>
