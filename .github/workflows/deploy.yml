@@ -21,7 +21,8 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          # Astro needs Node 22.23.4 or newer; a bare "22" can resolve to an older patch.
+          node-version: 22.23.4
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
