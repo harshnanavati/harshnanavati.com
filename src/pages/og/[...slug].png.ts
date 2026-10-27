@@ -19,7 +19,7 @@ const headshot =
 export const getStaticPaths = (async () => {
   const work = await getCollection('work');
   return [
-    { params: { slug: 'index' }, props: { title: SITE.name, subtitle: 'Applied AI Engineer. I build production LLM systems: RAG, AI agents and evaluation.', home: true } },
+    { params: { slug: 'home' }, props: { title: SITE.name, subtitle: 'Applied AI Engineer. I build production LLM systems: RAG, AI agents and evaluation.', home: true } },
     { params: { slug: 'about' }, props: { title: `About ${SITE.name}`, subtitle: 'Applied AI engineer from India, looking for a remote role.' } },
     { params: { slug: 'resume' }, props: { title: 'Resume', subtitle: `${SITE.name} · ${SITE.role}` } },
     ...work.map((entry) => ({

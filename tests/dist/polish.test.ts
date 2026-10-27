@@ -43,7 +43,7 @@ describe('sharing and indexing', () => {
   });
 
   it('gives the home page a 1200×630 share card with the headshot on it', () => {
-    const png = readFileSync(join(DIST, 'og', 'index.png'));
+    const png = readFileSync(join(DIST, 'og', 'home.png'));
     expect(png.readUInt32BE(16)).toBe(1200);
     expect(png.readUInt32BE(20)).toBe(630);
     // A photo makes the file several times heavier than a text-only card.
