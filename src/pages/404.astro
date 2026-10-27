@@ -2,11 +2,27 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Page not found" description="That page doesn't exist." path="/404" noindex>
+<BaseLayout title="Page not found" description="That page doesn’t exist." path="/404" noindex>
   <div class="container wide">
-    <div class="measure">
-      <h1>That page doesn't exist</h1>
-      <p><a href="/">Go to the home page</a></p>
+    <div class="measure not-found">
+      <h1>That page doesn’t exist</h1>
+      <p>It may have moved. These are the places most people are looking for:</p>
+      <ul>
+        <li><a href="/work/">All case studies</a></li>
+        <li><a href="/resume/">Resume</a></li>
+        <li><a href="/">Home page</a></li>
+      </ul>
     </div>
   </div>
 </BaseLayout>
+
+<style>
+  /* Enough height that the footer sits low on the screen instead of floating halfway up. */
+  .not-found {
+    min-height: 55vh;
+  }
+
+  ul {
+    padding-left: 1.25rem;
+  }
+</style>

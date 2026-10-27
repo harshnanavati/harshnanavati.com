@@ -31,12 +31,12 @@ const questions = [
           <span class="answer">
             {item.answer}{' '}
             {item.correct ? (
-              <span class="tick" aria-label="correct">
+              <span class="tick" role="img" aria-label="correct">
                 ✓
               </span>
             ) : (
               <>
-                <span class="cross" aria-label="wrong">
+                <span class="cross" role="img" aria-label="wrong">
                   ✗
                 </span>{' '}
                 key: {item.key}
@@ -95,6 +95,10 @@ const questions = [
   .cross {
     font-weight: 700;
     color: #b54a4a;
+  }
+
+  :global(:root[data-theme='dark']) .cross {
+    color: #e07a7a;
   }
 
   .result {

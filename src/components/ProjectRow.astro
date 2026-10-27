@@ -17,11 +17,11 @@ const hasPreview = Astro.slots.has('preview');
   <a href={href} class:list={{ 'text-only': !hasPreview }}>
     {
       hasPreview && (
-        <span class="preview" aria-hidden="true" inert>
+        <span class="preview" aria-hidden="true" inert data-nosnippet>
+          <span class="preview-label">Illustration</span>
           <span class="preview-inner">
             <slot name="preview" />
           </span>
-          <span class="preview-label">Illustration</span>
         </span>
       )
     }
@@ -41,12 +41,15 @@ const hasPreview = Astro.slots.has('preview');
     list-style: none;
   }
 
+  /* The card's outline is a step stronger than the site's hairlines, so each project sits apart
+     from its neighbours on a white page, without a shadow. */
   a {
+    --card-line: color-mix(in srgb, var(--border) 84%, var(--muted));
     position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
-    border: 1px solid var(--border);
+    border: 1px solid var(--card-line);
     border-radius: 14px;
     overflow: hidden;
     color: var(--text);
@@ -58,38 +61,57 @@ const hasPreview = Astro.slots.has('preview');
     border-color: var(--accent);
   }
 
-  /* The real illustration, laid out wider than the card and scaled down to fit it. */
+  /* The real illustration, laid out wider than the card and scaled down to fit it (--scale).
+     Narrower cards get a taller window, so the part that matters isn't cut off. */
   .preview {
+    --scale: 0.75;
     position: relative;
     display: block;
-    aspect-ratio: 2 / 1;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
     background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    /* Large enough to read, cut off with a soft fade rather than a hard edge. */
-    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent);
-    mask-image: linear-gradient(to bottom, #000 calc(100% - 40px), transparent);
+    border-bottom: 1px solid var(--card-line);
+  }
+
+  /* Large enough to read, cut off with a soft fade into the window's own background, so the
+     rule between illustration and text stays crisp and each card reads as one unit. */
+  .preview::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 36px;
+    background: linear-gradient(to bottom, transparent, var(--surface));
+  }
+
+  /* Two cards to a row: a shorter, slightly smaller window keeps the card compact. */
+  @media (min-width: 1100px) {
+    .preview {
+      --scale: 0.68;
+      aspect-ratio: 2 / 1;
+    }
+  }
+
+  /* Inset 16px at the sides, so the screen sits inside the card instead of doubling its border,
+     with a band above it for the label: these are drawings of the product, not screenshots. */
+  .preview-label {
+    position: absolute;
+    top: 5px;
+    left: 16px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--muted);
   }
 
   .preview-inner {
     position: absolute;
-    top: 18px;
+    top: 28px;
     left: 50%;
-    width: 133%;
-    transform: translateX(-50%) scale(0.75);
+    width: calc((100% - 32px) / var(--scale));
+    transform: translateX(-50%) scale(var(--scale));
     transform-origin: top center;
     pointer-events: none;
-  }
-
-  .preview-label {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    padding: 1px 7px;
-    border-radius: 4px;
-    background: var(--bg);
-    font-size: 12px;
-    color: var(--muted);
   }
 
   /* A card shows just the illustration's screen: its notes and markers belong on the case study. */
@@ -102,16 +124,25 @@ const hasPreview = Astro.slots.has('preview');
     display: none;
   }
 
+  /* Tighter spacing inside the screen, so more of the conversation fits the window. */
+  .preview-inner :global(.screen) {
+    gap: 10px;
+    padding: 16px;
+  }
+
+  /* The tags sit at the bottom, so they line up across a row of cards whatever the outcome's length. */
   .text {
-    display: grid;
-    gap: 4px;
-    padding: 18px 20px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 16px 20px 18px;
   }
 
   /* The project name is the first thing read on each card, so it's set large and heavy. */
   .title {
     font-family: var(--font-serif);
-    font-size: clamp(1.45rem, 2.4vw, 1.75rem);
+    font-size: clamp(1.4rem, 2.2vw, 1.6rem);
     font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -125,6 +156,8 @@ const hasPreview = Astro.slots.has('preview');
   }
 
   .outcome {
+    font-size: 16px;
+    line-height: 1.55;
     color: var(--muted);
   }
 
@@ -132,7 +165,8 @@ const hasPreview = Astro.slots.has('preview');
     display: flex;
     flex-wrap: wrap;
     gap: 4px 12px;
-    margin-top: 4px;
+    margin-top: auto;
+    padding-top: 8px;
     color: var(--muted);
   }
 

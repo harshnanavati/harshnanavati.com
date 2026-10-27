@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import sharp from 'sharp';
 import { describe, expect, it } from 'vitest';
 import { ALL_PAGES, DIST, loadPage, rawPage, WORK_SLUGS } from './helpers';
 
@@ -16,6 +17,13 @@ describe('fonts and assets', () => {
     const html = rawPage(p);
     expect(html).not.toMatch(/<link[^>]+rel="stylesheet"/);
     expect((html.match(/<link[^>]+rel="preload"[^>]+as="font"/g) ?? []).length).toBe(2);
+  });
+
+  // Every other subset (latin-ext, cyrillic, greek, vietnamese) was a font file one stray character away.
+  it.each(ALL_PAGES)('%s loads only the latin subset of each font', (p) => {
+    const fontFiles = [...rawPage(p).matchAll(/url\(["']?([^"')]+\.woff2)/g)].map((m) => m[1]);
+    expect(new Set(fontFiles).size).toBe(3);
+    expect(rawPage(p)).not.toMatch(/latin-ext|cyrillic|greek|vietnamese/);
   });
 
   it('has a 180×180 Apple touch icon', () => {
@@ -42,12 +50,15 @@ describe('sharing and indexing', () => {
     expect(html).not.toContain('property="og:url"');
   });
 
-  it('gives the home page a 1200×630 share card with the headshot on it', () => {
-    const png = readFileSync(join(DIST, 'og', 'home.png'));
-    expect(png.readUInt32BE(16)).toBe(1200);
-    expect(png.readUInt32BE(20)).toBe(630);
-    // A photo makes the file several times heavier than a text-only card.
-    expect(png.length).toBeGreaterThan(3 * readFileSync(join(DIST, 'og', 'about.png')).length);
+  it('gives the home page a 1200×630 JPEG share card with the headshot on it', async () => {
+    const jpeg = readFileSync(join(DIST, 'og', 'home.jpg'));
+    const { format, width, height } = await sharp(jpeg).metadata();
+    expect([format, width, height]).toEqual(['jpeg', 1200, 630]);
+    // A photo makes the file several times heavier than a text-only card...
+    expect(jpeg.length).toBeGreaterThan(3 * readFileSync(join(DIST, 'og', 'about.png')).length);
+    // ...but WhatsApp drops link thumbnails over about 300 KB.
+    expect(jpeg.length).toBeLessThan(300 * 1024);
+    expect(existsSync(join(DIST, 'og', 'home.png'))).toBe(false);
   });
 
   it.each(ALL_PAGES)('%s has complete link-preview tags', (p) => {

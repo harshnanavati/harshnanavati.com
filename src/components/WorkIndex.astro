@@ -1,0 +1,148 @@
+---
+// The Work page on wide screens: every project as a line in an index on the left, and beside it the
+// card of whichever project the visitor points at or tabs to. Narrower screens skip the index and
+// show the cards one after another.
+import type { CollectionEntry } from 'astro:content';
+import { splitTitle } from '../lib/title';
+import WorkGrid from './WorkGrid.astro';
+
+interface Props {
+  entries: CollectionEntry<'work'>[];
+}
+
+const { entries } = Astro.props;
+---
+
+<div class="work-index">
+  <ul class="index-list" aria-label="All projects">
+    {
+      entries.map((entry, i) => {
+        const { name, descriptor } = splitTitle(entry.data.title);
+        return (
+          <li>
+            <a class:list={['index-row', { active: i === 0 }]} href={`/work/${entry.id}/`} data-index={i}>
+              <span class="index-name">{name}</span>
+              {descriptor && <span class="index-descriptor">{descriptor}</span>}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+  <div class="index-stage">
+    <WorkGrid entries={entries} />
+  </div>
+</div>
+
+<script>
+  // Pointing at or tabbing to a project shows its card. The last one shown stays, so the card
+  // doesn't vanish when the pointer moves across to click it.
+  for (const index of document.querySelectorAll<HTMLElement>('.work-index')) {
+    const rows = [...index.querySelectorAll<HTMLAnchorElement>('.index-row')];
+    const cards = [...index.querySelectorAll<HTMLElement>('.index-stage .row')];
+    const show = (i: number) => {
+      rows.forEach((row, j) => row.classList.toggle('active', i === j));
+      cards.forEach((card, j) => card.classList.toggle('shown', i === j));
+    };
+    rows.forEach((row, i) => {
+      row.addEventListener('mouseenter', () => show(i));
+      row.addEventListener('focus', () => show(i));
+    });
+    show(0);
+  }
+</script>
+
+<style>
+  .index-list {
+    display: none;
+  }
+
+  @media (min-width: 1000px) {
+    .work-index {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+      gap: 56px;
+      align-items: start;
+    }
+
+    /* A ruled list, one project per line: the name, and what it is under it. */
+    .index-list {
+      display: block;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .index-row {
+      display: grid;
+      gap: 2px;
+      padding: 16px 0 16px 18px;
+      border-top: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      position: relative;
+    }
+
+    /* The project whose card is showing is marked with a bar at its edge. */
+    .index-row::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      bottom: 14px;
+      left: 0;
+      width: 2px;
+      background: var(--accent);
+      transform: scaleY(0);
+      transition: transform 0.2s ease;
+    }
+
+    .index-row.active::before {
+      transform: none;
+    }
+
+    .index-name {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 600;
+      line-height: 1.2;
+      transition: color 0.2s ease;
+    }
+
+    .index-row.active .index-name {
+      color: var(--accent);
+    }
+
+    .index-descriptor {
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    /* The cards stack in one spot that stays in view while the list scrolls; only the chosen one shows. */
+    .index-stage {
+      position: sticky;
+      top: calc(var(--header-height) + 24px);
+    }
+
+    .index-stage :global(.rows) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .index-stage :global(.rows > li) {
+      grid-area: 1 / 1;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        visibility 0.25s;
+    }
+
+    .index-stage :global(.rows > li.shown) {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+  }
+</style>

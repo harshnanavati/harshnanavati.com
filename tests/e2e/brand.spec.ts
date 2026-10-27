@@ -16,7 +16,7 @@ test.describe('desktop', () => {
     await page.goto('/');
     const s = await style(page, '.hero button.cite', ['border-top-width', 'font-size', 'font-variant-numeric', 'border-radius']);
     expect(s['border-top-width']).toBe('0px');
-    expect(s['font-size']).toBe('10.5px');
+    expect(s['font-size']).toBe('12px');
     expect(s['font-variant-numeric']).toContain('tabular-nums');
     expect(s['border-radius']).toBe('3px');
   });
@@ -44,8 +44,9 @@ test.describe('desktop', () => {
     expect(s['border-left-width']).toBe('0px');
     expect(s['border-top-width']).toBe('1px');
     expect(s['border-radius']).toBe('0px');
-    const a = (await items.nth(0).boundingBox())!;
-    const b = (await items.nth(1).boundingBox())!;
+    // They flow down two columns, so the last item sits in the second one.
+    const a = (await items.first().boundingBox())!;
+    const b = (await items.last().boundingBox())!;
     expect(b.x).toBeGreaterThan(a.x);
     const h = await style(page, '#key-decisions + ol > li > strong:first-child', ['font-family', 'font-weight', 'font-size']);
     expect(h['font-family']).toContain('Inter');
@@ -55,8 +56,14 @@ test.describe('desktop', () => {
 
   test('project previews on the Work page fade out at the bottom', async ({ page }) => {
     await page.goto('/work/');
-    const s = await style(page, 'ul.rows .preview', ['mask-image', '-webkit-mask-image']);
-    expect(`${s['mask-image']}${s['-webkit-mask-image']}`).toContain('linear-gradient');
+    // The fade is drawn over the window, so the rule under it stays crisp.
+    const fade = await page
+      .locator('ul.rows .preview')
+      .first()
+      .evaluate((el) => getComputedStyle(el, '::after').backgroundImage);
+    expect(fade).toContain('linear-gradient');
+    const rule = await style(page, 'ul.rows .preview', ['border-bottom-width']);
+    expect(rule['border-bottom-width']).toBe('1px');
   });
 });
 

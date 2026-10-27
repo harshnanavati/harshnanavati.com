@@ -6,6 +6,7 @@ import LinksOut from '../../components/LinksOut.astro';
 import VideoSlot from '../../components/VideoSlot.astro';
 import { DIAGRAMS, type WorkSlug } from '../../diagrams';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../lib/site';
 import { splitTitle } from '../../lib/title';
 import { MOMENTS } from '../../visuals';
 
@@ -44,19 +45,54 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
   href: `#${chip.evidence}`,
   linkText: `Go to ${sectionTitle(chip.evidence)}`,
 });
+// Who made it, said once in plain words, so it isn't lost when the page is read as text.
+const byline = /personal/i.test(data.kind)
+  ? `Personal project by ${SITE.name}`
+  : `Built by ${SITE.name} at ${SITE.employerShort}`;
+// Structured data for this case study: an article by Harsh, and where it sits on the site.
+const path = `/work/${slug}/`;
+const canonical = new URL(path, SITE.url).href;
+const personRef = { '@id': `${SITE.url}/#person` };
+const schema = [
+  {
+    '@type': 'Article',
+    '@id': `${canonical}#article`,
+    headline: data.title,
+    description: data.outcome,
+    url: canonical,
+    mainEntityOfPage: canonical,
+    image: new URL(`/og/${slug}.png`, SITE.url).href,
+    author: personRef,
+    publisher: personRef,
+    keywords: data.tags.join(', '),
+    inLanguage: 'en',
+    isPartOf: { '@id': `${SITE.url}/#website` },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Work', item: new URL('/work/', SITE.url).href },
+      { '@type': 'ListItem', position: 3, name, item: canonical },
+    ],
+  },
+];
 ---
 
 <BaseLayout
   title={data.title}
   description={data.outcome}
-  path={`/work/${slug}/`}
+  path={path}
   ogImage={`/og/${slug}.png`}
   ogType="article"
+  schema={schema}
 >
-  <div class="case-bar" aria-hidden="true">
+  <div class="case-bar" aria-hidden="true" data-nosnippet>
     <div class="container wide case-bar-inner">
-      <span class="case-bar-name">{name}</span>
-      {descriptor && <span class="case-bar-descriptor">{descriptor}</span>}
+      <span class="case-bar-text">
+        <span class="case-bar-name">{name}</span>
+        {descriptor && <span class="case-bar-descriptor">{descriptor}</span>}
+      </span>
     </div>
   </div>
 
@@ -65,6 +101,7 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
       <div class="hero-text">
         <h1>{name}</h1>
         {descriptor && <p class="descriptor">{descriptor}</p>}
+        <p class="byline">{byline}</p>
         <p class="outcome">{data.outcome}</p>
       </div>
       <aside class="meta-card" aria-label="Project details">
@@ -119,7 +156,7 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
 
     {data.privacyNote && <p class="privacy-note">{data.privacyNote}</p>}
 
-    <section class="stage" aria-label={Moment ? 'What the product does' : 'How it works at a glance'}>
+    <section class="stage" data-nosnippet aria-label={Moment ? 'What the product does' : 'How it works at a glance'}>
       {Moment ? <Moment /> : <Diagram diagram={DIAGRAMS[slug][0]} />}
     </section>
 
@@ -211,16 +248,21 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     visibility: visible;
   }
 
+  /* The text is centred in the bar; min-height lets it grow rather than clip if a reader enlarges spacing. */
   .case-bar-inner {
+    display: flex;
+    align-items: center;
+    min-height: var(--case-bar);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .case-bar-text {
     display: flex;
     align-items: baseline;
     gap: 12px;
-    height: var(--case-bar);
-    padding-top: 12px;
-    padding-bottom: 12px;
-    box-sizing: border-box;
-    white-space: nowrap;
-    overflow: hidden;
+    min-width: 0;
   }
 
   .case-bar-name {
@@ -240,6 +282,27 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
   @media (max-width: 599px) {
     .case-bar-descriptor {
       display: none;
+    }
+  }
+
+  /* A phone held sideways has no height to spare; the header scrolls away there too. */
+  @media (max-height: 500px) {
+    .case-bar {
+      display: none;
+    }
+
+    :global(html:has(.case-bar)) {
+      scroll-padding-top: 16px;
+    }
+  }
+
+  /* On paper the bar would repeat over every page, and the buttons do nothing. */
+  @media print {
+    .case-bar,
+    .toc,
+    .case :global(.open-full),
+    .case :global(.full-diagram) {
+      display: none !important;
     }
   }
 
@@ -266,6 +329,12 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     margin: -8px 0 16px;
     font-size: 1.15rem;
     font-weight: 500;
+    color: var(--muted);
+  }
+
+  .byline {
+    margin: -6px 0 16px;
+    font-size: 14px;
     color: var(--muted);
   }
 
@@ -325,6 +394,16 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     border: 1px solid var(--border);
     border-radius: 12px;
     overflow: hidden;
+  }
+
+  /* Two or three numbers would stretch into wide, empty boxes; they keep a natural width instead. */
+  .stats:not(:has(li:nth-child(4))) {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .stats:not(:has(li:nth-child(4))) li {
+    flex: 0 1 220px;
   }
 
   .stats li {
@@ -416,17 +495,17 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     margin-top: 0.4rem;
   }
 
-  /* Key decisions read as a ruled list: each one is a choice and its reason. */
+  /* Key decisions read as a ruled list: each one is a choice and its reason. On wider screens
+     they flow down two columns, so a long item never leaves a hole beside a short one. */
   .prose :global(#key-decisions + ol) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px 40px;
+    column-gap: 40px;
     padding: 0;
     list-style: none;
   }
 
   .prose :global(#key-decisions + ol > li) {
-    margin: 0;
+    break-inside: avoid;
+    margin: 0 0 8px;
     padding: 16px 0 8px;
     border-top: 1px solid var(--border);
     line-height: 1.6;
@@ -475,7 +554,7 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
 
   @media (min-width: 760px) {
     .prose :global(#key-decisions + ol) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      columns: 2;
     }
   }
 
@@ -499,8 +578,10 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
       order: 2;
     }
 
+    /* Full width, so its edge lines up with the illustration and numbers above it. */
     .meta-card {
       order: 3;
+      align-self: stretch;
       margin-top: 24px;
     }
 
@@ -534,9 +615,14 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
       gap: 16px 48px;
     }
 
+    /* Role and type keep their width; only the stack gives way. */
     .meta-card dl > div {
-      flex: 0 1 auto;
+      flex: 0 0 auto;
       max-width: 260px;
+    }
+
+    dd {
+      text-wrap: pretty;
     }
 
     .meta-card dl > div:last-child {
@@ -544,10 +630,10 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
       max-width: none;
     }
 
+    /* Top-aligned with the values beside it: dropped by the height of a label. */
     .meta-card :global(.links-out) {
       flex: 0 0 auto;
-      align-self: center;
-      margin: 0;
+      margin: calc(13px * 1.7 + 2px) 0 0;
       padding: 0;
       border: 0;
     }

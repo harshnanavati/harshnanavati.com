@@ -22,7 +22,7 @@ const cardId = `cite-${id}`;
   popovertarget={cardId}
   data-href={href}
   aria-label={`Evidence ${n}: ${source}`}>{n}</button
-><span class="cite-card" id={cardId} popover role="note">
+><span class="cite-card" id={cardId} popover role="note" data-nosnippet>
   <span class="cite-source">Evidence {n} · {source}</span>
   <span class="cite-basis">{basis}</span>
   <a class="cite-link" href={href}>{linkText}</a>
@@ -93,25 +93,25 @@ const cardId = `cite-${id}`;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 15px;
-    height: 15px;
-    margin-left: 2px;
-    padding: 0 3px;
+    min-width: 18px;
+    height: 18px;
+    margin: 0 0 0 1px;
+    padding: 0 4px;
     border: 0;
     border-radius: 3px;
     background: color-mix(in srgb, var(--accent) 10%, transparent);
     color: var(--accent);
-    font: 600 10.5px/1 var(--font-sans);
+    font: 600 12px/1 var(--font-sans);
     font-variant-numeric: tabular-nums;
     vertical-align: super;
     cursor: pointer;
   }
 
-  /* A larger tap area around the small visible marker. */
+  /* A larger tap area around the small visible marker (about 38x34). */
   .cite::before {
     content: '';
     position: absolute;
-    inset: -6px;
+    inset: -8px -10px;
   }
 
   .cite:hover,

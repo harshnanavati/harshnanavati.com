@@ -32,7 +32,7 @@ describe('home page citations', () => {
       '/work/ai-face-matching/#results',
       '/work/rag-support-chatbot/#results',
     ]);
-    expect(home().querySelector('.build-lede')!.text).toContain('I owned all five stages myself');
+    expect(home().querySelector('.build-lede')!.text).toContain('I owned the AI and the backend end to end');
   });
 
   it('gives every marker a unique evidence card', () => {

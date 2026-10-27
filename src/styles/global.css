@@ -5,12 +5,14 @@
   --border: #e5e3dc;
   --accent: #1f3864;
   --surface: #f7f6f2;
-  --font-serif: 'Source Serif 4 Variable', Georgia, serif;
-  --font-sans: 'Inter Variable', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  /* Set by the <Font> tags in BaseLayout: each family, its size-matched fallback, then the system fonts. */
+  --font-serif: var(--font-source-serif);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
   --text-width: 680px;
   --wide-width: 1080px;
-  --gutter: 16px;
+  /* 16px on phones, growing to 40px so tablets don't feel cramped at the edges. */
+  --gutter: clamp(16px, 4vw, 40px);
   --header-height: 72px;
   /* Space between the header and the start of each page. */
   --main-top: 40px;
@@ -138,11 +140,27 @@ code,
   left: -9999px;
 }
 
+/* Fixed and above the sticky header, so it is actually visible when it takes focus. */
 .skip-link:focus {
+  position: fixed;
+  z-index: 100;
   left: var(--gutter);
-  top: var(--gutter);
+  top: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
   background: var(--bg);
-  padding: 4px 8px;
+  color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Read out by screen readers, never shown. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 img,

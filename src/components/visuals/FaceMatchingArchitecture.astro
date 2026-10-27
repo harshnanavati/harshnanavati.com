@@ -40,7 +40,7 @@ const label =
   <ArchNode x={170} y={170} w={160} h={64} label="Roster photos" tech={['mtcnn · align', 'facenet · 512-d']} />
   <ArchNode x={350} y={170} w={140} h={64} label="Embedding cache" tech="computed once" />
   <ArchNode x={540} y={170} w={150} h={64} label="Game photos" tech="detect every face" />
-  <ArchNode x={710} y={170} w={120} h={64} label="Compare" tech="threshold from db" />
+  <ArchNode x={710} y={170} w={120} h={64} label="Compare" tech={['threshold', 'from db']} />
 
   <ArchNode x={195} y={312} w={120} h={68} label="Roster DB" tech={['sql server', 'team photos']} store />
   <ArchNode x={545} y={312} w={120} h={68} label="Photo DB" tech={['sql server', 'game photos']} store />

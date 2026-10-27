@@ -19,9 +19,9 @@ const featured = work.filter((entry) => FEATURED.includes(entry.id));
 const stages = [
   {
     title: 'Understand the problem',
-    text: "Start with the client and the people who'll use it. Pin down requirements and constraints, and let those pick the design.",
+    text: "Start with the people who’ll use it. Pin down requirements and constraints, and let those pick the design.",
     proof: 'RAG removed',
-    note: 'Concierge content was ~50 FAQs, so one cached prompt beat a full RAG pipeline.',
+    note: 'Concierge content was ~50 FAQs, so one cached prompt replaced a full RAG pipeline.',
     href: '/work/concierge-chatbot/#key-decisions',
   },
   {
@@ -49,7 +49,7 @@ const stages = [
     title: 'Optimize in production',
     text: 'Measure real use, then make it faster, cheaper and better.',
     proof: '30,000+ questions',
-    note: 'The support chatbot has served 8,800+ people and learns from every staff correction.',
+    note: 'The support chatbot has handled 30,000+ questions for 8,800+ people, with staff corrections written back into its knowledge base.',
     href: '/work/rag-support-chatbot/#results',
   },
 ];
@@ -57,9 +57,9 @@ const stages = [
 
 <BaseLayout
   title={SITE.name}
-  description="Applied AI engineer building production LLM systems: RAG with source-cited answers, agents that verify their own code, real-time LLM pipelines and GPU computer vision."
+  description="Harsh Nanavati is an Applied AI Engineer in Ahmedabad, India, building production LLM systems: RAG, AI agents and evaluation. Open to remote roles."
   path="/"
-  ogImage="/og/home.png"
+  ogImage="/og/home.jpg"
 >
   <div class="container wide">
     <section class:list={['hero', { 'with-photo': HEADSHOT }]}>
@@ -69,21 +69,21 @@ const stages = [
       </div>
       <div class="hero-text">
         <p class="lede">
-          I design and ship production AI: retrieval, agents, real-time LLM pipelines and computer vision. At Masterly
-          Solutions I've built seven AI systems<Cite
+          I’m Harsh Nanavati, an Applied AI Engineer at Masterly Solutions in Ahmedabad, India. There I’ve built seven
+          AI systems<Cite
             n={1}
             id="hero-systems"
             source="Case studies"
-            basis="Seven of the eight case studies on the Work page are Masterly Solutions work: four client projects and three in-house products, two of them live. The eighth is a personal project."
+            basis="Seven of the eight case studies on the Work page are Masterly Solutions work: four client projects, all live, and three in-house products, two of them live. The eighth is a personal project."
             href="/work/"
             linkText="Go to the work"
           />, the largest used by 8,800+ people<Cite
             n={2}
             id="hero-users"
             source="RAG Support Chatbot – Customer Support Assistant"
-            basis="The support chatbot has answered 30,000+ questions for 8,800+ people in production since May 2025."
+            basis="The support chatbot has handled 30,000+ questions for 8,800+ people in production since May 2025."
             href="/work/rag-support-chatbot/#results"
-            linkText="Go to the support chatbot's results"
+            linkText="Go to the support chatbot’s results"
           />.
         </p>
         <p class="ctas">
@@ -92,8 +92,7 @@ const stages = [
           <a href={`mailto:${SITE.email}`}>Email me</a>
         </p>
         <p class="remote muted">
-          I work remotely from India on IST (UTC+5:30), with 4+ hours of overlap with US East and Europe. Open to
-          full-time, contract or employer of record roles.
+          Open to remote roles. Based in India (IST), and happy to work your team’s hours, in the US or Europe.
         </p>
         {
           INTRO_VIDEO.youtubeId && (
@@ -111,8 +110,8 @@ const stages = [
     <section class="build" aria-labelledby="how-i-build">
       <h2 id="how-i-build">How I build</h2>
       <p class="build-lede">
-        I take AI projects from the first client conversation to a system running in production. On every project on
-        this site, I owned all five stages myself.
+        I take AI projects from the first client conversation to a system running in production. On every project
+        here I owned the AI and the backend end to end, and on three of them the front end too.
       </p>
       <ol class="stages">
         {
@@ -146,12 +145,14 @@ const stages = [
     <section class="contact-card" aria-labelledby="contact">
       <h2 id="contact">Have an AI project or a role in mind?</h2>
       <p>
-        I'm looking for a remote Applied AI or GenAI engineering role: full-time, contract or through an employer of
+        I’m looking for a remote Applied AI or GenAI engineering role: full-time, contract or through an employer of
         record.
       </p>
       <p class="contact-actions">
         <a class="primary" href={`mailto:${SITE.email}`}>Email me</a>
-        <a href={SITE.linkedin} target="_blank" rel="noopener">Connect on LinkedIn</a>
+        <a href={SITE.linkedin} target="_blank" rel="noopener">
+          Connect on LinkedIn<span class="visually-hidden"> (opens in a new tab)</span>
+        </a>
         <a href="/resume/">See my resume</a>
       </p>
     </section>
@@ -193,12 +194,14 @@ const stages = [
   }
 
   /* On phones the photo leads the hero, small, so a visitor sees who this is first. */
+  /* A hairline ring keeps the photo's light background from melting into the page. */
   .photo {
     order: -1;
     width: 96px;
     height: 96px;
     border-radius: 50%;
     object-fit: cover;
+    box-shadow: 0 0 0 1px var(--border);
   }
 
 
@@ -280,7 +283,12 @@ const stages = [
     font-variant-numeric: tabular-nums;
   }
 
+  .stage-body {
+    max-width: var(--text-width);
+  }
+
   .stage-body h3 {
+    text-wrap: balance;
     margin: 4px 0 6px;
     font-family: var(--font-sans);
     font-size: 17px;
@@ -306,6 +314,7 @@ const stages = [
   }
 
   .proof-value {
+    text-wrap: balance;
     font-size: 20px;
     font-weight: 600;
     line-height: 1.25;
@@ -349,8 +358,8 @@ const stages = [
     }
   }
 
-  /* Five across only when each column still has a comfortable line length. */
-  @media (min-width: 1000px) {
+  /* Five across only when each column still has a comfortable line length; below that, the timeline. */
+  @media (min-width: 1200px) {
     /* Number, title, text and proof each share a row across all five columns, so the proofs line up. */
     .stages {
       grid-template-columns: repeat(5, minmax(0, 1fr));

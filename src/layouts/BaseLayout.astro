@@ -1,9 +1,6 @@
 ---
-import '@fontsource-variable/inter';
-import '@fontsource-variable/source-serif-4';
-import '@fontsource-variable/jetbrains-mono';
-import interFont from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
-import serifFont from '@fontsource-variable/source-serif-4/files/source-serif-4-latin-wght-normal.woff2?url';
+// The fonts are set up in astro.config.mjs: latin only, with size-matched fallbacks.
+import { Font } from 'astro:assets';
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { SITE } from '../lib/site';
@@ -17,9 +14,11 @@ interface Props {
   ogType?: 'website' | 'article';
   /** Keep the page out of search results (the 404 page). */
   noindex?: boolean;
+  /** Extra schema.org nodes (an Article, a BreadcrumbList) added to the page's JSON-LD graph. */
+  schema?: Record<string, unknown>[];
 }
 
-const { title, description, path, ogImage = '/og/home.png', ogType = 'website', noindex = false } = Astro.props;
+const { title, description, path, ogImage = '/og/home.jpg', ogType = 'website', noindex = false, schema = [] } = Astro.props;
 const fullTitle = path === '/' ? `${SITE.name} · ${SITE.role}` : `${title} · ${SITE.name}`;
 // The tab for the page being read is marked, so visitors can see where they are.
 const NAV = [
@@ -31,13 +30,63 @@ const NAV = [
 const canonical = new URL(path, SITE.url).href;
 const ogImageUrl = new URL(ogImage, SITE.url).href;
 const imageAlt = `${title === SITE.name ? SITE.name : title}: ${description}`;
+// Structured data: who Harsh is and what this site is, so search engines and AI assistants
+// can identify him and cite the right pages. Pages add their own nodes through `schema`.
+const PERSON_ID = `${SITE.url}/#person`;
+const WEBSITE_ID = `${SITE.url}/#website`;
 const person = {
-  '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': PERSON_ID,
   name: SITE.name,
+  givenName: SITE.givenName,
+  familyName: SITE.familyName,
   jobTitle: SITE.role,
+  description: `${SITE.role} at ${SITE.employerShort} in ${SITE.location.locality}, ${SITE.location.country}, building production LLM systems: RAG, AI agents and evaluation.`,
+  disambiguatingDescription: SITE.disambiguation,
   url: SITE.url,
-  sameAs: [SITE.linkedin],
+  image: new URL(SITE.photo, SITE.url).href,
+  email: `mailto:${SITE.email}`,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: SITE.location.locality,
+    addressRegion: SITE.location.region,
+    addressCountry: SITE.location.countryCode,
+  },
+  worksFor: { '@type': 'Organization', name: SITE.employer },
+  alumniOf: SITE.education.map((school) => ({
+    '@type': 'CollegeOrUniversity',
+    name: school.name,
+    address: { '@type': 'PostalAddress', addressLocality: school.locality, addressCountry: SITE.location.countryCode },
+  })),
+  knowsAbout: SITE.knowsAbout,
+  sameAs: [SITE.linkedin, SITE.github],
+};
+const website = {
+  '@type': 'WebSite',
+  '@id': WEBSITE_ID,
+  url: SITE.url,
+  name: SITE.name,
+  inLanguage: 'en',
+  publisher: { '@id': PERSON_ID },
+  about: { '@id': PERSON_ID },
+};
+const profilePage =
+  path === '/about/'
+    ? [
+        {
+          '@type': 'ProfilePage',
+          '@id': `${canonical}#profilepage`,
+          url: canonical,
+          name: fullTitle,
+          inLanguage: 'en',
+          isPartOf: { '@id': WEBSITE_ID },
+          mainEntity: { '@id': PERSON_ID },
+        },
+      ]
+    : [];
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [person, website, ...profilePage, ...schema],
 };
 ---
 
@@ -56,9 +105,11 @@ const person = {
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
-    <link rel="preload" href={interFont} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={serifFont} as="font" type="font/woff2" crossorigin />
+    <Font cssVariable="--font-inter" preload />
+    <Font cssVariable="--font-source-serif" preload />
+    <Font cssVariable="--font-jetbrains-mono" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:site_name" content={SITE.name} />
@@ -71,8 +122,10 @@ const person = {
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
     <meta name="twitter:image:alt" content={imageAlt} />
-    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
     {
       SITE.goatcounter && (
         <script
@@ -90,7 +143,6 @@ const person = {
       <div class="container wide">
         <nav aria-label="Main">
           <a class="name" href="/">{SITE.name}</a>
-          <a class="header-cta" href={`mailto:${SITE.email}`}>Email me</a>
           <span class="links">
             {
               NAV.map((link) => (
@@ -101,6 +153,7 @@ const person = {
             }
             <ThemeToggle />
           </span>
+          <a class="header-cta" href={`mailto:${SITE.email}`}>Email me</a>
         </nav>
       </div>
     </header>
@@ -116,10 +169,15 @@ const person = {
     </main>
     <footer class="container wide site-footer">
       <div class="footer-inner">
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-        <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>
-        <a href="/resume/">Resume</a>
-        <span class="muted">© 2026 {SITE.name}</span>
+        <p class="footer-about">{SITE.about}</p>
+        <div class="footer-links">
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a href={SITE.linkedin} target="_blank" rel="noopener">
+            LinkedIn<span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+          <a href="/resume/">Resume</a>
+          <span class="muted">© 2026 {SITE.name}</span>
+        </div>
       </div>
     </footer>
   </body>
@@ -172,11 +230,17 @@ const person = {
     font-weight: 500;
   }
 
+  /* Taller tap areas without changing the layout: the padding is cancelled by the margin. */
+  .name,
+  .links a {
+    padding: 9px 0;
+    margin: -9px 0;
+  }
+
   /* One way to get in touch that's always on screen: last on the right on wide screens,
      beside the name on phones (where the tabs drop to a second row). */
   .site-header .header-cta {
-    order: 2;
-    padding: 6px 14px;
+    padding: 10px 14px;
     border-radius: 6px;
     background: var(--accent);
     color: var(--bg);
@@ -190,19 +254,38 @@ const person = {
   }
 
   .links {
-    order: 1;
     display: flex;
     align-items: center;
     gap: 20px;
   }
 
   @media (max-width: 599px) {
-    .site-header .header-cta {
-      order: 0;
+    .links {
+      order: 1;
+      flex-basis: 100%;
     }
 
-    .links {
-      flex-basis: 100%;
+    /* Slimmer here so the two rows fit the 96px header; the extra tap area is drawn around it. */
+    .site-header .header-cta {
+      position: relative;
+      padding: 7px 14px;
+    }
+
+    .site-header .header-cta::before {
+      content: '';
+      position: absolute;
+      inset: -4px 0;
+    }
+  }
+
+  /* On a phone held sideways there is little height to spare, so the header scrolls away. */
+  @media (max-height: 500px) {
+    .site-header {
+      position: static;
+    }
+
+    :global(html) {
+      scroll-padding-top: 16px;
     }
   }
 
@@ -212,12 +295,29 @@ const person = {
 
   /* The rule sits on the inner element so it ends exactly at the content edges. */
   .footer-inner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 20px;
     padding: 24px 0 48px;
     border-top: 1px solid var(--border);
     font-size: 14px;
+  }
+
+  /* Who this is, in one quiet sentence, for anyone (or anything) reading the page as text. */
+  .footer-about {
+    max-width: 44em;
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  .footer-links a {
+    padding: 10px 0;
+    margin: -10px 0;
   }
 
   @media print {

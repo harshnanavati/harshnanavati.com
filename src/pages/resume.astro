@@ -17,8 +17,10 @@ import { SITE } from '../lib/site';
         <p class="headline">{RESUME.headline}</p>
         <p class="contact">
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-          <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>
-          <span class="muted">Ahmedabad, India (IST), open to remote roles</span>
+          <a href={SITE.linkedin} target="_blank" rel="noopener">
+            LinkedIn<span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+          <span class="muted">Ahmedabad, India · remote, US or EU hours</span>
         </p>
       </div>
       <a class="download" href={RESUME_PDF} download>Download PDF</a>
@@ -317,8 +319,15 @@ import { SITE } from '../lib/site';
       background: none;
     }
 
-    li {
+    li,
+    .resume-aside section {
       break-inside: avoid;
+    }
+
+    /* A heading never sits alone at the foot of a page. */
+    h2,
+    h3 {
+      break-after: avoid;
     }
 
     a.lead {

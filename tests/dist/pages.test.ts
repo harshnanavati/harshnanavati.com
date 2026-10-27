@@ -46,8 +46,10 @@ describe('home page', () => {
   });
 
   it('says how remote work with Harsh works, in plain sentences', () => {
-    const remote = home().querySelector('.hero .remote')!.text.replace(/\s+/g, ' ');
-    for (const fact of ['India', 'IST (UTC+5:30)', '4+ hours', 'US East', 'Europe', 'full-time', 'contract', 'employer of record']) {
+    const remote = home().querySelector('.hero .remote')!.text.replace(/\s+/g, ' ').replace(/’/g, "'");
+    // He works the team's hours; the page must not claim he works remotely today.
+    expect(remote).not.toMatch(/I work remotely/);
+    for (const fact of ['Open to remote roles', 'India', 'IST', "your team's hours", 'US', 'Europe']) {
       expect(remote).toContain(fact);
     }
     expect(remote).not.toContain('·');
@@ -90,7 +92,7 @@ describe('about page', () => {
   const about = () => loadPage('/about/').querySelector('main')!;
 
   it('has the heading, time zone and what Harsh is looking for', () => {
-    expect(about().querySelector('h1')?.text.trim()).toBe('About');
+    expect(about().querySelector('h1')?.text.trim()).toBe('About Harsh Nanavati');
     expect(about().text).toContain('IST (UTC+5:30)');
     expect(about().text.replace(/’/g, "'")).toContain("What I'm looking for");
   });
@@ -98,7 +100,10 @@ describe('about page', () => {
   it('has a facts card with the contact links: email first, then LinkedIn and the resume', () => {
     const card = about().querySelector('aside.about-card')!;
     expect(card.querySelectorAll('dt').map((d) => d.text.trim())).toEqual(['Based in', 'Time zone', 'Open to']);
-    expect(card.querySelectorAll('.contact a').map((a) => a.text.trim())).toEqual(['Email me', 'LinkedIn', 'Resume']);
+    const visible = (a: { text: string }) => a.text.replace(' (opens in a new tab)', '').trim();
+    expect(card.querySelectorAll('.contact a').map(visible)).toEqual(['Email me', 'LinkedIn', 'Resume']);
+    // LinkedIn opens in a new tab, and says so to screen readers.
+    expect(card.querySelector('.contact a[target="_blank"] .visually-hidden')!.text).toBe(' (opens in a new tab)');
   });
 
   it('has an experience and education timeline, newest first', () => {
@@ -201,5 +206,22 @@ describe('talks page', () => {
     expect(items[2].text).toContain('80+ people');
     expect(items[3].text).toContain('60+ IT professionals');
     expect(items[4].text).toContain('120+ students');
+  });
+
+  it('loads the first photo straight away and offers every photo at card size', () => {
+    const imgs = talks().querySelectorAll('ul.talks img');
+    expect(imgs[0].getAttribute('loading')).toBe('eager');
+    expect(imgs[0].getAttribute('fetchpriority')).toBe('high');
+    for (const img of imgs.slice(1)) expect(img.getAttribute('loading')).toBe('lazy');
+    for (const img of imgs) {
+      expect(img.getAttribute('srcset')).toMatch(/ 480w,.+ 720w,.+ 960w/);
+      expect(img.getAttribute('sizes')).toMatch(/^\(min-width: 1000px\) (339|524)px, /);
+    }
+  });
+
+  it('shows the whole webinar poster instead of cropping through its text', () => {
+    const poster = talks().querySelectorAll('ul.talks img')[1];
+    expect(poster.getAttribute('src')).toContain('may-2026-rag-webinar');
+    expect(poster.getAttribute('style')).toMatch(/object-fit: contain; background: #[0-9a-f]{6}/);
   });
 });

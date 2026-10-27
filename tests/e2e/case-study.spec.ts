@@ -69,14 +69,14 @@ test.describe('case study on a wide screen', () => {
     await expect(toc).toBeInViewport();
   });
 
-  test('key decisions sit in two columns', async ({ page }) => {
+  test('key decisions flow down two columns', async ({ page }) => {
     await page.goto('/work/quantumcopilot/');
     const cards = page.locator('#key-decisions + ol > li');
     await expect(cards).toHaveCount(4);
-    const a = (await cards.nth(0).boundingBox())!;
-    const b = (await cards.nth(1).boundingBox())!;
-    expect(Math.round(a.y)).toBe(Math.round(b.y));
-    expect(b.x).toBeGreaterThan(a.x);
+    const lefts = await cards.evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().left)));
+    expect(new Set(lefts).size).toBe(2);
+    // Reading order runs down the first column, then the second.
+    expect(lefts[0]).toBeLessThan(lefts.at(-1)!);
   });
 
   test('the concierge page’s before-and-after diagram fills the reading column', async ({ page }) => {

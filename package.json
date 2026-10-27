@@ -26,7 +26,8 @@
     "@resvg/resvg-js": "^2.6.2",
     "astro": "^7.4.2",
     "lite-youtube-embed": "^0.3.4",
-    "satori": "^0.32.0"
+    "satori": "^0.32.0",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

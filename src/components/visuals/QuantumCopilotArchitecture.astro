@@ -17,36 +17,37 @@ const label =
   <text class="zone-label" x="70" y="46" text-anchor="middle">User</text>
 
   <line class="flow" x1="130" y1="92" x2="168" y2="92" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="320" y1="92" x2="333" y2="92" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="445" y1="92" x2="458" y2="92" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="620" y1="92" x2="638" y2="92" marker-end="url(#arch-arrow)"></line>
-  <polyline class="flow" points="730,124 730,150"></polyline>
-  <line class="flow" x1="730" y1="150" x2="598" y2="188" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="730" y1="150" x2="690" y2="188" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="730" y1="150" x2="782" y2="188" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="598" y1="246" x2="672" y2="278" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="690" y1="246" x2="686" y2="278" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="782" y1="246" x2="700" y2="278" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="340" y1="92" x2="353" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="495" y1="92" x2="508" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="650" y1="92" x2="662" y2="92" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="747,124 747,150"></polyline>
+  <line class="flow" x1="747" y1="150" x2="593" y2="188" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="747" y1="150" x2="689" y2="188" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="747" y1="150" x2="785" y2="188" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="593" y1="246" x2="672" y2="278" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="689" y1="246" x2="686" y2="278" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="785" y1="246" x2="700" y2="278" marker-end="url(#arch-arrow)"></line>
   <line class="flow" x1="560" y1="308" x2="132" y2="308" marker-end="url(#arch-arrow)"></line>
-  <polyline class="data" points="500,124 500,160 255,160 255,188" marker-end="url(#arch-arrow)"></polyline>
+  <polyline class="data" points="580,124 580,160 255,160 255,188" marker-end="url(#arch-arrow)"></polyline>
   <text class="tech" x="310" y="154" text-anchor="middle">no loan details</text>
   <polyline class="data" points="170,218 70,218 70,278" marker-end="url(#arch-arrow)"></polyline>
-  <polyline class="data" points="390,124 390,382"></polyline>
-  <polyline class="data" points="685,336 685,412 447,412" marker-end="url(#arch-arrow)"></polyline>
-  <text class="tech" x="566" y="404" text-anchor="middle">save summary</text>
-  <text class="tech" x="548" y="212" text-anchor="end">in parallel</text>
-  <text class="tech" x="548" y="228" text-anchor="end">asyncio.gather · retries</text>
+  <polyline class="data" points="425,124 425,382"></polyline>
+  <polyline class="data" points="685,336 685,412 482,412" marker-end="url(#arch-arrow)"></polyline>
+  <text class="tech" x="583" y="404" text-anchor="middle">save summary</text>
+  <text class="tech" x="538" y="207" text-anchor="end">in parallel</text>
+  <text class="tech" x="538" y="221" text-anchor="end">asyncio.gather</text>
+  <text class="tech" x="538" y="235" text-anchor="end">+ retries</text>
 
   <ArchNode x={10} y={60} w={120} h={64} label="Question" tech="plain English" />
-  <ArchNode x={170} y={60} w={150} h={64} label="API key check" tech="constant-time compare" />
-  <ArchNode x={335} y={60} w={110} h={64} label="Load memory" tech="last 5 summaries" />
-  <ArchNode x={460} y={60} w={160} h={64} label={['LLM extracts', 'typed parameters']} tech="gpt-4.1-nano" keyIdea />
-  <ArchNode x={640} y={60} w={180} h={64} label="Build scenarios" tech="up to 3 · product defaults" />
+  <ArchNode x={170} y={60} w={170} h={64} label="API key check" tech="constant-time compare" />
+  <ArchNode x={355} y={60} w={140} h={64} label="Load memory" tech="last 5 summaries" />
+  <ArchNode x={510} y={60} w={140} h={64} label={['LLM extracts', 'typed parameters']} tech="gpt-4.1-nano" keyIdea />
+  <ArchNode x={664} y={60} w={166} h={64} label="Build scenarios" tech={['up to 3', 'product defaults']} />
   <ArchNode x={170} y={190} w={170} h={56} label="General finance chat" tech="fallback" />
-  <ArchNode x={556} y={190} w={84} h={56} label="Calculation" tech="scenario 1" />
-  <ArchNode x={648} y={190} w={84} h={56} label="Calculation" tech="scenario 2" />
-  <ArchNode x={740} y={190} w={84} h={56} label="Calculation" tech="scenario 3" />
+  <ArchNode x={548} y={190} w={90} h={56} label="Calculation" tech="scenario 1" />
+  <ArchNode x={644} y={190} w={90} h={56} label="Calculation" tech="scenario 2" />
+  <ArchNode x={740} y={190} w={90} h={56} label="Calculation" tech="scenario 3" />
   <ArchNode x={560} y={280} w={250} h={56} label="LLM writes comparison table" tech="markdown table + memory summary" />
-  <ArchNode x={10} y={280} w={120} h={56} label="Answer" tech="table + follow-ups" />
-  <ArchNode x={335} y={384} w={110} h={56} label="SQL Server" tech="memory · logs" store />
+  <ArchNode x={10} y={280} w={120} h={56} label="Answer" tech={['table', '+ follow-ups']} />
+  <ArchNode x={370} y={384} w={110} h={56} label="SQL Server" tech="memory · logs" store />
 </ArchFigure>

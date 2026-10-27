@@ -1,19 +1,19 @@
 ---
 title: RAG Support Chatbot – Customer Support Assistant
 order: 2
-outcome: A support assistant that has answered 30,000+ questions for 8,800+ people since May 2025, and stops repeating a mistake once staff correct it.
-summary: Answered 30,000+ questions for 8,800+ people, and learns from every staff correction
-kind: Client project
-role: Solo, designed and built end to end
+outcome: A support assistant that has handled 30,000+ questions for 8,800+ people since May 2025, with staff corrections written back into its knowledge base so the next person asking gets the corrected answer.
+summary: Handled 30,000+ questions for 8,800+ people, with staff corrections fed straight back into its knowledge base
+kind: Client project, live
+role: Sole backend and AI engineer, end to end
 chips:
-  - { value: '30,000+', label: questions answered, basis: 'Production logs: 30,826 questions answered between May 2025 and October 2026.', evidence: results }
+  - { value: '30,000+', label: questions handled, basis: 'Production logs: 30,826 questions received between May 2025 and October 2026.', evidence: results }
   - { value: '8,800+', label: people served, basis: 'Production logs: 8,888 different people asked the bot at least one question in the same period.', evidence: results }
   - { value: '20,000+', label: chat sessions, basis: 'Production logs: 20,642 chat sessions in the same period.', evidence: results }
   - { value: '~86%', label: answered without a fallback, basis: 'Production logs: 26,421 of 30,826 questions got an answer instead of the fallback reply (85.7%). This measures coverage, not correctness.', evidence: results }
   - { value: '~60%', label: fewer support escalations, basis: 'An estimate: the drop in questions escalated to staff after the support bot launched.', evidence: results }
-  - { value: 'Learning loop', label: from staff corrections }
+  - { value: 'Correction loop', label: from staff corrections }
 tags: [rag, hitl, faiss]
-videoTitle: How a support bot learns from staff corrections
+videoTitle: How staff corrections reach a support bot's knowledge base
 stack: [Python, FastAPI, 'OpenAI (text-embedding-3-large, GPT-5-mini)', FAISS, SQL Server]
 ---
 
@@ -27,7 +27,7 @@ A US youth-sports organization gets the same questions from families all season:
 
 - Answers must stay current as information changes during the season.
 - Many questions need the person's own team and schedule, not just general information.
-- When the bot is wrong, it must not keep repeating the same mistake.
+- When staff correct an answer, the next person who asks must get the corrected version.
 
 ## How it works
 
@@ -38,7 +38,7 @@ The bot searches a question-and-answer knowledge base and combines the best pass
 ## Key decisions
 
 1. **Chunk on meaning, not size.** The knowledge base is written as questions and answers, so chunks follow those boundaries. Oversized answers are split by sentence, with overlap.
-2. **Close the loop.** Staff corrections flow back into the knowledge base, so the bot stops repeating a mistake once it's been corrected.
+2. **Close the loop.** Staff corrections are written back into the knowledge base, so the next person who asks gets the corrected answer.
 3. **Personal answers from real data.** Questions about "my team" are answered from the person's own team and schedule, not guessed from general text.
 4. **Measure what happens in production.** Every question is logged, which is where the numbers on this page come from.
 
@@ -46,7 +46,7 @@ The bot searches a question-and-answer knowledge base and combines the best pass
 
 From production logs, May 2025 to October 2026:
 
-- 30,000+ questions answered for 8,800+ people, across 20,000+ chat sessions.
+- 30,000+ questions handled for 8,800+ people, across 20,000+ chat sessions.
 - ~86% of questions answered without falling back to the "I can't help with that" reply.
 - An estimated ~60% fewer questions escalated to staff after launch.
 

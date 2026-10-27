@@ -8,13 +8,15 @@ import talkMay2026 from '../assets/talks/may-2026-rag-webinar.jpg';
 import talkSep2026 from '../assets/talks/sep-2026-launch.jpg';
 
 // Newest first. Numbers come from Harsh's own accounts and LinkedIn posts of each event.
-const talks = [
+// `focus` keeps a face in frame where the wide cards crop a photo hard. `matte` shows the whole image
+// instead, uncropped on that colour (sampled from its edges): for a poster, where a crop cuts its text.
+const talks: { when: string; title: string; detail: string; photo: ImageMetadata; alt: string; focus?: string; matte?: string }[] = [
   {
     when: 'Sep 2026',
     title: 'Hosted a product launch',
     detail: 'Hosted the launch event for a new Masterly Solutions product.',
     photo: talkSep2026,
-    alt: 'Harsh at the front of the room with a microphone, hosting the product launch',
+    alt: 'Harsh Nanavati at the front of the room with a microphone, hosting the product launch',
   },
   {
     when: 'May 2026',
@@ -22,6 +24,7 @@ const talks = [
     detail:
       'A 2-hour online session for 35+ engineering students and IT professionals on what to choose at each stage of a RAG system, from chunking and embeddings to retrieval and reranking, and why.',
     photo: talkMay2026,
+    matte: '#2b234f',
     alt: 'Announcement poster for the RAG Decision Map webinar on 21 May, hosted by Harsh Nanavati',
   },
   {
@@ -30,23 +33,37 @@ const talks = [
     detail:
       '40+ students from Birla Vishwakarma Mahavidyalaya and 40+ IT professionals at Masterly Solutions, from the origins of AI to LangChain, LangGraph and RAG.',
     photo: talkAug2025,
-    alt: 'Harsh presenting a slide on generative adversarial networks',
+    alt: 'Harsh Nanavati presenting a slide on generative adversarial networks',
   },
   {
     when: 'Apr 2025',
     title: 'From Chaos to Clarity: The AI Pipeline',
     detail: 'A talk on how an AI pipeline comes together, for 60+ IT professionals from inside and outside the company.',
     photo: talkApr2025,
-    alt: 'Harsh on stage in front of the From Chaos to Clarity title slide',
+    focus: 'center 25%',
+    alt: 'Harsh Nanavati on stage in front of the From Chaos to Clarity title slide',
   },
   {
     when: 'Jan 2025',
     title: 'AI and data science at BVM',
     detail: 'Visited Birla Vishwakarma Mahavidyalaya, Vallabh Vidyanagar, to talk about AI and data science with 120+ students.',
     photo: talkJan2025,
-    alt: 'Harsh standing beside a slide at Birla Vishwakarma Mahavidyalaya',
+    focus: 'center 8%',
+    alt: 'Harsh Nanavati standing beside a slide at Birla Vishwakarma Mahavidyalaya',
   },
 ];
+
+// How wide each photo shows, to match the grid below: three then two across on wide screens, two on
+// tablets (an odd last card takes the full row), one on phones.
+const sizes = (i: number) => {
+  const desktop = i >= 3 && i >= talks.length - 2 ? '524px' : '339px';
+  const tablet = i === talks.length - 1 && talks.length % 2 === 1 ? '92vw' : 'calc(46vw - 12px)';
+  return `(min-width: 1000px) ${desktop}, (min-width: 640px) ${tablet}, calc(100vw - 32px)`;
+};
+const photoStyle = (talk: (typeof talks)[number]) =>
+  [talk.focus && `object-position: ${talk.focus}`, talk.matte && `object-fit: contain; background: ${talk.matte}`]
+    .filter(Boolean)
+    .join('; ') || undefined;
 ---
 
 <BaseLayout
@@ -64,9 +81,20 @@ const talks = [
 
     <ul class="talks">
       {
-        talks.map((talk) => (
+        talks.map((talk, i) => (
           <li>
-            <Image class="talk-photo" src={talk.photo} alt={talk.alt} width={960} height={720} />
+            <Image
+              class="talk-photo"
+              src={talk.photo}
+              alt={talk.alt}
+              width={960}
+              height={720}
+              widths={[480, 720, 960]}
+              sizes={sizes(i)}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : undefined}
+              style={photoStyle(talk)}
+            />
             <div class="talk-body">
               <p class="when">{talk.when}</p>
               <h2>{talk.title}</h2>
@@ -134,6 +162,7 @@ const talks = [
     font-size: 1.05rem;
     font-weight: 600;
     line-height: 1.35;
+    text-wrap: balance;
   }
 
   .detail {
@@ -152,7 +181,15 @@ const talks = [
     }
   }
 
-  /* Wide screens: the two newest sessions as a larger pair, the rest three across, so no row has a gap. */
+  /* That full-row card would otherwise get a photo as tall as a phone screen; its `focus` keeps faces in frame. */
+  @media (min-width: 640px) and (max-width: 999px) {
+    .talks li:last-child:nth-child(odd) .talk-photo {
+      aspect-ratio: 2 / 1;
+    }
+  }
+
+  /* Wide screens: three across, then the last two as an even pair, so no row has a gap. Every photo
+     is the same height, which keeps the cards short enough that the second row shows in the first view. */
   @media (min-width: 1000px) {
     .talks {
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -164,8 +201,13 @@ const talks = [
       grid-column: span 2;
     }
 
-    .talks li:nth-child(-n + 2) {
+    .talks li:nth-last-child(-n + 2):nth-child(n + 4) {
       grid-column: span 3;
+    }
+
+    .talk-photo {
+      height: 220px;
+      aspect-ratio: auto;
     }
   }
 </style>

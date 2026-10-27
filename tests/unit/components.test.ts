@@ -37,7 +37,8 @@ describe('LinksOut', () => {
       expect(a.getAttribute('target')).toBe('_blank');
       expect(a.getAttribute('rel')).toBe('noopener');
     }
-    expect(links[0].text.trim()).toBe('Try it live');
+    expect(links[0].text.trim()).toBe('Try it live (opens in a new tab)');
+    expect(links[0].querySelector('.visually-hidden')!.text).toBe(' (opens in a new tab)');
   });
 });
 

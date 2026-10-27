@@ -17,21 +17,48 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      urls: ${{ steps.sitemap.outputs.urls }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Full history, so each sitemap entry's lastmod is the real date its page last changed.
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           # Astro needs Node 22.23.4 or newer; a bare "22" can resolve to an older patch.
           node-version: 22.23.4
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      # The browser tests run headless, so they need only Chromium's headless shell, and the runner image
+      # already has its system libraries. It's cached per Playwright version, so most deploys skip the download.
+      - name: Read the Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/playwright'].version")" >> "$GITHUB_OUTPUT"
+      - name: Cache the Playwright browser
+        id: playwright-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ steps.playwright.outputs.version }}
+      - if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --only-shell chromium
       - name: Unit tests, build, built-page tests, confidentiality and link checks, browser tests
         run: npm run verify
         env:
           CI: true
           # The confidentiality list lives only in this repository secret (one term per line).
           BANNED_TERMS: ${{ secrets.BANNED_TERMS }}
+      - name: List the sitemap URLs for IndexNow
+        id: sitemap
+        run: |
+          urls=$(node -e '
+            const fs = require("fs");
+            const files = fs.readdirSync("dist").filter((f) => /^sitemap-\d+\.xml$/.test(f));
+            const xml = files.map((f) => fs.readFileSync(`dist/${f}`, "utf8")).join("");
+            console.log(JSON.stringify([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1])));
+          ')
+          echo "urls=$urls" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
@@ -45,3 +72,15 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+      # Tell Bing and the other IndexNow search engines the pages changed. The key is public by design: it's
+      # served at keyLocation to prove the site owns it. A failure here never fails the deploy.
+      - name: Ping IndexNow
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          URLS: ${{ needs.build.outputs.urls }}
+          KEY: 857f6f6c4d38dba3bd04f381076e2dd5
+        run: |
+          jq -n --arg key "$KEY" --argjson urls "$URLS" \
+            '{host: "harshnanavati.com", key: $key, keyLocation: "https://harshnanavati.com/\($key).txt", urlList: $urls}' |
+            curl -sS --max-time 30 -X POST -H 'Content-Type: application/json; charset=utf-8' --data-binary @- \
+              -w 'IndexNow: HTTP %{http_code}\n' https://api.indexnow.org/indexnow || true

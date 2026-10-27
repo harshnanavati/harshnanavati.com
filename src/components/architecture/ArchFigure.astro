@@ -81,9 +81,11 @@ const { label, height } = Astro.props;
     font-weight: 500;
   }
 
+  /* The drawing shows at about 0.8 scale on a 1024px screen, so this lands near 9.5px.
+     Boxes are sized for these labels with at least 6px of room on each side. */
   .architecture .tech {
     font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-size: 12px;
     fill: var(--muted);
   }
 

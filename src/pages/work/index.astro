@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import WorkGrid from '../../components/WorkGrid.astro';
+import WorkIndex from '../../components/WorkIndex.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
@@ -18,7 +18,7 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
       Eight case studies: seven AI systems I built at Masterly Solutions and one personal project. Each covers the
       problem, the design decisions and the results, with evidence for every number.
     </p>
-    <WorkGrid entries={work} />
+    <WorkIndex entries={work} />
   </div>
 </BaseLayout>
 

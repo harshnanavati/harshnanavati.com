@@ -1,6 +1,6 @@
 // The resume as structured text for the /resume page. It mirrors
-// HarshNanavati_AppliedAIEngineer_Resume_2026.pdf, except the phone number,
-// which stays off the public web pages. Update both together.
+// HarshNanavati_AppliedAIEngineer_Resume_2026.pdf (neither carries a phone number).
+// Update both together.
 
 /** One resume bullet. `href` links a project's name to its case study. */
 type Point = { lead: string; text: string; href?: string };
@@ -10,7 +10,7 @@ export const RESUME_PDF = '/resume/HarshNanavati_AppliedAIEngineer_Resume_2026.p
 export const RESUME = {
   headline: 'Applied AI Engineer: LLMs, RAG, agentic systems and evaluation',
   summary:
-    'Applied AI engineer with 2+ years shipping production LLM systems end to end: enterprise RAG, agentic pipelines with automated verification, real-time self-hosted LLM services and GPU computer vision, for clients in the US and India. Systems serve 8,800+ users and cut manual work by up to ~70%. I own the full path: retrieval design, guardrails, evaluation, FastAPI backends and deployment.',
+    'Applied AI engineer with 2+ years shipping production LLM systems end to end: enterprise RAG, agentic pipelines with automated verification, real-time self-hosted LLM services and GPU computer vision, for a US client and in-house products. The largest serves 8,800+ people, and others cut manual work by an estimated 40–70%. I own the full path: retrieval design, guardrails, evaluation, FastAPI backends and deployment.',
   skills: [
     {
       group: 'GenAI',
@@ -36,12 +36,12 @@ export const RESUME = {
       company: 'Masterly Solutions Pvt. Ltd.',
       where: 'Ahmedabad, India',
       when: 'Oct 2024 – present',
-      note: 'Building in-house AI products and client systems for the US and India.',
+      note: 'Building in-house AI products and client systems for a US organization.',
       points: <Point[]>[
         {
           lead: 'DocuPilot – Enterprise RAG Platform',
           href: '/work/docupilot/',
-          text: 'cut manual SOP queries by ~40% for 600+ staff across 14 document categories, with Docling ingestion (OCR and tables), custom structure-aware chunking with page-level provenance, and text-embedding-3-small with FAISS retrieval over 12,000+ chunks at sub-100 ms median latency.',
+          text: 'cut procedure questions to supervisors by an estimated ~40% for 600+ staff across 14 document categories, with Docling ingestion (OCR and tables), custom structure-aware chunking with page-level provenance, and text-embedding-3-small with FAISS retrieval over 12,000+ chunks at sub-100 ms median latency.',
         },
         {
           lead: 'DocuPilot – Answer Grounding & Guardrails',
@@ -61,17 +61,17 @@ export const RESUME = {
         {
           lead: 'AI Face Matching System – GPU Photo-Tagging Pipeline',
           href: '/work/ai-face-matching/',
-          text: 'cut manual photo tagging by ~70% with an unattended MTCNN and FaceNet pipeline: self-healing job queue, retry budgets, stale-lease recovery and an embedding cache across three SQL Server databases; extended to video with YOLOv8 detection and ONNX/DirectML export.',
+          text: 'cut manual photo tagging by an estimated ~70% with an unattended MTCNN and FaceNet pipeline: self-healing job queue, retry budgets, stale-lease recovery and an embedding cache across three SQL Server databases; extended to video with YOLOv8 detection and ONNX/DirectML export.',
         },
         {
           lead: 'QuantumCopilot – AI Loan & Financial Assistant',
           href: '/work/quantumcopilot/',
-          text: 'maps natural-language queries to typed parameters across 6 loan products; parallel scenario fan-out (~3x faster scenario stage), multi-turn memory, and 8 Uvicorn workers on IIS.',
+          text: 'maps natural-language queries to typed parameters across 6 loan products; parallel scenario fan-out (an estimated ~3x faster scenario stage), multi-turn memory, and 8 Uvicorn workers on IIS.',
         },
         {
           lead: 'RAG Support Chatbot – Customer Support Assistant',
           href: '/work/rag-support-chatbot/',
-          text: 'answered 30,000+ questions for 8,800+ people in production since May 2025, ~86% without a fallback reply; FAISS retrieval over question-and-answer chunks and a staff correction loop that writes fixes back into the knowledge base (~60% fewer escalations, estimated).',
+          text: 'handled 30,000+ questions for 8,800+ people in production since May 2025, ~86% without a fallback reply; FAISS retrieval over question-and-answer chunks and a staff correction loop that writes fixes back into the knowledge base (~60% fewer escalations, estimated).',
         },
         {
           lead: 'Concierge Chatbot – Long-Context Visitor Assistant',

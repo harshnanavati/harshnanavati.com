@@ -12,7 +12,7 @@ const description = [
 ]
   .filter(Boolean)
   // Captions are sentences already; drop their full stop so the joins don't double it.
-  .map((part) => part.replace(/\.+$/, ''))
+  .map((part) => part.trim().replace(/\.+$/, ''))
   .join('. ');
 ---
 
@@ -95,7 +95,7 @@ const description = [
   }
 
   .tech {
-    font-size: 11.5px;
+    font-size: 12.5px;
     font-weight: 400;
     color: var(--muted);
   }

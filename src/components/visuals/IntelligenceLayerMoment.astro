@@ -13,7 +13,12 @@ const notes = [
 ];
 
 // Plain-English names for the harness's checks: golden examples, determinism, replay leakage, mirror symmetry.
-const checks = ['Matches the worked examples', 'Same answer on every run', 'Never sees future results', 'Fair to both teams'];
+const checks = [
+  'Matches the worked examples',
+  'Same answer on every run',
+  'Never sees future results',
+  'Flips correctly when teams swap',
+];
 ---
 
 <MomentFrame notes={notes}>
@@ -23,8 +28,8 @@ const checks = ['Matches the worked examples', 'Same answer on every run', 'Neve
   <div class="at">
     <Mark n={2} />
     <pre class="code"><code><span class="kw">def</span> home_win_rate(match):
-    games = past_matches(match.ground, years=2)
-    <span class="kw">return</span> wins(games, match.home) / len(games)</code></pre>
+    games = past_matches(match.ground, team=match.home, years=2)
+    <span class="kw">return</span> wins(games, match.home) / len(games) <span class="kw">if</span> games <span class="kw">else</span> 0.5</code></pre>
   </div>
   <div class="checks key at">
     <Mark n={3} />

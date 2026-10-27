@@ -52,6 +52,7 @@
 
 <style>
   .theme-toggle {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -63,6 +64,13 @@
     background: transparent;
     color: var(--text);
     cursor: pointer;
+  }
+
+  /* A 44px tap area around the 32px button. */
+  .theme-toggle::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
   }
 
   .theme-toggle:hover {

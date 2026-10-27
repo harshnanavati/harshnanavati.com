@@ -53,7 +53,7 @@ const { entries, previews = true } = Astro.props;
   @media (min-width: 760px) {
     .rows {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 28px;
+      gap: 40px 28px;
     }
 
     /* An odd last card takes the full row, its preview beside the text instead of above it. */
@@ -68,7 +68,7 @@ const { entries, previews = true } = Astro.props;
     .rows > :global(li:last-child:nth-child(odd) .preview) {
       flex: 0 0 calc(50% - 14px);
       border-bottom: 0;
-      border-right: 1px solid var(--border);
+      border-right: 1px solid var(--card-line);
     }
 
     .rows > :global(li:last-child:nth-child(odd) .text) {

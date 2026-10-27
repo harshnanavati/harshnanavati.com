@@ -36,13 +36,13 @@ const SECTION_ORDER = [
 const REQUIRED_SECTIONS = ['The problem', 'How it works', 'Key decisions', 'Results', "What I'd do next"];
 
 const KINDS: Record<(typeof WORK_SLUGS)[number], string> = {
-  docupilot: 'Client project',
+  docupilot: 'Client project, live',
   'crickpal-intelligence-layer': 'In-house product',
   'crickpal-ai-summary': 'In-house product, live',
-  'ai-face-matching': 'Client project',
+  'ai-face-matching': 'Client project, live',
   quantumcopilot: 'In-house product, live',
-  'rag-support-chatbot': 'Client project',
-  'concierge-chatbot': 'Client project',
+  'rag-support-chatbot': 'Client project, live',
+  'concierge-chatbot': 'Client project, live',
   vipermind: 'Personal project',
 };
 
@@ -126,7 +126,7 @@ describe('external product links', () => {
   const external = (slug: string) =>
     main(slug)
       .querySelectorAll('.links-out a')
-      .map((a) => ({ href: a.getAttribute('href'), text: a.text.trim() }));
+      .map((a) => ({ href: a.getAttribute('href'), text: a.text.replace(' (opens in a new tab)', '').trim() }));
 
   it('QuantumCopilot links to the live product', () => {
     expect(external('quantumcopilot')).toEqual([{ href: QUANTUM, text: 'Try it live' }]);
@@ -142,15 +142,15 @@ describe('external product links', () => {
 });
 
 describe('roles', () => {
-  it.each(WORK_SLUGS)('%s says Harsh built it solo', (slug) => {
+  it.each(WORK_SLUGS)('%s says what Harsh built on his own', (slug) => {
     const role = main(slug)
       .querySelectorAll('.meta-card dl > div')
       .find((d) => d.querySelector('dt')?.text.trim() === 'Role');
-    expect(role?.querySelector('dd')?.text).toMatch(/^Solo/);
+    expect(role?.querySelector('dd')?.text).toMatch(/^(Solo|Sole backend and AI engineer)/);
   });
 
   it('QuantumCopilot keeps the scope Harsh owned', () => {
-    expect(main('quantumcopilot').querySelector('.meta-card')!.text).toContain('backend and LLM pipeline');
+    expect(main('quantumcopilot').querySelector('.meta-card')!.text).toContain('API and LLM pipeline');
   });
 });
 

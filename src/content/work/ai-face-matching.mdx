@@ -3,8 +3,8 @@ title: AI Face Matching System – GPU Photo-Tagging Pipeline
 order: 5
 outcome: 'Staff no longer tag every tournament photo by hand: a GPU face-recognition pipeline tags players automatically and runs unattended, cutting manual tagging by an estimated ~70%.'
 summary: 'Cut manual photo tagging by an estimated ~70%, with players tagged automatically and unattended'
-kind: Client project
-role: Solo, designed and built end to end
+kind: Client project, live
+role: Sole backend and AI engineer, end to end
 chips:
   - { value: '~70%', label: less manual tagging, basis: 'An estimate: tagging used to be fully manual; now staff review only the matches below the confidence threshold.', evidence: results }
   - { value: '512-D', label: face embeddings, basis: 'Each face becomes 512 numbers (a FaceNet embedding) that are compared to find matches.', evidence: how-it-works }
@@ -47,7 +47,7 @@ A scheduler finds new games and puts them on a job queue. Each player's roster p
 
 ## Results
 
-- ~70% less manual tagging.
+- An estimated ~70% less manual tagging.
 - Runs unattended across three databases, recovering from bad inputs on its own.
 
 ## What I'd do next

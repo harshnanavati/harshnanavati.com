@@ -75,6 +75,7 @@ const showStepDiagram = index > 0 || !stageHasDiagram;
 
   .open-full,
   .dialog-head button {
+    min-height: 44px;
     padding: 8px 14px;
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -126,7 +127,13 @@ const showStepDiagram = index > 0 || !stageHasDiagram;
   .dialog-body {
     flex: 1;
     overflow: auto;
+    overscroll-behavior: contain;
     padding: 16px;
+  }
+
+  /* Stop the page behind from scrolling under a finger while the dialog is open. */
+  :global(html:has(dialog.full-diagram[open])) {
+    overflow: hidden;
   }
 
   /* Wide enough that the drawing's labels are readable; the body scrolls around it. */

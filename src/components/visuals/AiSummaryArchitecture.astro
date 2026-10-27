@@ -18,30 +18,30 @@ const label =
   <ArchZone x={150} y={230} w={690} h={100} label="Serve" />
 
   <line class="flow" x1="130" y1="92" x2="168" y2="92" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="310" y1="92" x2="328" y2="92" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="490" y1="92" x2="508" y2="92" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="680" y1="92" x2="698" y2="92" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="765" y1="124" x2="765" y2="148" marker-end="url(#arch-arrow)"></line>
-  <line class="flow" x1="700" y1="178" x2="682" y2="178" marker-end="url(#arch-arrow)"></line>
-  <polyline class="flow" points="595,206 595,222 420,222 420,254" marker-end="url(#arch-arrow)"></polyline>
-  <line class="flow" x1="475" y1="292" x2="558" y2="292" marker-end="url(#arch-arrow)"></line>
-  <polyline class="flow" points="625,320 625,350 70,350 70,322" marker-end="url(#arch-arrow)"></polyline>
+  <line class="flow" x1="346" y1="92" x2="362" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="490" y1="92" x2="506" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="658" y1="92" x2="672" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="752" y1="124" x2="752" y2="148" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="674" y1="178" x2="660" y2="178" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="583,206 583,222 420,222 420,254" marker-end="url(#arch-arrow)"></polyline>
+  <line class="flow" x1="485" y1="292" x2="558" y2="292" marker-end="url(#arch-arrow)"></line>
+  <polyline class="flow" points="635,320 635,350 70,350 70,322" marker-end="url(#arch-arrow)"></polyline>
   <polyline class="data" points="240,262 240,126" marker-end="url(#arch-arrow)"></polyline>
   <text class="tech" x="250" y="186">per-match prompt,</text>
   <text class="tech" x="250" y="200">model, thresholds</text>
 
   <text class="zone-label" x="70" y="50" text-anchor="middle">Live feed</text>
   <ArchNode x={10} y={58} w={120} h={68} label="MongoDB" tech="ball-by-ball" store />
-  <ArchNode x={170} y={60} w={140} h={64} label="Poller" tech={['active matches in turn', 'idle: flush, stop']} />
-  <ArchNode x={330} y={60} w={160} h={64} label="Batch new balls" tech="watermark · dedup by id" />
-  <ArchNode x={510} y={60} w={170} h={64} label={['Previous summary', '+ new balls only']} keyIdea />
-  <ArchNode x={700} y={60} w={130} h={64} label="Self-hosted LLM" tech={['ollama · json mode', 'circuit breaker']} />
-  <ArchNode x={700} y={150} w={130} h={56} label="Output guard" tech="rejects prompt echo" />
-  <ArchNode x={510} y={150} w={170} h={56} label="Headline" tech="from the narrative" />
+  <ArchNode x={170} y={60} w={176} h={64} label="Poller" tech={['active matches in turn', 'idle: flush, stop']} />
+  <ArchNode x={364} y={60} w={126} h={64} label="Batch new balls" tech={['watermark', 'dedup by id']} />
+  <ArchNode x={508} y={60} w={150} h={64} label={['Previous summary', '+ new balls only']} keyIdea />
+  <ArchNode x={674} y={60} w={156} h={64} label="Self-hosted LLM" tech={['ollama · json mode', 'circuit breaker']} />
+  <ArchNode x={674} y={150} w={156} h={56} label="Output guard" tech="rejects prompt echo" />
+  <ArchNode x={508} y={150} w={150} h={56} label="Headline" tech="from the narrative" />
 
   <ArchNode x={170} y={262} w={140} h={56} label="Admin console" tech="angular · jwt" />
-  <ArchNode x={365} y={254} w={110} h={70} label="SQL Server" tech="one transaction" store />
-  <ArchNode x={560} y={264} w={130} h={56} label="Summary API" tech="fastapi · by time" />
+  <ArchNode x={355} y={254} w={130} h={70} label="SQL Server" tech="one transaction" store />
+  <ArchNode x={560} y={264} w={150} h={56} label="Summary API" tech="fastapi · by time" />
   <text class="zone-label" x="70" y="256" text-anchor="middle">Readers</text>
-  <ArchNode x={10} y={264} w={120} h={56} label="Live match page" tech="headline + story" />
+  <ArchNode x={10} y={264} w={120} h={56} label="Live match page" tech={['headline', '+ story']} />
 </ArchFigure>

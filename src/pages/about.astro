@@ -11,7 +11,7 @@ const timeline = [
     when: '2024 – now',
     role: 'SDE – Artificial Intelligence (Applied AI Engineer)',
     where: 'Masterly Solutions, Ahmedabad',
-    detail: 'In-house products like CrickPal and QuantumCopilot, and client systems for organizations in the US and India.',
+    detail: 'In-house products like CrickPal and QuantumCopilot, and client systems for a US organization.',
   },
   {
     when: '2023 – 2024',
@@ -41,43 +41,13 @@ const timeline = [
   ogImage="/og/about.png"
 >
   <div class="container wide about">
-    <div class="about-main">
-      <h1>About</h1>
+    <div class="about-intro">
+      <h1>About Harsh Nanavati</h1>
       <p class="lede">
-        I'm Harsh, an applied AI engineer from Ahmedabad, India. I build AI systems that run in production: assistants that
-        answer from company documents, agents that write and test their own code, real-time LLM pipelines and GPU computer
-        vision.
+        I’m Harsh Nanavati, an Applied AI Engineer at Masterly Solutions in Ahmedabad, India. I build AI systems that run
+        in production: assistants that answer from company documents, AI agents whose code must pass automated tests and a
+        human review before it goes live, real-time LLM pipelines and GPU computer vision.
       </p>
-
-      <h2 id="experience">Experience and education</h2>
-      <ol class="timeline">
-        {
-          timeline.map((item) => (
-            <li>
-              <span class="when">{item.when}</span>
-              <div class="entry">
-                <p class="role">{item.role}</p>
-                <p class="where">{item.where}</p>
-                {item.detail && <p class="detail">{item.detail}</p>}
-              </div>
-            </li>
-          ))
-        }
-      </ol>
-
-      <h2>How I work</h2>
-      <p>
-        I care about the boring parts that make AI trustworthy: citations, verification, retries and logs. I'd rather ship
-        something smaller that works every time than a demo that works once.
-      </p>
-
-      <h2>What I'm looking for</h2>
-      <p>
-        An Applied AI or GenAI engineering role, fully remote, full-time or contract, including through an employer of
-        record. I'm on IST (UTC+5:30) and comfortable with 4+ hours of overlap with Europe or the US East Coast.
-      </p>
-
-      {INTRO_VIDEO.youtubeId && <VideoSlot title={INTRO_VIDEO.title} youtubeId={INTRO_VIDEO.youtubeId} />}
     </div>
 
     <aside class="about-card" aria-label="At a glance">
@@ -99,7 +69,7 @@ const timeline = [
         </div>
         <div>
           <dt>Time zone</dt>
-          <dd>IST (UTC+5:30), 4+ hours of overlap with Europe and US East</dd>
+          <dd>IST (UTC+5:30), working your team’s hours, US or Europe</dd>
         </div>
         <div>
           <dt>Open to</dt>
@@ -108,24 +78,65 @@ const timeline = [
       </dl>
       <p class="contact">
         <a class="primary" href={`mailto:${SITE.email}`}>Email me</a>
-        <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+        <a href={SITE.linkedin} target="_blank" rel="noopener">
+          LinkedIn<span class="visually-hidden"> (opens in a new tab)</span>
+        </a>
         <a href="/resume/">Resume</a>
       </p>
     </aside>
+
+    <div class="about-main">
+      <h2 id="experience">Experience and education</h2>
+      <ol class="timeline">
+        {
+          timeline.map((item) => (
+            <li>
+              <span class="when">{item.when}</span>
+              <div class="entry">
+                <p class="role">{item.role}</p>
+                <p class="where">{item.where}</p>
+                {item.detail && <p class="detail">{item.detail}</p>}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <h2>How I work</h2>
+      <p>
+        I care about the boring parts that make AI trustworthy: citations, verification, retries and logs. I’d rather ship
+        something smaller that works every time than a demo that works once.
+      </p>
+
+      <h2>What I’m looking for</h2>
+      <p>
+        An Applied AI or GenAI engineering role, fully remote, full-time or contract, including through an employer of
+        record. I’m based in India (IST, UTC+5:30) and happy to work your team’s hours, whether you’re in the US or Europe.
+      </p>
+
+      {INTRO_VIDEO.youtubeId && <VideoSlot title={INTRO_VIDEO.title} youtubeId={INTRO_VIDEO.youtubeId} />}
+    </div>
   </div>
 </BaseLayout>
 
 <style>
   /* Two columns on wide screens, like the resume: the story on the left, a card with the facts and
-     contact links on the right that stays in view. Phones put the card first. */
+     contact links on the right that stays in view. Narrower screens put the card under the intro. */
   .about {
     display: grid;
     gap: 40px;
   }
 
+  .about-intro h1 {
+    margin-top: 0;
+  }
+
+  .about-intro .lede {
+    margin-bottom: 0;
+  }
+
   /* On phones the card is compact: a small photo beside the name and role, the facts below. */
   .about-card {
-    order: -1;
     display: grid;
     grid-template-columns: 88px minmax(0, 1fr);
     grid-template-areas:
@@ -145,7 +156,7 @@ const timeline = [
     min-width: 0;
   }
 
-  .about-main h1 {
+  .about-main > h2:first-child {
     margin-top: 0;
   }
 
@@ -221,7 +232,7 @@ const timeline = [
     padding: 8px 0;
     border: 1px solid var(--border);
     border-radius: 6px;
-    background: var(--bg);
+    background: transparent;
     font-weight: 500;
     text-align: center;
     text-decoration: none;
@@ -247,15 +258,33 @@ const timeline = [
        of the page it stays put instead of being pushed up under the header. The extra room is the page's
        bottom padding plus the footer, taken back with a negative margin so nothing else moves. */
     .about {
-      --card-room: 160px;
+      --card-room: 240px;
       grid-template-columns: minmax(0, 1fr) 340px;
-      gap: 64px;
+      gap: 0 64px;
       align-items: start;
       margin-bottom: calc(-1 * var(--card-room));
     }
 
+    .about-intro {
+      grid-column: 1;
+      margin-bottom: 40px;
+    }
+
     .about-main {
+      grid-column: 1;
       padding-bottom: var(--card-room);
+    }
+
+    /* The card spans both rows of the story, so it can stay in view the whole way down. */
+    .about-card {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+
+    /* Below the story the footer keeps to the story's column, so on a laptop-height screen the card
+       sits beside it rather than on top of its rule. */
+    :global(body:has(.about-card) .footer-inner) {
+      max-width: calc(100% - 340px - 64px);
     }
 
     /* Wide screens: one column inside the card, a centred profile at the top (photo, name, role), then
@@ -263,7 +292,6 @@ const timeline = [
        at (the header plus the page's top padding), so it never shifts on the first scroll. Spacing is
        kept tight so the card stays short enough to remain in view on a laptop screen. */
     .about-card {
-      order: 0;
       position: sticky;
       top: calc(var(--header-height) + var(--main-top));
       grid-template-columns: minmax(0, 1fr);
