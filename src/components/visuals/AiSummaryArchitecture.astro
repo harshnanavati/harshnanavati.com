@@ -17,7 +17,7 @@ const label =
   <ArchZone x={150} y={20} w={690} h={190} label="Summary engine · background poller" />
   <ArchZone x={150} y={230} w={690} h={100} label="Serve" />
 
-  <line class="flow" x1="130" y1="92" x2="168" y2="92" marker-end="url(#arch-arrow)"></line>
+  <line class="flow" x1="130" y1="92" x2="158" y2="92" marker-end="url(#arch-arrow)"></line>
   <line class="flow" x1="346" y1="92" x2="362" y2="92" marker-end="url(#arch-arrow)"></line>
   <line class="flow" x1="490" y1="92" x2="506" y2="92" marker-end="url(#arch-arrow)"></line>
   <line class="flow" x1="658" y1="92" x2="672" y2="92" marker-end="url(#arch-arrow)"></line>
@@ -32,7 +32,7 @@ const label =
 
   <text class="zone-label" x="70" y="50" text-anchor="middle">Live feed</text>
   <ArchNode x={10} y={58} w={120} h={68} label="MongoDB" tech="ball-by-ball" store />
-  <ArchNode x={170} y={60} w={176} h={64} label="Poller" tech={['active matches in turn', 'idle: flush, stop']} />
+  <ArchNode x={160} y={60} w={186} h={64} label="Poller" tech={['active matches in turn', 'idle: flush, stop']} />
   <ArchNode x={364} y={60} w={126} h={64} label="Batch new balls" tech={['watermark', 'dedup by id']} />
   <ArchNode x={508} y={60} w={150} h={64} label={['Previous summary', '+ new balls only']} keyIdea />
   <ArchNode x={674} y={60} w={156} h={64} label="Self-hosted LLM" tech={['ollama · json mode', 'circuit breaker']} />
