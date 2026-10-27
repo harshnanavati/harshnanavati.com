@@ -16,7 +16,9 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Pinned: the headless shell relies on the system libraries this image ships with, and
+    # ubuntu-latest is moving to a newer Ubuntu that Playwright doesn't support yet.
+    runs-on: ubuntu-24.04
     outputs:
       urls: ${{ steps.sitemap.outputs.urls }}
     steps:

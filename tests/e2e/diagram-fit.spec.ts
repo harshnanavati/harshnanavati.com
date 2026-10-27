@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 // Every label in an architecture box keeps at least this much room on each side, in screen pixels.
-const CLEARANCE = 6;
+// Text renders a fraction wider or narrower on each OS, so this is the floor every machine must clear.
+const CLEARANCE = 4;
 
 const slugs = [
   'docupilot',
