@@ -3,7 +3,8 @@
 // The stage panel at the top of the page already shows either the product illustration
 // or, without one, the first step-by-step diagram. This component fills in the rest:
 // - the system architecture diagram on desktop, when the project has one;
-// - the step-by-step diagram on phones, when the stage shows an illustration instead.
+// - the step-by-step diagram on phones, when the stage shows an illustration instead,
+//   with a button that opens the architecture diagram full-screen.
 import { DIAGRAMS, type WorkSlug } from '../diagrams';
 import { ARCHITECTURES, MOMENTS } from '../visuals';
 import Diagram from './Diagram.astro';
@@ -25,16 +26,112 @@ const showStepDiagram = index > 0 || !stageHasDiagram;
     (Architecture ? (
       <div class="phone-only">
         <Diagram diagram={DIAGRAMS[slug][index]} />
+        <button type="button" class="open-full" data-full-diagram aria-haspopup="dialog">
+          View full diagram
+        </button>
+        <dialog class="full-diagram" aria-label="Full system diagram">
+          <div class="dialog-head">
+            <p>Scroll sideways or pinch to zoom.</p>
+            <button type="button" data-close>
+              Close
+            </button>
+          </div>
+          <div class="dialog-body" />
+        </dialog>
       </div>
     ) : (
       <Diagram diagram={DIAGRAMS[slug][index]} />
     ))
 }
 
+<script>
+  // The page has one architecture figure. Opening the dialog moves it in, closing puts it back,
+  // so the drawing exists once in the page instead of twice.
+  for (const open of document.querySelectorAll<HTMLButtonElement>('[data-full-diagram]')) {
+    const dialog = open.nextElementSibling as HTMLDialogElement;
+    const body = dialog.querySelector('.dialog-body')!;
+    const figure = document.querySelector('figure.architecture');
+    if (!figure) {
+      open.hidden = true;
+      continue;
+    }
+    const home = document.createComment('architecture');
+    open.addEventListener('click', () => {
+      figure.before(home);
+      body.append(figure);
+      dialog.showModal();
+    });
+    dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => home.replaceWith(figure));
+  }
+</script>
+
 <style>
   @media (min-width: 961px) {
     .phone-only {
       display: none;
     }
+  }
+
+  .open-full,
+  .dialog-head button {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--accent);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .open-full {
+    margin-top: -0.5rem;
+  }
+
+  .full-diagram {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .full-diagram[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dialog-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dialog-head p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .dialog-body {
+    flex: 1;
+    overflow: auto;
+    padding: 16px;
+  }
+
+  /* Wide enough that the drawing's labels are readable; the body scrolls around it. */
+  .dialog-body :global(.architecture) {
+    display: block;
+    width: 900px;
+    margin: 0;
   }
 </style>

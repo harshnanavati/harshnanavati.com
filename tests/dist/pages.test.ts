@@ -92,6 +92,22 @@ describe('about page', () => {
     expect(text[3]).toContain('LDRP-ITR');
   });
 
+  it('lists talks and sessions newest first, each with a described photo', () => {
+    const items = about().querySelectorAll('ul.talks > li');
+    expect(items.map((li) => li.querySelector('.when')!.text.trim())).toEqual([
+      'Sep 2026',
+      'May 2026',
+      'Aug 2025',
+      'Apr 2025',
+      'Jan 2025',
+    ]);
+    for (const li of items) expect(li.querySelector('img')!.getAttribute('alt')!.length).toBeGreaterThan(10);
+    expect(items[1].text).toContain('35+ engineering students');
+    expect(items[2].text).toContain('80+ people');
+    expect(items[3].text).toContain('60+ IT professionals');
+    expect(items[4].text).toContain('120+ students');
+  });
+
   it('shows no video placeholder until the intro video exists', () => {
     expect(about().text).not.toContain('Video coming soon');
     expect(about().querySelector('.video-slot figure.diagram')).toBeNull();

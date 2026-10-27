@@ -83,6 +83,26 @@ test.describe('QuantumCopilot visuals', () => {
     await expect(page.locator('.product-moment')).toBeVisible();
     await expect(page.locator('figure.architecture')).toBeHidden();
   });
+
+  test('phones can open the full architecture diagram and close it again', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto('/work/quantumcopilot/');
+    await page.getByRole('button', { name: 'View full diagram' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Full system diagram' });
+    await expect(dialog.locator('figure.architecture')).toBeVisible();
+    // Wider than the phone, so its labels stay readable; the dialog scrolls sideways.
+    expect((await dialog.locator('figure.architecture').boundingBox())!.width).toBeGreaterThan(800);
+    await dialog.getByRole('button', { name: 'Close' }).click();
+    await expect(dialog).toBeHidden();
+    await expect(page.locator('figure.architecture')).toHaveCount(1);
+    await expect(page.locator('figure.architecture')).toBeHidden();
+  });
+
+  test('desktop has no full-diagram button, since the drawing is already on the page', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/work/quantumcopilot/');
+    await expect(page.getByRole('button', { name: 'View full diagram' })).toBeHidden();
+  });
 });
 
 test.describe('QuantumCopilot visuals in dark mode', () => {
