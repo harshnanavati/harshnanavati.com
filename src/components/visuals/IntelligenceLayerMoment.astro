@@ -1,140 +1,107 @@
 ---
-// Illustration of the feature studio: an analyst's request and the harness verdict.
-// The feature and results are an example, not output from the real system.
+// Illustration of the feature studio: an analyst's idea, the feature code the agent writes, the
+// automatic checks it must pass, and the human approval. The feature is an example, not output from
+// the real system.
+import Mark from './Mark.astro';
 import MomentFrame from './MomentFrame.astro';
 
-const checks = [
-  { name: 'Golden examples', detail: 'All 3 worked examples reproduced', status: 'pass' },
-  { name: 'Mirror symmetry', detail: 'Swapping the teams flips the value', status: 'pass' },
-  {
-    name: 'Replay leakage',
-    detail: 'First draft read a result from after the toss; repaired and re-run',
-    status: 'repaired',
-  },
-  { name: 'Determinism', detail: '5 runs, identical output', status: 'pass' },
-] as const;
+const notes = [
+  { title: 'An analyst describes the idea', text: 'In plain English, with no code.' },
+  { title: 'An AI agent writes the code', text: 'It turns the idea into a prediction feature.' },
+  { title: 'Automatic tests catch bad code', text: 'If a test fails, the agent repairs the code and tries again.' },
+  { title: 'A person approves it', text: 'Nothing goes live without a human sign-off.' },
+];
+
+// Plain-English names for the harness's checks: golden examples, determinism, replay leakage, mirror symmetry.
+const checks = ['Matches the worked examples', 'Same answer on every run', 'Never sees future results', 'Fair to both teams'];
 ---
 
-<MomentFrame caption="Illustration with an example feature request. Not output from the live system.">
-  <div class="request">
-    <p class="who">Analyst request</p>
-    <p class="ask">“Home team’s win rate at this venue over the last two years, before the toss.”</p>
-    <p class="meta">3 worked examples attached</p>
+<MomentFrame notes={notes}>
+  <p class="bubble user idea at">
+    <Mark n={1} /><span class="label">Analyst's idea</span>Home team's win rate at this ground over the last two years
+  </p>
+  <div class="at">
+    <Mark n={2} />
+    <pre class="code"><code><span class="kw">def</span> home_win_rate(match):
+    games = past_matches(match.ground, years=2)
+    <span class="kw">return</span> wins(games, match.home) / len(games)</code></pre>
   </div>
-
-  <ul class="checks">
-    {
-      checks.map((c) => (
-        <li class:list={['check', c.status]}>
-          <svg class="mark" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-            <circle cx="10" cy="10" r="9" />
-            {c.status === 'pass' ? <path d="M6 10.5l2.6 2.6L14 7.6" /> : <path d="M6.5 10a3.5 3.5 0 1 0 1.2-2.6M6.2 5.8v2.8h2.8" />}
-          </svg>
-          <span class="name">{c.name}</span>
-          <span class="detail">{c.detail}</span>
-        </li>
-      ))
-    }
-  </ul>
-
-  <div class="verdict">
-    <p>All checks passed. Waiting for a human to approve.</p>
-    <span class="approve">Approve feature</span>
+  <div class="checks key at">
+    <Mark n={3} />
+    <ul>
+      {
+        checks.map((check) => (
+          <li>
+            <span class="tick" aria-hidden="true">
+              ✓
+            </span>
+            {check}
+          </li>
+        ))
+      }
+    </ul>
   </div>
+  <span class="approve at"><Mark n={4} />Approve feature</span>
 </MomentFrame>
 
 <style>
-  p {
+  .bubble.idea {
+    justify-self: stretch;
+    max-width: none;
+  }
+
+  .code {
     margin: 0;
-  }
-
-  .request {
     padding: 12px 14px;
-    border-radius: 10px;
-    background: var(--surface);
+    white-space: pre-wrap;
+    border-radius: 8px;
+    background: #1f2430;
+    color: #e7e9ee;
+    font: 13px/1.6 var(--font-mono);
   }
 
-  .who,
-  .meta {
-    font-size: 12.5px;
-    color: var(--muted);
-  }
-
-  .ask {
-    margin: 4px 0;
-    font-family: var(--font-serif);
-    font-size: 1.05rem;
-    line-height: 1.45;
+  .kw {
+    color: #9fb5e8;
   }
 
   .checks {
-    list-style: none;
-    margin: 14px 0 0;
-    padding: 0;
-  }
-
-  .check {
-    display: grid;
-    grid-template-columns: 20px minmax(0, 150px) minmax(0, 1fr);
-    gap: 10px;
-    align-items: start;
-    padding: 9px 2px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .mark circle {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.6;
-  }
-
-  .mark path {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .name {
-    font-weight: 500;
-  }
-
-  .detail {
-    font-size: 13.5px;
-    color: var(--muted);
-  }
-
-  .repaired .detail {
-    color: var(--text);
-  }
-
-  .verdict {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 14px;
+    padding: 12px;
+    border-radius: 8px;
     font-size: 14px;
   }
 
+  .checks ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .checks li {
+    display: flex;
+    gap: 8px;
+  }
+
+  .tick {
+    font-weight: 700;
+    color: var(--accent);
+  }
+
   .approve {
-    padding: 6px 14px;
+    justify-self: end;
+    padding: 8px 16px;
     border-radius: 6px;
     background: var(--accent);
     color: var(--bg);
+    font-size: 14px;
     font-weight: 500;
-    font-size: 13.5px;
   }
 
   @media (max-width: 520px) {
-    .check {
-      grid-template-columns: 20px minmax(0, 1fr);
-    }
-
-    .detail {
-      grid-column: 2;
+    .checks ul {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

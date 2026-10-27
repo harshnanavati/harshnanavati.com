@@ -1,160 +1,124 @@
 ---
-// Illustration of a graded topic quiz: the learner's answers checked against the answer
-// key, the score against the pass mark. Questions and answers are made up.
+// Illustration of a graded topic quiz: the learner's answers checked against the answer key, the
+// score against the pass mark, and the next topic unlocked. Questions and answers are made up.
+import Mark from './Mark.astro';
 import MomentFrame from './MomentFrame.astro';
 
-const answers = [
-  { q: 'What does len([3, 1, 4]) return?', given: '3', key: '3' },
-  { q: 'Which method adds an item to the end of a list?', given: 'append()', key: 'append()' },
-  { q: 'For nums = [2, 4, 6], what is nums[-1]?', given: '2', key: '6' },
-  { q: 'What does [1, 2] + [3] give?', given: '[1, 2, 3]', key: '[1, 2, 3]' },
+const notes = [
+  { title: 'AI agents write the lesson and quiz', text: 'Every question comes with its answer key.' },
+  { title: 'Code grades the answers', text: 'Checked against the key, so the same answers always get the same score.' },
+  { title: 'Pass to move on', text: '70% on a topic quiz unlocks the next topic.' },
 ];
-const correct = answers.filter((a) => a.given === a.key).length;
-const score = Math.round((correct / answers.length) * 100);
+
+const questions = [
+  { q: 'What does len([3, 1, 4]) return?', answer: '3', correct: true },
+  { q: 'Which method adds an item to the end of a list?', answer: 'append()', correct: true },
+  { q: 'For nums = [2, 4, 6], what is nums[-1]?', answer: '2', correct: false, key: '6' },
+  { q: 'What does [1, 2] + [3] give?', answer: '[1, 2, 3]', correct: true },
+];
 ---
 
-<MomentFrame caption="Illustration with made-up questions and answers. Not output from the live system.">
-  <div class="head">
-    <p class="topic">Beginner · Data Structures · <strong>Lists</strong></p>
-    <p class="kind">Topic quiz, written by the LLM with its answer key</p>
-  </div>
-
-  <ol class="answers">
+<MomentFrame notes={notes}>
+  <p class="quiz-title">Lists, beginner quiz</p>
+  <div class="at">
+    <Mark n={1} />
+    <ol class="questions">
     {
-      answers.map((a) => {
-        const right = a.given === a.key;
-        return (
-          <li class:list={['answer', { wrong: !right }]}>
-            <svg class="mark" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-              <circle cx="10" cy="10" r="9" />
-              {right ? <path d="M6 10.5l2.6 2.6L14 7.6" /> : <path d="M7 7l6 6M13 7l-6 6" />}
-            </svg>
-            <span class="q">{a.q}</span>
-            <span class="given">
-              <code>{a.given}</code>
-              {!right && (
-                <span class="key">
-                  key <code>{a.key}</code>
-                </span>
-              )}
-            </span>
-          </li>
-        );
-      })
+      questions.map((item, i) => (
+        <li class:list={['q', { 'key at': i === 2 }]}>
+          {i === 2 && <Mark n={2} />}
+          <span>{item.q}</span>
+          <span class="answer">
+            {item.answer}{' '}
+            {item.correct ? (
+              <span class="tick" aria-label="correct">
+                ✓
+              </span>
+            ) : (
+              <>
+                <span class="cross" aria-label="wrong">
+                  ✗
+                </span>{' '}
+                key: {item.key}
+              </>
+            )}
+          </span>
+        </li>
+      ))
     }
-  </ol>
-
-  <div class="verdict">
-    <p>
-      <strong>
-        {correct} of {answers.length} correct, {score}%
-      </strong>
-      <span class="muted">Pass mark 70%, checked by code</span>
-    </p>
-    <span class="next">Passed: Dictionaries unlocked</span>
+    </ol>
   </div>
+  <p class="result at">
+    <Mark n={3} />
+    <span><strong>3 of 4 correct, 75%.</strong> <span class="pass">Pass mark 70%</span></span>
+    <span class="unlocked">Next topic unlocked: Dictionaries</span>
+  </p>
 </MomentFrame>
 
 <style>
-  p {
+  .quiz-title {
     margin: 0;
-  }
-
-  .topic {
-    font-size: 14px;
-  }
-
-  .kind {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--muted);
   }
 
-  .answers {
+  .questions {
+    margin: 0;
+    padding: 0 0 0 4px;
     list-style: none;
-    margin: 12px 0 0;
-    padding: 0;
+  }
+
+  .q {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 12px;
+    padding: 8px 0 8px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14.5px;
+  }
+
+  .q.key {
+    padding-right: 10px;
+    border-radius: 6px;
   }
 
   .answer {
-    display: grid;
-    grid-template-columns: 20px minmax(0, 1fr) auto;
-    gap: 10px;
-    align-items: start;
-    padding: 9px 2px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .mark circle {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.6;
-  }
-
-  .mark path {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .wrong .mark circle,
-  .wrong .mark path {
-    stroke: var(--muted);
-  }
-
-  .given {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
-  }
-
-  code {
     font-family: var(--font-mono);
-    font-size: 12.5px;
+    font-size: 13px;
   }
 
-  .key {
-    font-size: 12px;
+  .tick {
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .cross {
+    font-weight: 700;
+    color: #b54a4a;
+  }
+
+  .result {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px 16px;
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  .pass {
     color: var(--muted);
   }
 
-  .verdict {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-top: 14px;
-    font-size: 14px;
-  }
-
-  .verdict p {
-    display: grid;
-  }
-
-  .verdict .muted {
-    font-size: 12.5px;
-  }
-
-  .next {
-    padding: 6px 14px;
+  .unlocked {
+    padding: 8px 14px;
     border-radius: 6px;
     background: var(--accent);
     color: var(--bg);
+    font-size: 14px;
     font-weight: 500;
-    font-size: 13.5px;
-  }
-
-  @media (max-width: 520px) {
-    .answer {
-      grid-template-columns: 20px minmax(0, 1fr);
-    }
-
-    .given {
-      grid-column: 2;
-      align-items: flex-start;
-    }
   }
 </style>

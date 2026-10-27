@@ -53,6 +53,13 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
   ogImage={`/og/${slug}.png`}
   ogType="article"
 >
+  <div class="case-bar" aria-hidden="true">
+    <div class="container wide case-bar-inner">
+      <span class="case-bar-name">{name}</span>
+      {descriptor && <span class="case-bar-descriptor">{descriptor}</span>}
+    </div>
+  </div>
+
   <article class="container wide case">
     <header class="hero">
       <div class="hero-text">
@@ -145,6 +152,18 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
 </BaseLayout>
 
 <script>
+  // Once the big title scrolls up under the header, a slim bar with the project's name takes its place,
+  // so a reader always knows which project they're in. It goes away when the title comes back.
+  const bar = document.querySelector('.case-bar');
+  const title = document.querySelector('main h1');
+  if (bar && title) {
+    const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 72;
+    new IntersectionObserver(
+      ([entry]) => bar.classList.toggle('shown', !entry.isIntersecting && entry.boundingClientRect.top < header),
+      { rootMargin: `-${header}px 0px 0px 0px` },
+    ).observe(title);
+  }
+
   // Highlight the section being read in the side nav.
   const links = new Map(
     [...document.querySelectorAll<HTMLAnchorElement>('nav.toc a')].map((a) => [a.hash.slice(1), a]),
@@ -166,6 +185,64 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
 </script>
 
 <style>
+  /* Jumps to a section stop below both the header and the project-name bar. */
+  :global(html:has(.case-bar)) {
+    --case-bar: 48px;
+    scroll-padding-top: calc(var(--header-height) + var(--case-bar) + 16px);
+  }
+
+  .case-bar {
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    left: 0;
+    z-index: 40;
+    background: var(--bg);
+    box-shadow: 0 1px 0 var(--border);
+    transform: translateY(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.2s ease,
+      visibility 0.2s;
+  }
+
+  .case-bar.shown {
+    transform: none;
+    visibility: visible;
+  }
+
+  .case-bar-inner {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    height: var(--case-bar);
+    padding-top: 12px;
+    padding-bottom: 12px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .case-bar-name {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .case-bar-descriptor {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* Phones have room for the name only. */
+  @media (max-width: 599px) {
+    .case-bar-descriptor {
+      display: none;
+    }
+  }
+
   .case {
     --toc-width: 196px;
     --body-gap: 64px;
@@ -299,7 +376,6 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
   }
 
   .stage :global(.product-moment) {
-    max-width: 800px;
     margin: 0 auto;
   }
 
@@ -433,10 +509,56 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     }
   }
 
+  /* Wide screens: one full-width column at the top. A side column always left a gap, because the
+     intro and the details run to different lengths on every project. Instead the details sit in a
+     quiet strip between two rules, with the stack taking whatever width is left. */
   @media (min-width: 1024px) {
     .hero {
-      grid-template-columns: minmax(0, 1fr) 300px;
-      gap: 56px;
+      gap: 28px;
+    }
+
+    .meta-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px 48px;
+      padding: 16px 0;
+      border: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+    }
+
+    .meta-card dl {
+      display: flex;
+      flex: 1;
+      gap: 16px 48px;
+    }
+
+    .meta-card dl > div {
+      flex: 0 1 auto;
+      max-width: 260px;
+    }
+
+    .meta-card dl > div:last-child {
+      flex: 1 1 320px;
+      max-width: none;
+    }
+
+    .meta-card :global(.links-out) {
+      flex: 0 0 auto;
+      align-self: center;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .stats {
+      margin-top: 28px;
+    }
+
+    .stage {
+      margin-top: 24px;
+      padding: 32px;
     }
 
     .body {
@@ -449,7 +571,7 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     .toc {
       display: block;
       position: sticky;
-      top: calc(var(--header-height) + 24px);
+      top: calc(var(--header-height) + var(--case-bar) + 24px);
     }
 
     .toc ul {

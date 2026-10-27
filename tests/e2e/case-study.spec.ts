@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 const box = async (page: Page, selector: string) => {
   const b = await page.locator(selector).first().evaluate((el) => {
     const r = el.getBoundingClientRect();
-    return { left: Math.round(r.left), right: Math.round(r.right), top: Math.round(r.top) };
+    return { left: Math.round(r.left), right: Math.round(r.right), top: Math.round(r.top), bottom: Math.round(r.bottom) };
   });
   return b;
 };
@@ -11,16 +11,21 @@ const box = async (page: Page, selector: string) => {
 test.describe('case study on a wide screen', () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
 
-  test('hero and stage share the header’s edges; the architecture fills the reading column', async ({ page }) => {
+  test('the top runs full width: details strip and illustration share the header’s edges', async ({ page }) => {
     await page.goto('/work/quantumcopilot/');
     const nav = await box(page, 'header nav');
     const h1 = await box(page, 'main h1');
+    const meta = await box(page, '.meta-card');
     const stage = await box(page, '.stage');
     const arch = await box(page, 'figure.architecture');
     const text = await box(page, '.prose > p');
     expect(h1.left).toBe(nav.left);
+    // No side column at the top, so nothing can leave an empty gap beside a shorter neighbour.
+    expect(meta.left).toBe(nav.left);
+    expect(meta.right).toBe(nav.right);
     expect(stage.left).toBe(nav.left);
     expect(stage.right).toBe(nav.right);
+    expect(stage.top).toBeGreaterThan(meta.bottom);
     expect(arch.left).toBe(text.left);
     expect(arch.right).toBe(nav.right);
   });
@@ -43,11 +48,16 @@ test.describe('case study on a wide screen', () => {
     });
   }
 
-  test('the meta card sits beside the title', async ({ page }) => {
+  test('the details sit in one strip under the intro, with the stack in the widest column', async ({ page }) => {
     await page.goto('/work/quantumcopilot/');
-    const h1 = await box(page, 'main h1');
+    const intro = await box(page, '.outcome');
     const card = await box(page, '.meta-card');
-    expect(card.left).toBeGreaterThan(h1.left + 400);
+    expect(card.top).toBeGreaterThan(intro.top);
+    const cells = await page.locator('.meta-card dl > div').evaluateAll((els) =>
+      els.map((el) => ({ top: Math.round(el.getBoundingClientRect().top), width: el.getBoundingClientRect().width })),
+    );
+    expect(new Set(cells.map((c) => c.top)).size).toBe(1);
+    expect(cells.at(-1)!.width).toBe(Math.max(...cells.map((c) => c.width)));
   });
 
   test('the section nav is visible and stays in view while reading', async ({ page }) => {
@@ -149,4 +159,23 @@ test.describe('resume layout', () => {
     expect(aside.left).toBe(main.left);
     expect(aside.top).toBeGreaterThan(main.top);
   });
+});
+
+test.describe('project name while reading', () => {
+  for (const width of [375, 1440]) {
+    test(`appears in a bar under the header once the title scrolls away, and goes when it returns, at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/work/rag-support-chatbot/');
+      const bar = page.locator('.case-bar');
+      await expect(bar).toBeHidden();
+      await page.mouse.wheel(0, 1500);
+      await expect(bar).toBeVisible();
+      await expect(bar).toContainText('RAG Support Chatbot');
+      const headerBottom = await page.locator('.site-header').evaluate((el) => Math.round(el.getBoundingClientRect().bottom));
+      // It slides in, so wait for it to settle right under the header.
+      await expect.poll(async () => Math.round((await bar.boundingBox())!.y)).toBe(headerBottom);
+      await page.mouse.wheel(0, -5000);
+      await expect(bar).toBeHidden();
+    });
+  }
 });

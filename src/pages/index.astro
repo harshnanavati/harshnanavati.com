@@ -73,14 +73,14 @@ const stages = [
           Solutions I've built seven AI systems<Cite
             n={1}
             id="hero-systems"
-            source="Selected work"
+            source="Case studies"
             basis="Seven of the eight case studies on the Work page are Masterly Solutions work: four client projects and three in-house products, two of them live. The eighth is a personal project."
             href="/work/"
             linkText="Go to the work"
           />, the largest used by 8,800+ people<Cite
             n={2}
             id="hero-users"
-            source="RAG Support Chatbot – Self-Correcting Customer Support"
+            source="RAG Support Chatbot – Customer Support Assistant"
             basis="The support chatbot has answered 30,000+ questions for 8,800+ people in production since May 2025."
             href="/work/rag-support-chatbot/#results"
             linkText="Go to the support chatbot's results"
@@ -95,7 +95,6 @@ const stages = [
           I work remotely from India on IST (UTC+5:30), with 4+ hours of overlap with US East and Europe. Open to
           full-time, contract or employer of record roles.
         </p>
-        <p class="cite-note muted">Claims on this site link to their evidence. Tap a small number to see it.</p>
         {
           INTRO_VIDEO.youtubeId && (
             <p class="intro-video">
@@ -137,7 +136,7 @@ const stages = [
     </section>
 
     <section id="work">
-      <h2>Selected work</h2>
+      <h2>Featured work</h2>
       <WorkGrid entries={featured} previews={false} />
       <p class="all-work">
         <a href="/work/">View all {work.length} case studies</a>
@@ -202,10 +201,6 @@ const stages = [
     object-fit: cover;
   }
 
-  .cite-note {
-    margin: 1rem 0 0;
-    font-size: 14px;
-  }
 
   .ctas {
     display: flex;

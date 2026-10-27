@@ -1,74 +1,37 @@
 ---
-// Illustration of the concierge: one cached prompt, with follow-ups drawn only from the real
-// FAQ list. Questions, places and answers are invented.
+// Illustration of the concierge: an answer from the cached FAQs with suggested follow-ups, and a
+// fixed reply for a request it can't handle. Questions and answers are made up.
+import Mark from './Mark.astro';
 import MomentFrame from './MomentFrame.astro';
+
+const notes = [
+  { title: 'Answers from about 50 FAQs', text: "They all fit in one cached prompt, so there's no search step that can miss." },
+  { title: 'Suggests what to ask next', text: 'Only from the real FAQ list, never invented.' },
+  { title: 'Clear limits', text: 'Out-of-scope requests get a fixed reply, so it never promises anything.' },
+];
 ---
 
-<MomentFrame caption="Illustration with made-up questions and answers. Not client content.">
-  <section class="bot" aria-label="Concierge bot example">
-    <p class="bot-name">Concierge · one cached prompt</p>
-    <p class="user">Anywhere good to eat near the fields?</p>
-    <div class="reply">
-      <p>Three family places are within a 10-minute walk, and two of them take large groups without a booking.</p>
-      <span class="follow">
-        <span class="chip">Late-night food</span>
-        <span class="chip">Parking nearby</span>
-      </span>
-    </div>
-    <p class="user">Can you book us a table for tonight?</p>
-    <div class="reply">
-      <p>I can’t make bookings, but the event help desk can point you to places that take reservations.</p>
-      <span class="chip">Fixed reply for out-of-scope requests</span>
-    </div>
-  </section>
+<MomentFrame notes={notes}>
+  <p class="bubble user">Anywhere good to eat near the fields?</p>
+  <div class="bubble ai at">
+    <Mark n={1} />Three family places are within a 10-minute walk, and two take large groups without a booking.
+    <span class="chips follow"><Mark n={2} /><span class="chip">Late-night food</span><span class="chip">Parking nearby</span></span>
+  </div>
+  <p class="bubble user">Can you book us a table for tonight?</p>
+  <p class="bubble ai key at">
+    <Mark n={3} />I can't make bookings, but the event help desk can point you to places that take reservations.
+  </p>
 </MomentFrame>
 
 <style>
-  p {
-    margin: 0;
-  }
-
-  .bot {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .bot-name {
-    font-size: 12.5px;
-    color: var(--muted);
-  }
-
-  .user {
-    align-self: flex-end;
-    max-width: 92%;
-    padding: 8px 12px;
-    border-radius: 12px 12px 2px 12px;
-    background: color-mix(in srgb, var(--accent) 14%, transparent);
-  }
-
-  .reply {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 12px 14px;
-    border-radius: 12px 12px 12px 2px;
-    background: var(--surface);
-  }
-
+  /* The second marker sits in line with the suggestions it points to. */
   .follow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    align-items: center;
   }
 
-  .chip {
-    padding: 3px 9px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 12.5px;
-    color: var(--muted);
-    background: var(--bg);
+  .follow :global(.m) {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
   }
 </style>

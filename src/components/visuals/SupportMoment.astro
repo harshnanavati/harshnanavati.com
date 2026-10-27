@@ -1,76 +1,29 @@
 ---
-// Illustration of the support bot: a personal answer from the family's own schedule, and
-// an answer that now reflects a staff correction. Questions, teams and times are invented.
+// Illustration of the RAG support chatbot: a personal answer from the family's schedule, and a staff
+// correction that fixes an answer for everyone. Questions and answers are made up.
+import Mark from './Mark.astro';
 import MomentFrame from './MomentFrame.astro';
+
+const notes = [
+  { title: 'Personal answers', text: "It reads the family's own schedule, not just the general FAQs." },
+  { title: 'Staff fix a wrong answer once', text: 'The correction goes straight into the knowledge base.' },
+  { title: 'Everyone gets the fixed answer', text: "The mistake isn't repeated, so fewer questions reach staff." },
+];
 ---
 
-<MomentFrame caption="Illustration with made-up questions and answers. Not client content.">
-  <section class="bot" aria-label="Support bot example">
-    <p class="bot-name">Support bot · RAG</p>
-    <p class="user">When does my team play next?</p>
-    <div class="reply">
-      <p>Your team plays on Field 4 tomorrow at 2:30 PM. Check in at the field desk 45 minutes before.</p>
-      <span class="chip">From your team’s schedule</span>
-    </div>
-    <p class="user">Can we bring our own canopy to the field?</p>
-    <div class="reply">
-      <p>Yes, team canopies are allowed behind the dugout fence, but not along the foul lines.</p>
-      <span class="chip corrected">Updated from a staff correction</span>
-    </div>
-  </section>
+<MomentFrame notes={notes}>
+  <p class="bubble user">When does my team play next?</p>
+  <div class="bubble ai at">
+    <Mark n={1} />Field 4, tomorrow at 2:30 PM. Check in at the field desk 45 minutes before.
+    <span class="chips"><span class="chip">From your team's schedule</span></span>
+  </div>
+  <p class="bubble user">Can we bring our own canopy to the field?</p>
+  <p class="bubble ai key at">
+    <Mark n={2} /><span class="label">Staff correction, saved to the knowledge base</span>Canopies are allowed behind
+    the dugout fence, not along the foul lines.
+  </p>
+  <div class="bubble ai at">
+    <Mark n={3} />Yes, team canopies are allowed behind the dugout fence, but not along the foul lines.
+    <span class="chips"><span class="chip">Learned from a staff correction</span></span>
+  </div>
 </MomentFrame>
-
-<style>
-  p {
-    margin: 0;
-  }
-
-  .bot {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .bot-name {
-    font-size: 12.5px;
-    color: var(--muted);
-  }
-
-  .user {
-    align-self: flex-end;
-    max-width: 92%;
-    padding: 8px 12px;
-    border-radius: 12px 12px 2px 12px;
-    background: color-mix(in srgb, var(--accent) 14%, transparent);
-  }
-
-  .reply {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 12px 14px;
-    border-radius: 12px 12px 12px 2px;
-    background: var(--surface);
-  }
-
-  .follow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .corrected {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .chip {
-    padding: 3px 9px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 12.5px;
-    color: var(--muted);
-    background: var(--bg);
-  }
-</style>

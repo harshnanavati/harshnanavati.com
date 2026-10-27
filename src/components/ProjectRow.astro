@@ -92,7 +92,13 @@ const hasPreview = Astro.slots.has('preview');
     color: var(--muted);
   }
 
-  .preview-inner :global(figcaption) {
+  /* A card shows just the illustration's screen: its notes and markers belong on the case study. */
+  .preview-inner :global(.product-moment) {
+    display: block;
+  }
+
+  .preview-inner :global(.notes),
+  .preview-inner :global(.m) {
     display: none;
   }
 

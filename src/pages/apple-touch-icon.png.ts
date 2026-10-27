@@ -5,7 +5,7 @@ import type { APIRoute } from 'astro';
 import satori from 'satori';
 
 const require = createRequire(import.meta.url);
-const font = readFileSync(require.resolve('@fontsource/inter/files/inter-latin-500-normal.woff'));
+const font = readFileSync(require.resolve('@fontsource/inter/files/inter-latin-700-normal.woff'));
 
 // The home-screen icon for iPhones and iPads: the favicon's monogram on a full square,
 // since iOS rounds the corners itself and fills any transparency with black.
@@ -23,14 +23,14 @@ export const GET: APIRoute = async () => {
           background: '#1f3864',
           color: '#ffffff',
           fontSize: 72,
-          fontWeight: 500,
+          fontWeight: 700,
           fontFamily: 'Inter',
-          letterSpacing: 2,
+          letterSpacing: -2,
         },
         children: 'HN',
       },
     },
-    { width: 180, height: 180, fonts: [{ name: 'Inter', data: font, weight: 500, style: 'normal' }] },
+    { width: 180, height: 180, fonts: [{ name: 'Inter', data: font, weight: 700, style: 'normal' }] },
   );
   const png = new Resvg(svg).render().asPng();
   return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });

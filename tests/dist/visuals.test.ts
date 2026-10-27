@@ -16,10 +16,18 @@ const KEY_IDEA: Record<(typeof WORK_SLUGS)[number], string> = {
 };
 
 describe.each(WORK_SLUGS)('visuals on %s', (slug) => {
-  it('opens with a product illustration that is labelled as one', () => {
+  it('explains its illustration with numbered notes, one marker on the screen for each', () => {
+    const moment = main(slug).querySelector('.stage .product-moment')!;
+    const notes = moment.querySelectorAll('.notes > li');
+    expect(notes.length).toBeGreaterThanOrEqual(2);
+    const markers = moment.querySelectorAll('.screen .m').map((m) => m.text.trim());
+    expect(markers).toEqual(notes.map((_, i) => String(i + 1)));
+  });
+
+  it('opens with a product illustration, with no disclaimer caption under it', () => {
     const moment = main(slug).querySelector('.stage .product-moment');
     expect(moment).not.toBeNull();
-    expect(moment!.querySelector('figcaption')!.text).toContain('Illustration');
+    expect(moment!.querySelector('figcaption')).toBeNull();
   });
 
   it('has an accessible architecture diagram with exactly one key component', () => {
@@ -42,7 +50,7 @@ describe('face matching illustration', () => {
   it('uses silhouettes only, never images', () => {
     const m = main('ai-face-matching');
     expect(m.querySelectorAll('img')).toHaveLength(0);
-    expect(m.querySelector('.product-moment figcaption')!.text).toContain('silhouettes');
+    expect(m.querySelector('.product-moment')).not.toBeNull();
   });
 });
 

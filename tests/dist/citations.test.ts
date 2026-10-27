@@ -12,8 +12,8 @@ describe('home page citations', () => {
     expect(cites[1].getAttribute('data-href')).toBe('/work/rag-support-chatbot/#results');
   });
 
-  it('explains the idea in one quiet line', () => {
-    expect(home().querySelector('.cite-note')!.text).toContain('link to their evidence');
+  it('lets the evidence markers speak for themselves, with no instructions line', () => {
+    expect(home().querySelector('.cite-note')).toBeNull();
   });
 
   it('backs each "How I build" stage with a proof that links to its case study', () => {

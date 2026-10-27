@@ -1,6 +1,8 @@
 ---
-// Illustration of a QuantumCopilot answer. Example numbers only, computed here with
-// the standard EMI formula; not a screenshot of the live product.
+// Illustration of a QuantumCopilot answer: the question, the exact inputs the LLM extracts from it, and
+// the scenarios the calculation engine returns. Example numbers only, computed here with the standard
+// EMI formula; not a screenshot of the live product.
+import Mark from './Mark.astro';
 import MomentFrame from './MomentFrame.astro';
 
 const PRINCIPAL = 2_000_000;
@@ -19,122 +21,93 @@ const scenarios = RATES.map((rate) => {
   const monthly = emi(PRINCIPAL, rate, YEARS);
   return { rate, monthly, interest: monthly * YEARS * 12 - PRINCIPAL };
 });
-const saving = scenarios[0].interest - scenarios[scenarios.length - 1].interest;
+
+const notes = [
+  { title: 'Borrowers ask in plain English', text: 'About any of six loan products.' },
+  { title: 'The AI turns it into exact inputs', text: 'Loan type, amount, term and the rates to compare.' },
+  { title: 'A calculation engine does the maths', text: 'Every figure is calculated, never made up by the AI.' },
+];
 ---
 
-<MomentFrame
-  caption="Illustration with example numbers, calculated with the standard EMI formula. Not a screenshot of the live product."
->
-  <div class="chat">
-    <p class="user">What's my EMI on a ₹20 lakh home loan over 15 years? And what if the rate drops?</p>
-    <div class="reply">
-      <p>Here are three rate scenarios for a ₹20,00,000 home loan over 15 years:</p>
-      <table>
-        <thead>
-          <tr><th scope="col">Rate</th><th scope="col">Monthly EMI</th><th scope="col">Total interest</th></tr>
-        </thead>
-        <tbody>
-          {
-            scenarios.map((s) => (
-              <tr>
-                <td>{s.rate.toFixed(1)}%</td>
-                <td>{inr(s.monthly)}</td>
-                <td>{inr(s.interest)}</td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-      <p>Dropping from 9.0% to 8.0% saves you {inr(saving)} in interest.</p>
-      <p class="follow-ups">
-        <span class="chip">Make it 20 years</span>
-        <span class="chip">Compare a car loan</span>
-      </p>
-    </div>
+<MomentFrame notes={notes}>
+  <p class="bubble user at"><Mark n={1} />What's my EMI on a ₹20 lakh home loan over 15 years? And what if the rate drops?</p>
+  <p class="parsed at">
+    <Mark n={2} />
+    <span>Understood as</span>
+    <span class="chip">Home loan</span>
+    <span class="chip">{inr(PRINCIPAL)}</span>
+    <span class="chip">{YEARS} years</span>
+    <span class="chip">{RATES.map((r) => `${r.toFixed(1)}%`).join(', ')}</span>
+  </p>
+  <div class="result key at">
+    <Mark n={3} />
+    <table>
+      <thead>
+        <tr><th scope="col">Rate</th><th scope="col">Monthly EMI</th><th scope="col">Total interest</th></tr>
+      </thead>
+      <tbody>
+        {
+          scenarios.map((s) => (
+            <tr>
+              <td>{s.rate.toFixed(1)}%</td>
+              <td>{inr(s.monthly)}</td>
+              <td>{inr(s.interest)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
   </div>
 </MomentFrame>
 
 <style>
-  .chat {
+  .parsed {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .chat p {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
     margin: 0;
+    padding-left: 20px;
+    font-size: 13px;
+    color: var(--muted);
   }
 
-  .user {
-    align-self: flex-end;
-    max-width: 85%;
-    padding: 8px 12px;
-    border-radius: 12px 12px 2px 12px;
-    background: color-mix(in srgb, var(--accent) 14%, transparent);
+  .parsed .chip {
+    color: var(--text);
   }
 
-  .reply {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .result {
     padding: 12px 14px;
-    border-radius: 12px 12px 12px 2px;
-    background: var(--surface);
+    border-radius: 10px;
   }
 
   table {
-    border-collapse: collapse;
     width: 100%;
-    font-size: 13.5px;
-  }
-
-  th,
-  td {
-    padding: 5px 8px;
-    border-bottom: 1px solid var(--border);
-    text-align: right;
-    white-space: nowrap;
-  }
-
-  th:first-child,
-  td:first-child {
-    text-align: left;
-  }
-
-  th {
-    font-weight: 500;
-    color: var(--muted);
-  }
-
-  td {
+    border-collapse: collapse;
+    font-size: 14.5px;
     font-variant-numeric: tabular-nums;
   }
 
-  tbody tr:last-child td {
-    color: var(--accent);
-    font-weight: 500;
-  }
-
-  .follow-ups {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .chip {
-    padding: 3px 9px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
+  th {
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--border);
     font-size: 13px;
+    font-weight: 500;
+    text-align: left;
     color: var(--muted);
-    background: var(--bg);
   }
 
-  @media (max-width: 420px) {
-    th,
-    td {
-      padding: 5px 4px;
-      font-size: 12.5px;
-    }
+  td {
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  th:not(:first-child),
+  td:not(:first-child) {
+    text-align: right;
   }
 </style>

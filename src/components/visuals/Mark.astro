@@ -1,0 +1,11 @@
+---
+// A numbered marker on an illustration's screen, matching the note with the same number.
+// Decorative for screen readers: the notes list beside the screen carries the meaning.
+interface Props {
+  n: number;
+}
+
+const { n } = Astro.props;
+---
+
+<span class="m" aria-hidden="true">{n}</span>

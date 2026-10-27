@@ -8,7 +8,7 @@ const TITLES: Record<(typeof WORK_SLUGS)[number], [string, string?]> = {
   'crickpal-ai-summary': ['CrickPal AI Summary', 'Real-Time LLM Commentary Engine'],
   'ai-face-matching': ['AI Face Matching System', 'GPU Photo-Tagging Pipeline'],
   quantumcopilot: ['QuantumCopilot', 'AI Loan & Financial Assistant'],
-  'rag-support-chatbot': ['RAG Support Chatbot', 'Self-Correcting Customer Support'],
+  'rag-support-chatbot': ['RAG Support Chatbot', 'Customer Support Assistant'],
   'concierge-chatbot': ['Concierge Chatbot', 'Long-Context Visitor Assistant'],
   vipermind: ['ViperMind', 'Multi-Agent Python Tutor'],
 };

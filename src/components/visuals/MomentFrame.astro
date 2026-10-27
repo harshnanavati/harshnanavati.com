@@ -1,49 +1,172 @@
 ---
-// The panel every product illustration sits in, plus its caption. No fake browser
-// chrome: captions always say it's an illustration, so nothing reads as a screenshot.
+// The panel every product illustration sits in: a simplified screen, and beside it numbered notes
+// in plain English. Small numbered markers on the screen (Mark.astro) tie each part to its note,
+// in the same numbered-circle style as the home page's How I build. No fake browser chrome, so it
+// reads as an illustration rather than a screenshot.
 interface Props {
-  caption: string;
+  notes: { title: string; text: string }[];
 }
 
-const { caption } = Astro.props;
+const { notes } = Astro.props;
 ---
 
 <figure class="product-moment">
-  <div class="window">
-    <div class="window-body">
-      <slot />
-    </div>
+  <div class="screen">
+    <slot />
   </div>
-  <figcaption>{caption}</figcaption>
+  <ol class="notes">
+    {
+      notes.map((note, i) => (
+        <li>
+          <span class="m" aria-hidden="true">
+            {i + 1}
+          </span>
+          <div>
+            <p class="note-title">{note.title}</p>
+            <p class="note-text">{note.text}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
 </figure>
 
 <style>
   .product-moment {
+    --user: color-mix(in srgb, var(--accent) 11%, var(--bg));
+    --tint: color-mix(in srgb, var(--accent) 7%, var(--bg));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
     margin: 0;
   }
 
-  .window {
+  .screen {
+    position: relative;
+    display: grid;
+    gap: 12px;
+    padding: 22px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    overflow: hidden;
     background: var(--bg);
+    font-size: 15px;
+    line-height: 1.5;
   }
 
-  .window-body {
-    padding: 18px;
+  .notes {
+    display: grid;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .notes li {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .note-title {
+    margin: 1px 0 3px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .note-text {
+    margin: 0;
     font-size: 14.5px;
-    line-height: 1.55;
+    line-height: 1.5;
+    color: var(--muted);
   }
 
-  figcaption {
-    margin-top: 10px;
+  /* Shared pieces the illustrations are built from. */
+  .product-moment :global(.m) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .product-moment :global(.at) {
+    position: relative;
+  }
+
+  .product-moment :global(.at > .m) {
+    position: absolute;
+    top: -9px;
+    left: -9px;
+    z-index: 1;
+    box-shadow: 0 0 0 3px var(--bg);
+  }
+
+  .product-moment :global(.bubble) {
+    max-width: 86%;
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 12px;
+  }
+
+  .product-moment :global(.user) {
+    justify-self: end;
+    background: var(--user);
+  }
+
+  .product-moment :global(.ai) {
+    justify-self: start;
+    background: var(--surface);
+  }
+
+  /* The one part of each illustration that makes the project work. */
+  .product-moment :global(.key) {
+    outline: 2px solid var(--accent);
+    background: var(--tint);
+  }
+
+  .product-moment :global(.chips) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .product-moment :global(.chip) {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg);
     font-size: 13px;
     color: var(--muted);
   }
 
+  .product-moment :global(.label) {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Wide enough for both: the screen and its notes side by side. */
+  @media (min-width: 900px) {
+    .product-moment {
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 40px;
+      align-items: center;
+    }
+  }
+
   @media (max-width: 420px) {
-    .window-body {
-      padding: 12px;
+    .screen {
+      padding: 16px;
       font-size: 14px;
     }
   }

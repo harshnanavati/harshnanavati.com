@@ -69,7 +69,7 @@ export const RESUME = {
           text: 'maps natural-language queries to typed parameters across 6 loan products; parallel scenario fan-out (~3x faster scenario stage), multi-turn memory, and 8 Uvicorn workers on IIS.',
         },
         {
-          lead: 'RAG Support Chatbot – Self-Correcting Customer Support',
+          lead: 'RAG Support Chatbot – Customer Support Assistant',
           href: '/work/rag-support-chatbot/',
           text: 'answered 30,000+ questions for 8,800+ people in production since May 2025, ~86% without a fallback reply; FAISS retrieval over question-and-answer chunks and a staff correction loop that writes fixes back into the knowledge base (~60% fewer escalations, estimated).',
         },

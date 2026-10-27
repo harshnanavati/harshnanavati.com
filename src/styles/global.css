@@ -20,7 +20,7 @@
 /* Below this width the header's tabs drop under the name, so it is two rows tall. */
 @media (max-width: 599px) {
   :root {
-    --header-height: 92px;
+    --header-height: 96px;
   }
 }
 

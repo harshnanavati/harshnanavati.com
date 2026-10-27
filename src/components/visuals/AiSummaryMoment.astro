@@ -1,127 +1,101 @@
 ---
-// Illustration of a live match page with the AI headline and narrative.
-// Teams, players and scores are invented.
+// Illustration of a live match page: the score in plain words, the AI's headline and summary, and
+// the summary refreshing as the match goes on. Teams and scores are invented.
+import Mark from './Mark.astro';
 import MomentFrame from './MomentFrame.astro';
 
-const updates = ['After over 6', 'After over 12', 'After over 16'];
+const notes = [
+  { title: 'Live match data comes in', text: "Every ball's score streams in as the match is played." },
+  { title: 'The AI writes the story', text: 'A headline and short summary fans can read in seconds.' },
+  { title: 'It keeps up with the match', text: 'Refreshed as play goes on, on a self-hosted model with no per-token bill.' },
+];
 ---
 
-<MomentFrame caption="Illustration with a made-up match. Teams and scores are invented.">
-  <div class="scoreline">
-    <span class="team">Northern Hawks</span>
-    <span class="score">132/4 <small>(16.0 ov)</small></span>
-    <span class="vs">vs Coastal Kings</span>
-  </div>
-
-  <div class="summary">
-    <p class="tier">AI headline</p>
+<MomentFrame notes={notes}>
+  <p class="score at">
+    <Mark n={1} /><span>Northern Hawks</span><strong>132 for 4</strong><span class="context">after 16 of 20 overs, against Coastal Kings</span>
+  </p>
+  <div class="story key at">
+    <Mark n={2} />
     <p class="headline">Hawks recover from 42 for 3 with a 90-run stand</p>
-    <p class="tier">AI summary</p>
-    <p class="narrative">
-      Early wickets left the Hawks wobbling at 42 for 3 inside the powerplay. A patient fourth-wicket partnership turned
-      the innings around, rotating strike against spin and cashing in on short deliveries late. They reach the final
-      four overs with wickets in hand and a total above par in sight.
+    <p class="summary">
+      Early wickets left the Hawks in trouble, but a patient partnership turned the innings around. They head into the
+      last four overs with wickets in hand and a strong total in sight.
     </p>
   </div>
-
-  <ol class="timeline" aria-label="Summary updates">
-    {
-      updates.map((u, i) => (
-        <li class:list={{ latest: i === updates.length - 1 }}>
-          {u}
-          {i === updates.length - 1 && <span class="badge">latest</span>}
-        </li>
-      ))
-    }
-  </ol>
+  <p class="refresh at">
+    <Mark n={3} />
+    <span>Over 6</span><span class="pip done"></span><span class="track"></span>
+    <span>Over 12</span><span class="pip done"></span><span class="track"></span>
+    <span>Over 16, latest</span><span class="pip done"></span><span class="track"></span><span class="pip"></span>
+  </p>
 </MomentFrame>
 
 <style>
-  p {
-    margin: 0;
-  }
-
-  .scoreline {
+  .score {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 6px 12px;
-    padding-bottom: 12px;
+    gap: 4px 10px;
+    margin: 0;
+    padding: 0 0 10px 20px;
     border-bottom: 1px solid var(--border);
   }
 
-  .team {
-    font-weight: 500;
-  }
-
-  .score {
+  .score strong {
     font-family: var(--font-serif);
-    font-size: 1.35rem;
+    font-size: 22px;
+    font-weight: 600;
     color: var(--accent);
   }
 
-  .score small {
-    font-family: var(--font-sans);
+  .context {
+    color: var(--muted);
+  }
+
+  .story {
+    padding: 14px 16px;
+    border-radius: 10px;
+  }
+
+  .headline {
+    margin: 0 0 6px;
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .summary {
+    margin: 0;
+  }
+
+  /* A timeline of refreshes: filled points are summaries already written. */
+  .refresh {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 4px 0 0 20px;
     font-size: 13px;
     color: var(--muted);
   }
 
-  .vs {
-    font-size: 13.5px;
-    color: var(--muted);
+  .pip {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
   }
 
-  .summary {
-    display: grid;
-    gap: 4px;
-    margin-top: 14px;
-    padding: 14px 16px;
-    border-radius: 10px;
-    background: var(--surface);
+  .pip.done {
+    background: var(--accent);
   }
 
-  .tier {
-    font-size: 12.5px;
-    color: var(--muted);
-  }
-
-  .headline {
-    margin-bottom: 10px;
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
-    line-height: 1.35;
-  }
-
-  .narrative {
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  .timeline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 14px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .timeline li {
-    padding: 3px 9px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 12.5px;
-    color: var(--muted);
-  }
-
-  .timeline .latest {
-    border-color: var(--accent);
-    color: var(--text);
-  }
-
-  .badge {
-    margin-left: 6px;
-    color: var(--accent);
-    font-weight: 500;
+  .track {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
   }
 </style>
