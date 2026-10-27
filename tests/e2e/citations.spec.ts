@@ -7,7 +7,7 @@ test('clicking a marker opens its evidence card near it, and Esc closes it', asy
   await marker.click();
   const card = page.locator('#cite-hero-users');
   await expect(card).toBeVisible();
-  await expect(card).toContainText('DocuPilot');
+  await expect(card).toContainText('support chatbot');
   const m = (await marker.boundingBox())!;
   const c = (await card.boundingBox())!;
   expect(c.y).toBeGreaterThan(m.y);
@@ -20,7 +20,7 @@ test('the evidence link takes you to the proof', async ({ page }) => {
   await page.goto('/');
   await page.locator('.hero button.cite').nth(1).click();
   await page.locator('#cite-hero-users a').click();
-  await expect(page).toHaveURL(/\/work\/docupilot\/#results$/);
+  await expect(page).toHaveURL(/\/work\/rag-support-chatbot\/#results$/);
 });
 
 test('works from the keyboard', async ({ page }) => {

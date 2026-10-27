@@ -10,7 +10,8 @@ const PAGES = [
   '/work/crickpal-ai-summary/',
   '/work/ai-face-matching/',
   '/work/quantumcopilot/',
-  '/work/support-concierge-chatbots/',
+  '/work/rag-support-chatbot/',
+  '/work/concierge-chatbot/',
 ];
 
 test.describe('no horizontal overflow at 360px', () => {
@@ -75,7 +76,7 @@ test.describe('mobile diagram stacks vertically', () => {
 
 test('desktop diagram flows left to right', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto('/work/support-concierge-chatbots/');
+  await page.goto('/work/concierge-chatbot/');
   const steps = page.locator('.prose > figure.diagram .lane').first().locator('.step');
   const first = await steps.nth(0).boundingBox();
   const second = await steps.nth(1).boundingBox();

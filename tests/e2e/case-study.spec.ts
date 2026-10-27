@@ -25,7 +25,7 @@ test.describe('case study on a wide screen', () => {
     expect(arch.right).toBe(nav.right);
   });
 
-  for (const slug of ['quantumcopilot', 'support-concierge-chatbots', 'docupilot']) {
+  for (const slug of ['quantumcopilot', 'rag-support-chatbot', 'docupilot']) {
     test(`the section nav is never covered while scrolling ${slug}`, async ({ page }) => {
       await page.goto(`/work/${slug}/`);
       const firstLink = page.locator('nav.toc a').first();
@@ -69,8 +69,8 @@ test.describe('case study on a wide screen', () => {
     expect(b.x).toBeGreaterThan(a.x);
   });
 
-  test('the chatbots page’s second diagram fills the reading column', async ({ page }) => {
-    await page.goto('/work/support-concierge-chatbots/');
+  test('the concierge page’s before-and-after diagram fills the reading column', async ({ page }) => {
+    await page.goto('/work/concierge-chatbot/');
     const nav = await box(page, 'header nav');
     const text = await box(page, '.prose > p');
     const second = await box(page, '.prose > figure.diagram');
@@ -88,7 +88,7 @@ test.describe('architecture diagrams on a wide screen', () => {
     'crickpal-ai-summary',
     'ai-face-matching',
     'quantumcopilot',
-    'support-concierge-chatbots',
+    'rag-support-chatbot',
     'vipermind',
   ]) {
     test(`${slug} shows its architecture across the reading column`, async ({ page }) => {

@@ -27,20 +27,20 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
         <h1>I build production LLM systems: RAG, AI agents and evaluation.</h1>
         <p class="lede">
           I design and ship production AI: retrieval, agents, real-time LLM pipelines and computer vision. At Masterly
-          Solutions I've built six AI systems<Cite
+          Solutions I've built seven AI systems<Cite
             n={1}
             id="hero-systems"
             source="Selected work"
-            basis="Six of the case studies on this page are Masterly Solutions work: three client projects and three in-house products, two of them live. The seventh is a personal project."
+            basis="Seven of the case studies on this page are Masterly Solutions work: four client projects and three in-house products, two of them live. The eighth is a personal project."
             href="#work"
             linkText="Go to the work"
-          />, the largest used by 600+ staff<Cite
+          />, the largest used by 8,800+ people<Cite
             n={2}
             id="hero-users"
-            source="DocuPilot – Enterprise RAG Platform"
-            basis="DocuPilot alone is used by 600+ staff in production."
-            href="/work/docupilot/#results"
-            linkText="Go to DocuPilot's results"
+            source="RAG Support Chatbot – Self-Correcting Customer Support"
+            basis="The support chatbot has answered 30,000+ questions for 8,800+ people in production since May 2025."
+            href="/work/rag-support-chatbot/#results"
+            linkText="Go to the support chatbot's results"
           />.
         </p>
         <p class="ctas">
@@ -170,9 +170,11 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     font-size: 15px;
   }
 
+  /* On phones the photo leads the hero, small, so a visitor sees who this is first. */
   .photo {
-    width: 180px;
-    height: 180px;
+    order: -1;
+    width: 96px;
+    height: 96px;
     border-radius: 50%;
     object-fit: cover;
   }
@@ -254,6 +256,7 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     }
 
     .photo {
+      order: 0;
       width: 220px;
       height: 220px;
     }

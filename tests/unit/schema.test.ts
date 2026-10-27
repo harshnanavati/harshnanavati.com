@@ -40,8 +40,8 @@ describe('workSchema', () => {
     expect(() => workSchema.parse({ ...valid, youtubeId: 'short' })).toThrow();
   });
 
-  it('rejects an order outside 1–7', () => {
-    expect(() => workSchema.parse({ ...valid, order: 8 })).toThrow();
+  it('rejects an order outside 1–8', () => {
+    expect(() => workSchema.parse({ ...valid, order: 9 })).toThrow();
   });
 
   it('rejects a number without a stated basis', () => {

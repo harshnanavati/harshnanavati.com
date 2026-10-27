@@ -10,7 +10,8 @@ const KEY_IDEA: Record<(typeof WORK_SLUGS)[number], string> = {
   'crickpal-ai-summary': 'new balls only',
   'ai-face-matching': 'Job queue',
   quantumcopilot: 'typed parameters',
-  'support-concierge-chatbots': 'correction loop',
+  'rag-support-chatbot': 'correction loop',
+  'concierge-chatbot': 'cached prompt',
   vipermind: 'graded by code',
 };
 
@@ -22,17 +23,18 @@ describe.each(WORK_SLUGS)('visuals on %s', (slug) => {
   });
 
   it('has an accessible architecture diagram with exactly one key component', () => {
-    const fig = main(slug).querySelector('figure.architecture');
+    // The concierge story is a before-and-after, told by its step diagram instead.
+    const fig = main(slug).querySelector(slug === 'concierge-chatbot' ? 'figure.diagram' : 'figure.architecture');
     expect(fig).not.toBeNull();
     expect(fig!.getAttribute('role')).toBe('img');
     expect(fig!.getAttribute('aria-label')!.length).toBeGreaterThan(80);
-    const keys = fig!.querySelectorAll('.key');
+    const keys = fig!.querySelectorAll('.key, .step.key');
     expect(keys).toHaveLength(1);
     expect(keys[0].text).toContain(KEY_IDEA[slug]);
   });
 
   it('makes no HMAC claim', () => {
-    expect(main(slug).querySelector('figure.architecture')!.toString()).not.toMatch(/hmac/i);
+    expect(main(slug).toString()).not.toMatch(/hmac/i);
   });
 });
 

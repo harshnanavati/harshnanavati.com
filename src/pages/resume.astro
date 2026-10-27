@@ -279,7 +279,7 @@ import { SITE } from '../lib/site';
   @media print {
     @page {
       size: A4;
-      margin: 14mm 14mm;
+      margin: 12mm 13mm;
     }
 
     .download {
@@ -300,6 +300,49 @@ import { SITE } from '../lib/site';
 
     li {
       break-inside: avoid;
+    }
+
+    /* Paper sizes: the screen spacing is generous, so tighten it to keep two pages. */
+    .top {
+      padding: 0 0 12px;
+    }
+
+    h1 {
+      font-size: 22pt;
+    }
+
+    h2 {
+      margin: 0 0 8px;
+      font-size: 13pt;
+    }
+
+    section + section {
+      margin-top: 18px;
+    }
+
+    .summary,
+    .note {
+      font-size: 10pt;
+    }
+
+    .job + .job {
+      margin-top: 16px;
+      padding-top: 12px;
+    }
+
+    .points {
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .points li {
+      font-size: 9.5pt;
+      line-height: 1.4;
+    }
+
+    .skill-list,
+    .fact p {
+      font-size: 9pt;
     }
   }
 </style>

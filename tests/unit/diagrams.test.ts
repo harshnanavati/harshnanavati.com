@@ -11,12 +11,13 @@ const SLUGS = [
   'crickpal-ai-summary',
   'ai-face-matching',
   'quantumcopilot',
-  'support-concierge-chatbots',
+  'rag-support-chatbot',
+  'concierge-chatbot',
   'vipermind',
 ];
 
 describe('DIAGRAMS registry', () => {
-  it('has exactly the seven project slugs', () => {
+  it('has exactly the eight project slugs', () => {
     expect(Object.keys(DIAGRAMS).sort()).toEqual([...SLUGS].sort());
   });
 
@@ -36,7 +37,8 @@ describe('DIAGRAMS registry', () => {
   });
 
   it('the chatbots page has two diagrams', () => {
-    expect(DIAGRAMS['support-concierge-chatbots']).toHaveLength(2);
+    expect(DIAGRAMS['rag-support-chatbot']).toHaveLength(1);
+    expect(DIAGRAMS['concierge-chatbot']).toHaveLength(1);
   });
 });
 

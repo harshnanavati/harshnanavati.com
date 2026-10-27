@@ -1,0 +1,56 @@
+---
+title: RAG Support Chatbot – Self-Correcting Customer Support
+order: 2
+outcome: A support assistant that has answered 30,000+ questions for 8,800+ people since May 2025, and stops repeating a mistake once staff correct it.
+summary: Answered 30,000+ questions for 8,800+ people, and learns from every staff correction
+kind: Client project
+role: Solo, designed and built end to end
+chips:
+  - { value: '30,000+', label: questions answered, basis: 'Production logs: 30,826 questions answered between May 2025 and October 2026.', evidence: results }
+  - { value: '8,800+', label: people served, basis: 'Production logs: 8,888 different people asked the bot at least one question in the same period.', evidence: results }
+  - { value: '20,000+', label: chat sessions, basis: 'Production logs: 20,642 chat sessions in the same period.', evidence: results }
+  - { value: '~86%', label: answered without a fallback, basis: 'Production logs: 26,421 of 30,826 questions got an answer instead of the fallback reply (85.7%). This measures coverage, not correctness.', evidence: results }
+  - { value: '~60%', label: fewer support escalations, basis: 'An estimate: the drop in questions escalated to staff after the support bot launched.', evidence: results }
+  - { value: 'Learning loop', label: from staff corrections }
+tags: [rag, hitl, faiss]
+videoTitle: How a support bot learns from staff corrections
+stack: [Python, FastAPI, 'OpenAI (text-embedding-3-large, GPT-5-mini)', FAISS, SQL Server]
+---
+
+import ProjectDiagram from '../../components/ProjectDiagram.astro';
+
+## The problem
+
+A US youth-sports organization gets the same questions from families all season: schedules, rules and logistics, and often personal ones like "when does my team play?". Staff were answering them one by one.
+
+## Constraints
+
+- Answers must stay current as information changes during the season.
+- Many questions need the person's own team and schedule, not just general information.
+- When the bot is wrong, it must not keep repeating the same mistake.
+
+## How it works
+
+<ProjectDiagram slug="rag-support-chatbot" index={0} />
+
+The bot searches a question-and-answer knowledge base and combines the best passages with the chat history and the person's own team and schedule, then writes the reply. When staff mark an answer as wrong, their correction is written back into the knowledge base and the index is rebuilt, so the next family gets the corrected answer.
+
+## Key decisions
+
+1. **Chunk on meaning, not size.** The knowledge base is written as questions and answers, so chunks follow those boundaries. Oversized answers are split by sentence, with overlap.
+2. **Close the loop.** Staff corrections flow back into the knowledge base, so the bot stops repeating a mistake once it's been corrected.
+3. **Personal answers from real data.** Questions about "my team" are answered from the person's own team and schedule, not guessed from general text.
+4. **Measure what happens in production.** Every question is logged, which is where the numbers on this page come from.
+
+## Results
+
+From production logs, May 2025 to October 2026:
+
+- 30,000+ questions answered for 8,800+ people, across 20,000+ chat sessions.
+- ~86% of questions answered without falling back to the "I can't help with that" reply.
+- An estimated ~60% fewer questions escalated to staff after launch.
+
+## What I'd do next
+
+- Build an evaluation set that checks answers for correctness, not just coverage.
+- Track which corrections fix the most repeat questions, and surface those to staff first.

@@ -2,6 +2,7 @@
 // system architecture diagram for desktop widths inside "How it works".
 import AiSummaryArchitecture from '../components/visuals/AiSummaryArchitecture.astro';
 import AiSummaryMoment from '../components/visuals/AiSummaryMoment.astro';
+import ConciergeMoment from '../components/visuals/ConciergeMoment.astro';
 import DocuPilotArchitecture from '../components/visuals/DocuPilotArchitecture.astro';
 import DocuPilotMoment from '../components/visuals/DocuPilotMoment.astro';
 import FaceMatchingArchitecture from '../components/visuals/FaceMatchingArchitecture.astro';
@@ -11,7 +12,7 @@ import IntelligenceLayerMoment from '../components/visuals/IntelligenceLayerMome
 import QuantumCopilotArchitecture from '../components/visuals/QuantumCopilotArchitecture.astro';
 import QuantumCopilotMoment from '../components/visuals/QuantumCopilotMoment.astro';
 import SupportBotArchitecture from '../components/visuals/SupportBotArchitecture.astro';
-import SupportConciergeMoment from '../components/visuals/SupportConciergeMoment.astro';
+import SupportMoment from '../components/visuals/SupportMoment.astro';
 import ViperMindArchitecture from '../components/visuals/ViperMindArchitecture.astro';
 import ViperMindMoment from '../components/visuals/ViperMindMoment.astro';
 import type { WorkSlug } from '../diagrams';
@@ -24,7 +25,8 @@ export const MOMENTS: Partial<Record<WorkSlug, AstroComponent>> = {
   'crickpal-ai-summary': AiSummaryMoment,
   'ai-face-matching': FaceMatchingMoment,
   quantumcopilot: QuantumCopilotMoment,
-  'support-concierge-chatbots': SupportConciergeMoment,
+  'rag-support-chatbot': SupportMoment,
+  'concierge-chatbot': ConciergeMoment,
   vipermind: ViperMindMoment,
 };
 
@@ -34,6 +36,6 @@ export const ARCHITECTURES: Partial<Record<WorkSlug, AstroComponent>> = {
   'crickpal-ai-summary': AiSummaryArchitecture,
   'ai-face-matching': FaceMatchingArchitecture,
   quantumcopilot: QuantumCopilotArchitecture,
-  'support-concierge-chatbots': SupportBotArchitecture,
+  'rag-support-chatbot': SupportBotArchitecture,
   vipermind: ViperMindArchitecture,
 };

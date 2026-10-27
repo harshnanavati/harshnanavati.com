@@ -11,7 +11,7 @@ describe('home project cards', () => {
     const first = rows()[0];
     expect(first.querySelector('.title')!.text.trim()).toBe('DocuPilot');
     expect(first.querySelector('.descriptor')!.text.trim()).toBe('Enterprise RAG Platform');
-    const face = rows()[3];
+    const face = rows()[4];
     expect(face.querySelector('.title')!.text.trim()).toBe('AI Face Matching System');
     expect(face.querySelector('.descriptor')).toBeNull();
   });
@@ -32,7 +32,7 @@ describe('product illustrations', () => {
 
 describe('next project link', () => {
   it('names the product without its descriptor', () => {
-    expect(main('/work/docupilot/').querySelector('.next-title')!.text.trim()).toBe('CrickPal Intelligence Layer');
+    expect(main('/work/docupilot/').querySelector('.next-title')!.text.trim()).toBe('RAG Support Chatbot');
   });
 });
 

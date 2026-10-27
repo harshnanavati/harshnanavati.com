@@ -1,0 +1,48 @@
+---
+title: Concierge Chatbot – Long-Context Visitor Assistant
+order: 7
+outcome: A visitor assistant that started as a full RAG pipeline, which I replaced with one cached prompt once it was clear the content was only about 50 FAQs.
+summary: Started as a RAG pipeline, rebuilt as one cached prompt with no retrieval to go wrong
+kind: Client project
+role: Solo, designed and built end to end
+chips:
+  - { value: '~50', label: FAQs in one cached prompt, basis: 'The concierge content is about 50 questions and answers, small enough to fit in one prompt.', evidence: key-decisions }
+  - { value: 'One call', label: per message }
+  - { value: 'No index', label: to maintain }
+tags: [long-context, prompt-caching, llm]
+videoTitle: When I removed RAG, and why it was the right call
+stack: [Python, FastAPI, 'OpenAI (GPT-4o-mini, GPT-4.1-nano)', prompt caching, 'BeautifulSoup and APScheduler (original RAG version)']
+---
+
+import ProjectDiagram from '../../components/ProjectDiagram.astro';
+
+## The problem
+
+Families visiting a US youth-sports organization's events ask about dining, lodging and attractions nearby. The organization wanted an assistant that answers those questions and never makes promises on its behalf.
+
+## Constraints
+
+- Answers must stay accurate as the information changes.
+- Out-of-scope questions must be declined cleanly.
+- It should be cheap and simple to run, since it's a small, low-traffic service.
+
+## How it works
+
+<ProjectDiagram slug="concierge-chatbot" index={0} />
+
+The first version was a full RAG pipeline: scraping, change detection, a versioned index and a daily scheduler. Now all ~50 FAQs sit in one cached system prompt, one model call returns the route, the answer and a follow-up suggestion, and out-of-scope replies are fixed, pre-written text.
+
+## Key decisions
+
+1. **Know when not to use RAG.** The concierge content turned out to be only about 50 FAQs, which fits in one prompt. Removing retrieval meant fewer moving parts and no retrieval misses, and prompt caching keeps it cheap.
+2. **One call per message.** A single model call decides the route, writes the answer and picks a follow-up suggestion, instead of a chain of calls.
+3. **Constrain the model where it matters.** Follow-up suggestions can only come from the real FAQ list, and out-of-scope replies are fixed text, so the bot never invents a promise on the organization's behalf.
+
+## Results
+
+- A simpler concierge: one model call per message and no index to maintain.
+- No retrieval step that can miss the right answer.
+
+## What I'd do next
+
+- Build an evaluation set and compare the RAG and long-context designs on accuracy and cost, with numbers.

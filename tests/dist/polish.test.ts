@@ -42,6 +42,14 @@ describe('sharing and indexing', () => {
     expect(html).not.toContain('property="og:url"');
   });
 
+  it('gives the home page a 1200×630 share card with the headshot on it', () => {
+    const png = readFileSync(join(DIST, 'og', 'index.png'));
+    expect(png.readUInt32BE(16)).toBe(1200);
+    expect(png.readUInt32BE(20)).toBe(630);
+    // A photo makes the file several times heavier than a text-only card.
+    expect(png.length).toBeGreaterThan(3 * readFileSync(join(DIST, 'og', 'about.png')).length);
+  });
+
   it.each(ALL_PAGES)('%s has complete link-preview tags', (p) => {
     const head = loadPage(p).querySelector('head')!;
     const meta = (sel: string) => head.querySelector(sel)?.getAttribute('content');
@@ -62,7 +70,8 @@ describe('diagram accessibility', () => {
     }
   });
 
-  it.each(WORK_SLUGS)('%s architecture SVG is hidden behind its figure label', (slug) => {
+  // The concierge page tells its story with a before-and-after step diagram instead.
+  it.each(WORK_SLUGS.filter((s) => s !== 'concierge-chatbot'))('%s architecture SVG is hidden behind its figure label', (slug) => {
     const svg = loadPage(`/work/${slug}/`).querySelector('figure.architecture svg')!;
     expect(svg.getAttribute('aria-hidden')).toBe('true');
   });

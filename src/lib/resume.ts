@@ -7,7 +7,7 @@ export const RESUME_PDF = '/resume/HarshNanavati_AppliedAIEngineer_Resume_2026.p
 export const RESUME = {
   headline: 'Applied AI Engineer: LLMs, RAG, agentic systems and evaluation',
   summary:
-    'Applied AI engineer with 2+ years shipping production LLM systems end to end: enterprise RAG, agentic pipelines with automated verification, real-time self-hosted LLM services and GPU computer vision, for clients in the US and India. Systems serve 600+ users and cut manual work by up to ~70%. I own the full path: retrieval design, guardrails, evaluation, FastAPI backends and deployment.',
+    'Applied AI engineer with 2+ years shipping production LLM systems end to end: enterprise RAG, agentic pipelines with automated verification, real-time self-hosted LLM services and GPU computer vision, for clients in the US and India. Systems serve 8,800+ users and cut manual work by up to ~70%. I own the full path: retrieval design, guardrails, evaluation, FastAPI backends and deployment.',
   skills: [
     {
       group: 'GenAI',
@@ -60,8 +60,12 @@ export const RESUME = {
           text: 'maps natural-language queries to typed parameters across 6 loan products; parallel scenario fan-out (~3x faster scenario stage), multi-turn memory, and 8 Uvicorn workers on IIS.',
         },
         {
-          lead: 'RAG Support & Concierge Chatbots',
-          text: 'a support bot with a human-in-the-loop correction loop (~60% fewer escalations); a concierge bot redesigned from RAG to cached long-context with single-call intent routing.',
+          lead: 'RAG Support Chatbot – Self-Correcting Customer Support',
+          text: 'answered 30,000+ questions for 8,800+ people in production since May 2025, ~86% without a fallback reply; FAISS retrieval over question-and-answer chunks and a staff correction loop that writes fixes back into the knowledge base (~60% fewer escalations, estimated).',
+        },
+        {
+          lead: 'Concierge Chatbot – Long-Context Visitor Assistant',
+          text: 'redesigned from a RAG pipeline to ~50 FAQs in one cached prompt, with single-call intent routing and fixed replies for out-of-scope requests.',
         },
       ],
     },

@@ -15,10 +15,10 @@ describe('home page', () => {
     );
   });
 
-  it('lists the seven projects in order, with their home summaries', () => {
+  it('lists the eight projects in order, with their home summaries', () => {
     const rows = home().querySelectorAll('#work li a');
     expect(rows.map((a) => a.getAttribute('href'))).toEqual(WORK_SLUGS.map((s) => `/work/${s}/`));
-    expect(rows[0].text).toContain('with a source for every answer');
+    expect(rows[0].text).toContain('with a cited source page for every answer');
   });
 
   it('introduces Harsh in one paragraph, by scope rather than years', () => {
@@ -26,8 +26,8 @@ describe('home page', () => {
     expect(hero.querySelectorAll('.sub, .current')).toHaveLength(0);
     const lede = hero.querySelector('.lede')!.text.replace(/\s+/g, ' ');
     expect(lede).toContain('Masterly Solutions');
-    expect(lede).toContain('six AI systems');
-    expect(lede).toContain('600+ staff');
+    expect(lede).toContain('seven AI systems');
+    expect(lede).toContain('8,800+ people');
     expect(hero.text).not.toContain('2+ years');
   });
 
@@ -41,7 +41,7 @@ describe('home page', () => {
 
   it('shows a preview of each project’s illustration, hidden from screen readers', () => {
     const previews = home().querySelectorAll('#work li .preview');
-    expect(previews).toHaveLength(7);
+    expect(previews).toHaveLength(8);
     for (const p of previews) {
       expect(p.getAttribute('aria-hidden')).toBe('true');
       expect(p.querySelector('.product-moment')).not.toBeNull();

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadPage, WORK_SLUGS } from './helpers';
+import { loadPage, rawPage, WORK_SLUGS } from './helpers';
 
 // The product name leads; the descriptor sits under it.
 const TITLES: Record<(typeof WORK_SLUGS)[number], [string, string?]> = {
@@ -8,7 +8,8 @@ const TITLES: Record<(typeof WORK_SLUGS)[number], [string, string?]> = {
   'crickpal-ai-summary': ['CrickPal AI Summary', 'Real-Time LLM Commentary Engine'],
   'ai-face-matching': ['AI Face Matching System'],
   quantumcopilot: ['QuantumCopilot', 'AI Loan & Financial Assistant'],
-  'support-concierge-chatbots': ['RAG Support & Concierge Chatbots'],
+  'rag-support-chatbot': ['RAG Support Chatbot', 'Self-Correcting Customer Support'],
+  'concierge-chatbot': ['Concierge Chatbot', 'Long-Context Visitor Assistant'],
   vipermind: ['ViperMind', 'Multi-Agent Python Tutor'],
 };
 
@@ -18,7 +19,8 @@ const CHIP_VALUES: Record<(typeof WORK_SLUGS)[number], string[]> = {
   'crickpal-ai-summary': ['2'],
   'ai-face-matching': ['~70%'],
   quantumcopilot: ['6', 'Up to 3', '~3x'],
-  'support-concierge-chatbots': ['~60%'],
+  'rag-support-chatbot': ['30,000+', '8,800+', '20,000+', '~86%', '~60%'],
+  'concierge-chatbot': ['~50'],
   vipermind: ['30', '7'],
 };
 
@@ -39,7 +41,8 @@ const KINDS: Record<(typeof WORK_SLUGS)[number], string> = {
   'crickpal-ai-summary': 'In-house product, live',
   'ai-face-matching': 'Client project',
   quantumcopilot: 'In-house product, live',
-  'support-concierge-chatbots': 'Client project',
+  'rag-support-chatbot': 'Client project',
+  'concierge-chatbot': 'Client project',
   vipermind: 'Personal project',
 };
 
@@ -115,8 +118,7 @@ describe.each(WORK_SLUGS)('work page %s', (slug) => {
   });
 
   it('shows each diagram exactly once', () => {
-    const expected = slug === 'support-concierge-chatbots' ? 2 : 1;
-    expect(main(slug).querySelectorAll('figure.diagram')).toHaveLength(expected);
+    expect(main(slug).querySelectorAll('figure.diagram')).toHaveLength(1);
   });
 });
 
@@ -134,7 +136,7 @@ describe('external product links', () => {
     expect(external(slug)).toEqual([{ href: CRICKPAL, text: 'CrickPal, the platform this runs on' }]);
   });
 
-  it.each(['docupilot', 'ai-face-matching', 'support-concierge-chatbots', 'vipermind'])('%s has no product links', (slug) => {
+  it.each(['docupilot', 'ai-face-matching', 'rag-support-chatbot', 'concierge-chatbot', 'vipermind'])('%s has no product links', (slug) => {
     expect(external(slug)).toEqual([]);
   });
 });
@@ -162,15 +164,19 @@ describe('face matching privacy', () => {
 });
 
 describe('next project links', () => {
-  it('goes from DocuPilot to the Intelligence Layer, and wraps from the last to the first', () => {
-    expect(main('docupilot').querySelector('a.next-project')?.getAttribute('href')).toBe(
-      '/work/crickpal-intelligence-layer/',
-    );
-    expect(main('support-concierge-chatbots').querySelector('a.next-project')?.getAttribute('href')).toBe(
-      '/work/vipermind/',
-    );
-    expect(main('vipermind').querySelector('a.next-project')?.getAttribute('href')).toBe(
-      '/work/docupilot/',
-    );
+  it('follows the home order and wraps from the last project to the first', () => {
+    const next = (slug: string) => main(slug).querySelector('a.next-project')?.getAttribute('href');
+    expect(next('docupilot')).toBe('/work/rag-support-chatbot/');
+    expect(next('rag-support-chatbot')).toBe('/work/crickpal-intelligence-layer/');
+    expect(next('concierge-chatbot')).toBe('/work/vipermind/');
+    expect(next('vipermind')).toBe('/work/docupilot/');
+  });
+});
+
+describe('the old shared chatbots page', () => {
+  it('redirects to the support chatbot', () => {
+    const html = rawPage('/work/support-concierge-chatbots/');
+    expect(html).toMatch(/http-equiv="refresh"[^>]*\/work\/rag-support-chatbot\//);
+    expect(html).toContain('noindex');
   });
 });

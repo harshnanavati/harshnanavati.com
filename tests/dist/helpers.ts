@@ -6,11 +6,12 @@ export const DIST = join(process.cwd(), 'dist');
 
 export const WORK_SLUGS = [
   'docupilot',
+  'rag-support-chatbot',
   'crickpal-intelligence-layer',
   'crickpal-ai-summary',
   'ai-face-matching',
   'quantumcopilot',
-  'support-concierge-chatbots',
+  'concierge-chatbot',
   'vipermind',
 ] as const;
 
