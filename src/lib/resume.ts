@@ -2,6 +2,9 @@
 // HarshNanavati_AppliedAIEngineer_Resume_2026.pdf, except the phone number,
 // which stays off the public web pages. Update both together.
 
+/** One resume bullet. `href` links a project's name to its case study. */
+type Point = { lead: string; text: string; href?: string };
+
 export const RESUME_PDF = '/resume/HarshNanavati_AppliedAIEngineer_Resume_2026.pdf';
 
 export const RESUME = {
@@ -34,37 +37,45 @@ export const RESUME = {
       where: 'Ahmedabad, India',
       when: 'Oct 2024 – present',
       note: 'Building in-house AI products and client systems for the US and India.',
-      points: [
+      points: <Point[]>[
         {
           lead: 'DocuPilot – Enterprise RAG Platform',
+          href: '/work/docupilot/',
           text: 'cut manual SOP queries by ~40% for 600+ staff across 14 document categories, with Docling ingestion (OCR and tables), custom structure-aware chunking with page-level provenance, and text-embedding-3-small with FAISS retrieval over 12,000+ chunks at sub-100 ms median latency.',
         },
         {
           lead: 'DocuPilot – Answer Grounding & Guardrails',
+          href: '/work/docupilot/#key-decisions',
           text: 'GPT-4o-mini answers constrained by answer-grounded citation selection and a two-stage citation gate, with every claim linked to its source page region; role-based document access, JWT auth, SHA-256 dedup and per-query observability on FastAPI and SQL Server.',
         },
         {
           lead: 'CrickPal Intelligence Layer – AI Win-Prediction Platform',
+          href: '/work/crickpal-intelligence-layer/',
           text: 'an LLM agent turns analysts’ plain-English specs into feature code, gated by an automated verification harness (golden examples, symmetry, replay-based leakage, determinism) with self-repair and human approval; Elo baseline at log-loss 0.643 and Brier 0.227 over 4.1k T20Is; ~800 automated tests.',
         },
         {
           lead: 'CrickPal AI Summary – Real-Time LLM Commentary Engine',
+          href: '/work/crickpal-ai-summary/',
           text: 'live ball-by-ball data turned into narrative and headline summaries on self-hosted Ollama; incremental summarization keeps prompt size flat as a match grows; exactly-once batching on a single instance, a circuit breaker with backoff, and an admin console for per-match prompt and model tuning without redeploys.',
         },
         {
-          lead: 'AI Face Matching System',
+          lead: 'AI Face Matching System – GPU Photo-Tagging Pipeline',
+          href: '/work/ai-face-matching/',
           text: 'cut manual photo tagging by ~70% with an unattended MTCNN and FaceNet pipeline: self-healing job queue, retry budgets, stale-lease recovery and an embedding cache across three SQL Server databases; extended to video with YOLOv8 detection and ONNX/DirectML export.',
         },
         {
           lead: 'QuantumCopilot – AI Loan & Financial Assistant',
+          href: '/work/quantumcopilot/',
           text: 'maps natural-language queries to typed parameters across 6 loan products; parallel scenario fan-out (~3x faster scenario stage), multi-turn memory, and 8 Uvicorn workers on IIS.',
         },
         {
           lead: 'RAG Support Chatbot – Self-Correcting Customer Support',
+          href: '/work/rag-support-chatbot/',
           text: 'answered 30,000+ questions for 8,800+ people in production since May 2025, ~86% without a fallback reply; FAISS retrieval over question-and-answer chunks and a staff correction loop that writes fixes back into the knowledge base (~60% fewer escalations, estimated).',
         },
         {
           lead: 'Concierge Chatbot – Long-Context Visitor Assistant',
+          href: '/work/concierge-chatbot/',
           text: 'redesigned from a RAG pipeline to ~50 FAQs in one cached prompt, with single-call intent routing and fixed replies for out-of-scope requests.',
         },
       ],
@@ -75,7 +86,7 @@ export const RESUME = {
       where: 'Remote, Ahmedabad, India',
       when: 'Jun 2023 – May 2024',
       note: '',
-      points: [
+      points: <Point[]>[
         {
           lead: '',
           text: 'Used Spark, Scala and SQL for entity-resolution and anomaly-detection analyses on large-scale financial datasets.',

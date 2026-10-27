@@ -18,12 +18,14 @@ beforeAll(async () => {
 });
 
 describe('BaseLayout', () => {
-  it('has the four nav links in order', async () => {
+  it('has the name, the Email me button and the four tabs, in order', async () => {
     const doc = await render();
     const links = doc.querySelectorAll('header nav a').map((a) => [a.text.trim(), a.getAttribute('href')]);
     expect(links).toEqual([
       ['Harsh Nanavati', '/'],
-      ['Work', '/#work'],
+      ['Email me', 'mailto:nanavatiharsh00@gmail.com'],
+      ['Work', '/work/'],
+      ['Talks', '/talks/'],
       ['About', '/about/'],
       ['Resume', '/resume/'],
     ]);

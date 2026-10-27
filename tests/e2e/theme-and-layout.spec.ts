@@ -30,14 +30,14 @@ test.describe('theme toggle', () => {
   });
 });
 
-test.describe('theme toggle with a dark system setting', () => {
+test.describe('theme on a device set to dark mode', () => {
   test.use({ colorScheme: 'dark' });
 
-  test('starts dark and can switch to light', async ({ page }) => {
+  test('still opens in light, and the toggle switches to dark', async ({ page }) => {
     await page.goto('/');
-    expect(await bodyBg(page)).toBe(DARK);
-    await page.getByRole('button', { name: 'Switch to light theme' }).click();
     expect(await bodyBg(page)).toBe(WHITE);
+    await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+    expect(await bodyBg(page)).toBe(DARK);
   });
 });
 
@@ -106,7 +106,11 @@ test.describe('QuantumCopilot visuals', () => {
 });
 
 test.describe('QuantumCopilot visuals in dark mode', () => {
-  test.use({ colorScheme: 'dark', viewport: { width: 1280, height: 900 } });
+  test.use({ viewport: { width: 1280, height: 900 } });
+  test.beforeEach(async ({ page }) => {
+    // Dark is a visitor's choice now, remembered from the toggle.
+    await page.addInitScript(() => localStorage.setItem('theme', 'dark'));
+  });
 
   test('architecture key component uses the dark accent', async ({ page }) => {
     await page.goto('/work/quantumcopilot/');
@@ -128,5 +132,55 @@ test.describe('phone layout', () => {
     const b = (await rows.nth(1).boundingBox())!;
     expect(Math.round(a.x)).toBe(Math.round(b.x));
     expect(b.y).toBeGreaterThan(a.y);
+  });
+});
+
+test.describe('header', () => {
+  for (const width of [375, 1280]) {
+    test(`stays at the top of the screen while scrolling at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto('/work/docupilot/');
+      await page.mouse.wheel(0, 2500);
+      await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(1000);
+      const top = await page.locator('.site-header').evaluate((el) => el.getBoundingClientRect().top);
+      expect(top).toBe(0);
+      await expect(page.getByRole('link', { name: 'Talks' })).toBeInViewport();
+      await expect(page.locator('.header-cta')).toBeInViewport();
+    });
+  }
+});
+
+test.describe('How I build on a wide screen', () => {
+  test('runs the five stages across one row, with every proof on the same line', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+    const tops = async (selector: string) =>
+      page.locator(selector).evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().top)));
+    const steps = await tops('.stages .step');
+    expect(steps).toHaveLength(5);
+    expect(new Set(steps).size).toBe(1);
+    expect(new Set(await tops('.stages .proof-value')).size).toBe(1);
+  });
+});
+
+test.describe('About page card', () => {
+  test('stays exactly where it starts while the page scrolls', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/about/');
+    const top = () => page.locator('.about-card').evaluate((el) => Math.round(el.getBoundingClientRect().top));
+    const start = await top();
+    for (const y of [1, 40, 200]) {
+      await page.evaluate((v) => scrollTo(0, v), y);
+      expect(await top()).toBe(start);
+    }
+  });
+
+  test('stays put at the very end of the page on a laptop-height screen, not under the header', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 800 });
+    await page.goto('/about/');
+    const top = () => page.locator('.about-card').evaluate((el) => Math.round(el.getBoundingClientRect().top));
+    const start = await top();
+    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+    expect(await top()).toBe(start);
   });
 });

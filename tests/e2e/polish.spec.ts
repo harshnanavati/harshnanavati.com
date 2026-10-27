@@ -70,7 +70,7 @@ test.describe('diagrams at tablet width', () => {
 
   test('"How I build" reads in one column', async ({ page }) => {
     await page.goto('/');
-    const items = page.locator('.principles > p');
+    const items = page.locator('.stages > li');
     const a = (await items.nth(0).boundingBox())!;
     const b = (await items.nth(1).boundingBox())!;
     expect(Math.round(a.x)).toBe(Math.round(b.x));
@@ -78,7 +78,10 @@ test.describe('diagrams at tablet width', () => {
 });
 
 test.describe('printing the resume', () => {
-  test.use({ colorScheme: 'dark' });
+  test.beforeEach(async ({ page }) => {
+    // Dark is a visitor's choice now, remembered from the toggle.
+    await page.addInitScript(() => localStorage.setItem('theme', 'dark'));
+  });
 
   test('prints dark text on white without the site chrome, in at most two pages', async ({ page }) => {
     await page.goto('/resume/');

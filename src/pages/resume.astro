@@ -47,7 +47,14 @@ import { SITE } from '../lib/site';
                 <ul class="points">
                   {job.points.map((p) => (
                     <li>
-                      {p.lead && <strong class="lead">{p.lead}</strong>}
+                      {p.lead &&
+                        (p.href ? (
+                          <a class="lead" href={p.href}>
+                            {p.lead}
+                          </a>
+                        ) : (
+                          <strong class="lead">{p.lead}</strong>
+                        ))}
                       <span>{p.lead ? p.text.charAt(0).toUpperCase() + p.text.slice(1) : p.text}</span>
                     </li>
                   ))}
@@ -234,6 +241,18 @@ import { SITE } from '../lib/site';
     color: var(--accent);
   }
 
+  /* Project names open their case studies: underlined lightly so they read as links. */
+  a.lead {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  a.lead:hover {
+    text-decoration-color: var(--accent);
+  }
+
   /* Side column */
   .skill-group + .skill-group {
     margin-top: 16px;
@@ -300,6 +319,10 @@ import { SITE } from '../lib/site';
 
     li {
       break-inside: avoid;
+    }
+
+    a.lead {
+      text-decoration: none;
     }
 
     /* Paper sizes: the screen spacing is generous, so tighten it to keep two pages. */

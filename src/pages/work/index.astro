@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import WorkGrid from '../../components/WorkGrid.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Work"
+  description="Case studies of production AI systems by Harsh Nanavati: RAG, AI agents, real-time LLM pipelines and computer vision, each with the evidence behind its results."
+  path="/work/"
+  ogImage="/og/work.png"
+>
+  <div class="container wide">
+    <h1>Work</h1>
+    <p class="lede">
+      Eight case studies: seven AI systems I built at Masterly Solutions and one personal project. Each covers the
+      problem, the design decisions and the results, with evidence for every number.
+    </p>
+    <WorkGrid entries={work} />
+  </div>
+</BaseLayout>
+
+<style>
+  .lede {
+    max-width: var(--text-width);
+    margin: 0 0 2rem;
+  }
+</style>

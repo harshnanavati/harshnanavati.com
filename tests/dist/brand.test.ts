@@ -4,8 +4,8 @@ import { ALL_PAGES, loadPage, WORK_SLUGS } from './helpers';
 const main = (path: string) => loadPage(path).querySelector('main')!;
 const text = (path: string) => main(path).text.replace(/\s+/g, ' ').replace(/’/g, "'");
 
-describe('home project cards', () => {
-  const rows = () => main('/').querySelectorAll('#work li.row');
+describe('project cards on the Work page', () => {
+  const rows = () => main('/work/').querySelectorAll('ul.rows li.row');
 
   it('lead with the product name, the descriptor under it', () => {
     const first = rows()[0];
@@ -13,7 +13,7 @@ describe('home project cards', () => {
     expect(first.querySelector('.descriptor')!.text.trim()).toBe('Enterprise RAG Platform');
     const face = rows()[4];
     expect(face.querySelector('.title')!.text.trim()).toBe('AI Face Matching System');
-    expect(face.querySelector('.descriptor')).toBeNull();
+    expect(face.querySelector('.descriptor')!.text.trim()).toBe('GPU Photo-Tagging Pipeline');
   });
 
   it('label each preview as an illustration and drop the arrow', () => {

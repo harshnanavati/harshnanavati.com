@@ -4,7 +4,7 @@
 // or, without one, the first step-by-step diagram. This component fills in the rest:
 // - the system architecture diagram on desktop, when the project has one;
 // - the step-by-step diagram on phones, when the stage shows an illustration instead,
-//   with a button that opens the architecture diagram full-screen.
+//   with a button above it that opens the architecture diagram full-screen.
 import { DIAGRAMS, type WorkSlug } from '../diagrams';
 import { ARCHITECTURES, MOMENTS } from '../visuals';
 import Diagram from './Diagram.astro';
@@ -25,7 +25,6 @@ const showStepDiagram = index > 0 || !stageHasDiagram;
   showStepDiagram &&
     (Architecture ? (
       <div class="phone-only">
-        <Diagram diagram={DIAGRAMS[slug][index]} />
         <button type="button" class="open-full" data-full-diagram aria-haspopup="dialog">
           View full diagram
         </button>
@@ -38,6 +37,7 @@ const showStepDiagram = index > 0 || !stageHasDiagram;
           </div>
           <div class="dialog-body" />
         </dialog>
+        <Diagram diagram={DIAGRAMS[slug][index]} />
       </div>
     ) : (
       <Diagram diagram={DIAGRAMS[slug][index]} />
@@ -86,8 +86,9 @@ const showStepDiagram = index > 0 || !stageHasDiagram;
     cursor: pointer;
   }
 
+  /* Above the steps, so it's seen before scrolling through them. */
   .open-full {
-    margin-top: -0.5rem;
+    margin-top: 0.5rem;
   }
 
   .full-diagram {

@@ -7,7 +7,7 @@ describe('home page citations', () => {
   it('cites both hero claims, numbered in reading order', () => {
     const cites = home().querySelectorAll('.hero button.cite');
     expect(cites.map((c) => c.text.trim())).toEqual(['1', '2']);
-    expect(cites[0].getAttribute('data-href')).toBe('#work');
+    expect(cites[0].getAttribute('data-href')).toBe('/work/');
     expect(cites[0].getAttribute('popovertarget')).toBe('cite-hero-systems');
     expect(cites[1].getAttribute('data-href')).toBe('/work/rag-support-chatbot/#results');
   });
@@ -16,14 +16,23 @@ describe('home page citations', () => {
     expect(home().querySelector('.cite-note')!.text).toContain('link to their evidence');
   });
 
-  it('backs each "How I build" principle with a project', () => {
-    const cites = home().querySelectorAll('.principles button.cite');
-    expect(cites.map((c) => c.getAttribute('data-href'))).toEqual([
-      '/work/docupilot/#key-decisions',
-      '/work/crickpal-intelligence-layer/#key-decisions',
-      '/work/ai-face-matching/#key-decisions',
+  it('backs each "How I build" stage with a proof that links to its case study', () => {
+    const stages = home().querySelectorAll('.build ol.stages > li');
+    expect(stages.map((li) => li.querySelector('h3')!.text.trim())).toEqual([
+      'Understand the problem',
+      'Prove it works',
+      'Build the system',
+      'Ship to production',
+      'Optimize in production',
     ]);
-    expect(cites.map((c) => c.text.trim())).toEqual(['3', '4', '5']);
+    expect(stages.map((li) => li.querySelector('a.proof')!.getAttribute('href'))).toEqual([
+      '/work/concierge-chatbot/#key-decisions',
+      '/work/crickpal-intelligence-layer/#results',
+      '/work/docupilot/#key-decisions',
+      '/work/ai-face-matching/#results',
+      '/work/rag-support-chatbot/#results',
+    ]);
+    expect(home().querySelector('.build-lede')!.text).toContain('I owned all five stages myself');
   });
 
   it('gives every marker a unique evidence card', () => {

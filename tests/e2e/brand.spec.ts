@@ -53,9 +53,9 @@ test.describe('desktop', () => {
     expect(h['font-size']).toBe('16px');
   });
 
-  test('home previews fade out at the bottom', async ({ page }) => {
-    await page.goto('/');
-    const s = await style(page, '#work .preview', ['mask-image', '-webkit-mask-image']);
+  test('project previews on the Work page fade out at the bottom', async ({ page }) => {
+    await page.goto('/work/');
+    const s = await style(page, 'ul.rows .preview', ['mask-image', '-webkit-mask-image']);
     expect(`${s['mask-image']}${s['-webkit-mask-image']}`).toContain('linear-gradient');
   });
 });

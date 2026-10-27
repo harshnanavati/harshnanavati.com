@@ -5,52 +5,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { HEADSHOT } from '../lib/headshot';
 import { INTRO_VIDEO } from '../lib/intro';
 import { SITE } from '../lib/site';
-import talkApr2025 from '../assets/talks/apr-2025-ai-pipeline.jpg';
-import talkAug2025 from '../assets/talks/aug-2025-ai-session.jpg';
-import talkJan2025 from '../assets/talks/jan-2025-bvm.jpg';
-import talkMay2026 from '../assets/talks/may-2026-rag-webinar.jpg';
-import talkSep2026 from '../assets/talks/sep-2026-launch.jpg';
-
-// Newest first. Numbers come from Harsh's own accounts and LinkedIn posts of each event.
-const talks = [
-  {
-    when: 'Sep 2026',
-    title: 'Hosted a product launch',
-    detail: 'Hosted the launch event for a new Masterly Solutions product.',
-    photo: talkSep2026,
-    alt: 'Harsh hosting the product launch with a microphone, the audience behind him',
-  },
-  {
-    when: 'May 2026',
-    title: 'RAG Decision Map, a free webinar',
-    detail:
-      'A 2-hour online session for 35+ engineering students and IT professionals on what to choose at each stage of a RAG system, from chunking and embeddings to retrieval and reranking, and why.',
-    photo: talkMay2026,
-    alt: 'Announcement poster for the RAG Decision Map webinar on 21 May, hosted by Harsh Nanavati',
-  },
-  {
-    when: 'Aug 2025',
-    title: 'A 2-hour AI session for 80+ people',
-    detail:
-      '40+ students from Birla Vishwakarma Mahavidyalaya and 40+ IT professionals at Masterly Solutions, from the origins of AI to LangChain, LangGraph and RAG.',
-    photo: talkAug2025,
-    alt: 'Harsh presenting a slide on generative adversarial networks',
-  },
-  {
-    when: 'Apr 2025',
-    title: 'From Chaos to Clarity: The AI Pipeline',
-    detail: 'A talk on how an AI pipeline comes together, for 60+ IT professionals from inside and outside the company.',
-    photo: talkApr2025,
-    alt: 'Harsh on stage in front of the From Chaos to Clarity title slide',
-  },
-  {
-    when: 'Jan 2025',
-    title: 'AI and data science at BVM',
-    detail: 'Visited Birla Vishwakarma Mahavidyalaya, Vallabh Vidyanagar, to talk about AI and data science with 120+ students.',
-    photo: talkJan2025,
-    alt: 'Harsh standing beside a slide at Birla Vishwakarma Mahavidyalaya',
-  },
-];
 
 const timeline = [
   {
@@ -86,22 +40,10 @@ const timeline = [
   path="/about/"
   ogImage="/og/about.png"
 >
-  <div class="container wide">
-    <div class="measure">
-      <div class="intro">
-        <h1>About</h1>
-        {
-          HEADSHOT ? (
-            <Image class="headshot" src={HEADSHOT} alt="Harsh Nanavati" width={224} height={224} loading="eager" />
-          ) : (
-            <div class="headshot placeholder" aria-hidden="true">
-              HN
-            </div>
-          )
-        }
-      </div>
-
-      <p>
+  <div class="container wide about">
+    <div class="about-main">
+      <h1>About</h1>
+      <p class="lede">
         I'm Harsh, an applied AI engineer from Ahmedabad, India. I build AI systems that run in production: assistants that
         answer from company documents, agents that write and test their own code, real-time LLM pipelines and GPU computer
         vision.
@@ -129,58 +71,94 @@ const timeline = [
         something smaller that works every time than a demo that works once.
       </p>
 
-      <h2 id="talks">Talks and sessions</h2>
-      <ul class="talks">
-        {
-          talks.map((talk) => (
-            <li>
-              <Image class="talk-photo" src={talk.photo} alt={talk.alt} width={320} height={240} />
-              <div>
-                <p class="when">{talk.when}</p>
-                <p class="role">{talk.title}</p>
-                <p class="detail">{talk.detail}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
-
       <h2>What I'm looking for</h2>
       <p>
         An Applied AI or GenAI engineering role, fully remote, full-time or contract, including through an employer of
         record. I'm on IST (UTC+5:30) and comfortable with 4+ hours of overlap with Europe or the US East Coast.
       </p>
-      <p class="contact">
-        <a href={`mailto:${SITE.email}`}>Email me</a>{' · '}
-        <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>{' · '}
-        <a href="/resume/">Resume</a>
-      </p>
 
       {INTRO_VIDEO.youtubeId && <VideoSlot title={INTRO_VIDEO.title} youtubeId={INTRO_VIDEO.youtubeId} />}
     </div>
+
+    <aside class="about-card" aria-label="At a glance">
+      {
+        HEADSHOT ? (
+          <Image class="headshot" src={HEADSHOT} alt="Harsh Nanavati" width={480} height={480} loading="eager" />
+        ) : (
+          <div class="headshot placeholder" aria-hidden="true">
+            HN
+          </div>
+        )
+      }
+      <p class="card-name">{SITE.name}</p>
+      <p class="card-role">{SITE.role}</p>
+      <dl class="facts">
+        <div>
+          <dt>Based in</dt>
+          <dd>Ahmedabad, India</dd>
+        </div>
+        <div>
+          <dt>Time zone</dt>
+          <dd>IST (UTC+5:30), 4+ hours of overlap with Europe and US East</dd>
+        </div>
+        <div>
+          <dt>Open to</dt>
+          <dd>Remote roles: full-time, contract or employer of record</dd>
+        </div>
+      </dl>
+      <p class="contact">
+        <a class="primary" href={`mailto:${SITE.email}`}>Email me</a>
+        <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+        <a href="/resume/">Resume</a>
+      </p>
+    </aside>
   </div>
 </BaseLayout>
 
 <style>
-  /* Heading on the left edge like every other page; the portrait sits to its right. */
-  .intro {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 1rem;
+  /* Two columns on wide screens, like the resume: the story on the left, a card with the facts and
+     contact links on the right that stays in view. Phones put the card first. */
+  .about {
+    display: grid;
+    gap: 40px;
   }
 
-  .intro h1 {
-    margin: 0;
+  /* On phones the card is compact: a small photo beside the name and role, the facts below. */
+  .about-card {
+    order: -1;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    grid-template-areas:
+      'photo name'
+      'photo role'
+      'facts facts'
+      'contact contact';
+    column-gap: 16px;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+
+  .about-main {
+    min-width: 0;
+  }
+
+  .about-main h1 {
+    margin-top: 0;
+  }
+
+  .lede {
+    font-size: 1.1rem;
   }
 
   .headshot {
-    width: 112px;
-    height: 112px;
+    grid-area: photo;
+    width: 88px;
+    height: 88px;
     border-radius: 50%;
     object-fit: cover;
-    flex-shrink: 0;
   }
 
   .placeholder {
@@ -190,7 +168,136 @@ const timeline = [
     background: var(--accent);
     color: var(--bg);
     font-family: var(--font-serif);
-    font-size: 36px;
+    font-size: 48px;
+  }
+
+  .card-name {
+    grid-area: name;
+    align-self: end;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .card-role {
+    grid-area: role;
+    align-self: start;
+    margin: 2px 0 0;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .facts {
+    grid-area: facts;
+    display: grid;
+    gap: 10px;
+    margin: 18px 0;
+  }
+
+  .facts dt {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .facts dd {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  /* Three matching buttons in one row; Email me is the filled, slightly wider one. */
+  .contact {
+    grid-area: contact;
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .contact a {
+    padding: 8px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .contact a:hover {
+    border-color: var(--accent);
+  }
+
+  .contact a.primary {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .contact a.primary:hover {
+    border-color: var(--text);
+    background: var(--text);
+  }
+
+  @media (min-width: 960px) {
+    /* The card may scroll on down beside the footer (whose links sit on the left), so at the very end
+       of the page it stays put instead of being pushed up under the header. The extra room is the page's
+       bottom padding plus the footer, taken back with a negative margin so nothing else moves. */
+    .about {
+      --card-room: 160px;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 64px;
+      align-items: start;
+      margin-bottom: calc(-1 * var(--card-room));
+    }
+
+    .about-main {
+      padding-bottom: var(--card-room);
+    }
+
+    /* Wide screens: one column inside the card, a centred profile at the top (photo, name, role), then
+       the facts left-aligned under a rule so they scan easily. It locks at exactly the height it starts
+       at (the header plus the page's top padding), so it never shifts on the first scroll. Spacing is
+       kept tight so the card stays short enough to remain in view on a laptop screen. */
+    .about-card {
+      order: 0;
+      position: sticky;
+      top: calc(var(--header-height) + var(--main-top));
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'photo' 'name' 'role' 'facts' 'contact';
+      justify-items: stretch;
+      padding: 22px 24px 24px;
+    }
+
+    .headshot {
+      justify-self: center;
+      width: 200px;
+      height: 200px;
+      margin-bottom: 12px;
+    }
+
+    .card-name,
+    .card-role {
+      text-align: center;
+    }
+
+    .card-role {
+      margin-top: 2px;
+    }
+
+    .facts {
+      gap: 7px;
+      margin: 14px 0 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .facts dd {
+      line-height: 1.4;
+    }
   }
 
   /* A real sequence, newest first: dates on the left, a rule joining the entries. */
@@ -252,48 +359,7 @@ const timeline = [
     font-size: 15.5px;
   }
 
-  /* Same date and title treatment as the timeline, with the photo where the date column was. */
-  .talks {
-    display: grid;
-    gap: 24px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .talks li {
-    display: grid;
-    grid-template-columns: 160px minmax(0, 1fr);
-    gap: 20px;
-    align-items: start;
-  }
-
-  .talks p {
-    margin: 0;
-  }
-
-  .talks .when {
-    padding: 0;
-  }
-
-  .talk-photo {
-    width: 160px;
-    height: 120px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-
   @media (max-width: 520px) {
-    .talks li {
-      grid-template-columns: 112px minmax(0, 1fr);
-      gap: 14px;
-    }
-
-    .talk-photo {
-      width: 112px;
-      height: 84px;
-    }
-
     .timeline li {
       grid-template-columns: minmax(0, 1fr);
       gap: 2px;

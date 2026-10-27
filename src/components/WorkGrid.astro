@@ -1,0 +1,78 @@
+---
+// The grid of project cards, shared by the home page (a few highlights, text only so they stay light)
+// and the Work page (all of them, each with its illustration).
+import type { CollectionEntry } from 'astro:content';
+import type { WorkSlug } from '../diagrams';
+import { splitTitle } from '../lib/title';
+import { MOMENTS } from '../visuals';
+import ProjectRow from './ProjectRow.astro';
+
+interface Props {
+  entries: CollectionEntry<'work'>[];
+  /** Show each project's illustration above its text. */
+  previews?: boolean;
+}
+
+const { entries, previews = true } = Astro.props;
+---
+
+<ul class="rows">
+  {
+    entries.map((entry) => {
+      const Moment = previews ? MOMENTS[entry.id as WorkSlug] : undefined;
+      const { name, descriptor } = splitTitle(entry.data.title);
+      const card = {
+        href: `/work/${entry.id}/`,
+        title: name,
+        descriptor,
+        outcome: entry.data.summary,
+        tags: entry.data.tags,
+      };
+      // An empty preview slot still counts as filled, so a text-only card is rendered without one.
+      return Moment ? (
+        <ProjectRow {...card}>
+          <Moment slot="preview" />
+        </ProjectRow>
+      ) : (
+        <ProjectRow {...card} />
+      );
+    })
+  }
+</ul>
+
+<style>
+  .rows {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 760px) {
+    .rows {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    /* An odd last card takes the full row, its preview beside the text instead of above it. */
+    .rows > :global(li:last-child:nth-child(odd)) {
+      grid-column: 1 / -1;
+    }
+
+    .rows > :global(li:last-child:nth-child(odd) > a) {
+      flex-direction: row;
+    }
+
+    .rows > :global(li:last-child:nth-child(odd) .preview) {
+      flex: 0 0 calc(50% - 14px);
+      border-bottom: 0;
+      border-right: 1px solid var(--border);
+    }
+
+    .rows > :global(li:last-child:nth-child(odd) .text) {
+      align-content: center;
+    }
+  }
+</style>

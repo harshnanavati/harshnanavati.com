@@ -21,6 +21,13 @@ interface Props {
 
 const { title, description, path, ogImage = '/og/home.png', ogType = 'website', noindex = false } = Astro.props;
 const fullTitle = path === '/' ? `${SITE.name} · ${SITE.role}` : `${title} · ${SITE.name}`;
+// The tab for the page being read is marked, so visitors can see where they are.
+const NAV = [
+  { label: 'Work', href: '/work/', current: (p: string) => p.startsWith('/work/') },
+  { label: 'Talks', href: '/talks/', current: (p: string) => p === '/talks/' },
+  { label: 'About', href: '/about/', current: (p: string) => p === '/about/' },
+  { label: 'Resume', href: '/resume/', current: (p: string) => p === '/resume/' },
+];
 const canonical = new URL(path, SITE.url).href;
 const ogImageUrl = new URL(ogImage, SITE.url).href;
 const imageAlt = `${title === SITE.name ? SITE.name : title}: ${description}`;
@@ -79,17 +86,31 @@ const person = {
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="container wide site-header">
-      <nav aria-label="Main">
-        <a class="name" href="/">{SITE.name}</a>
-        <span class="links">
-          <a href="/#work">Work</a>
-          <a href="/about/">About</a>
-          <a href="/resume/">Resume</a>
-          <ThemeToggle />
-        </span>
-      </nav>
+    <header class="site-header">
+      <div class="container wide">
+        <nav aria-label="Main">
+          <a class="name" href="/">{SITE.name}</a>
+          <a class="header-cta" href={`mailto:${SITE.email}`}>Email me</a>
+          <span class="links">
+            {
+              NAV.map((link) => (
+                <a href={link.href} aria-current={link.current(path) ? 'page' : undefined}>
+                  {link.label}
+                </a>
+              ))
+            }
+            <ThemeToggle />
+          </span>
+        </nav>
+      </div>
     </header>
+    <script is:inline>
+      // A rule under the header once the page scrolls beneath it.
+      const header = document.querySelector('.site-header');
+      const mark = () => header.classList.toggle('scrolled', scrollY > 4);
+      addEventListener('scroll', mark, { passive: true });
+      mark();
+    </script>
     <main id="main">
       <slot />
     </main>
@@ -105,13 +126,27 @@ const person = {
 </html>
 
 <style>
+  /* Stays at the top while the page scrolls under it. */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg);
+    transition: box-shadow 0.15s;
+  }
+
+  /* Drawn as a shadow, not a border, so the line adds no height and nothing below it shifts. */
+  .site-header.scrolled {
+    box-shadow: 0 1px 0 var(--border);
+  }
+
   .site-header nav {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 8px 16px;
-    padding: 24px 0 8px;
+    align-items: center;
+    gap: 6px 16px;
+    min-height: var(--header-height);
+    padding: 10px 0;
     font-size: 15px;
   }
 
@@ -124,18 +159,55 @@ const person = {
     color: var(--accent);
   }
 
+  .links a[aria-current='page'] {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+
   .name {
+    margin-right: auto;
     font-weight: 500;
   }
 
+  /* One way to get in touch that's always on screen: last on the right on wide screens,
+     beside the name on phones (where the tabs drop to a second row). */
+  .site-header .header-cta {
+    order: 2;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .site-header .header-cta:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
   .links {
+    order: 1;
     display: flex;
     align-items: center;
     gap: 20px;
   }
 
+  @media (max-width: 599px) {
+    .site-header .header-cta {
+      order: 0;
+    }
+
+    .links {
+      flex-basis: 100%;
+    }
+  }
+
   main {
-    padding: 32px 0 64px;
+    padding: var(--main-top) 0 64px;
   }
 
   /* The rule sits on the inner element so it ends exactly at the content edges. */

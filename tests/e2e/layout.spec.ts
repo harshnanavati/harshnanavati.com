@@ -2,6 +2,8 @@ import { expect, test } from '@playwright/test';
 
 const PAGES = [
   '/',
+  '/work/',
+  '/talks/',
   '/about/',
   '/resume/',
   '/404',
@@ -27,7 +29,10 @@ test.describe('no horizontal overflow at 360px', () => {
 });
 
 test.describe('dark mode uses dark tokens', () => {
-  test.use({ colorScheme: 'dark' });
+  test.beforeEach(async ({ page }) => {
+    // Dark is a visitor's choice now, remembered from the toggle.
+    await page.addInitScript(() => localStorage.setItem('theme', 'dark'));
+  });
 
   test('page and key diagram box switch to dark colors', async ({ page }) => {
     await page.goto('/work/docupilot/');
@@ -52,7 +57,7 @@ test.describe('light mode', () => {
 });
 
 test('every case study opens with an illustration and no video placeholder', async ({ page }) => {
-  for (const path of PAGES.filter((p) => p.startsWith('/work/'))) {
+  for (const path of PAGES.filter((p) => p.startsWith('/work/') && p !== '/work/')) {
     await page.goto(path);
     await expect(page.locator('.stage .product-moment')).toBeVisible();
     await expect(page.getByText('Video coming soon')).toHaveCount(0);

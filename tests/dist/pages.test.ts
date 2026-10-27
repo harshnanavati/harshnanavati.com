@@ -15,10 +15,24 @@ describe('home page', () => {
     );
   });
 
-  it('lists the eight projects in order, with their home summaries', () => {
-    const rows = home().querySelectorAll('#work li a');
-    expect(rows.map((a) => a.getAttribute('href'))).toEqual(WORK_SLUGS.map((s) => `/work/${s}/`));
+  it('features four projects, in order, and links to the full Work page', () => {
+    const rows = home().querySelectorAll('#work li.row > a');
+    expect(rows.map((a) => a.getAttribute('href'))).toEqual([
+      '/work/docupilot/',
+      '/work/rag-support-chatbot/',
+      '/work/crickpal-intelligence-layer/',
+      '/work/ai-face-matching/',
+    ]);
     expect(rows[0].text).toContain('with a cited source page for every answer');
+    const all = home().querySelector('.all-work a')!;
+    expect(all.getAttribute('href')).toBe('/work/');
+    expect(all.text.trim()).toBe('View all 8 case studies');
+  });
+
+  it('lists all eight projects in order on the Work page, with their summaries', () => {
+    const rows = loadPage('/work/').querySelectorAll('main ul.rows li.row > a');
+    expect(rows.map((a) => a.getAttribute('href'))).toEqual(WORK_SLUGS.map((s) => `/work/${s}/`));
+    expect(loadPage('/work/').querySelector('main h1')?.text.trim()).toBe('Work');
   });
 
   it('introduces Harsh in one paragraph, by scope rather than years', () => {
@@ -40,8 +54,10 @@ describe('home page', () => {
   });
 
   it('shows a preview of each project’s illustration, hidden from screen readers', () => {
-    const previews = home().querySelectorAll('#work li .preview');
+    const previews = loadPage('/work/').querySelectorAll('main ul.rows li .preview');
     expect(previews).toHaveLength(8);
+    // The home page keeps its four highlights light: text only, no illustrations.
+    expect(home().querySelectorAll('#work li .preview')).toHaveLength(0);
     for (const p of previews) {
       expect(p.getAttribute('aria-hidden')).toBe('true');
       expect(p.querySelector('.product-moment')).not.toBeNull();
@@ -53,11 +69,14 @@ describe('home page', () => {
     expect(home().text).not.toContain('users on one system');
   });
 
-  it('has a correctly spaced closing line', () => {
-    const closing = home().querySelector('.closing')!.text.replace(/\s+/g, ' ').trim();
-    expect(closing).toBe(
-      'Looking for an Applied AI or GenAI engineering role, remote, full-time or contract. Email me or connect on LinkedIn.',
-    );
+  it('ends with a contact card: email first, then LinkedIn and the resume', () => {
+    const card = home().querySelector('.contact-card')!;
+    expect(card.querySelector('h2')!.text.trim()).toBe('Have an AI project or a role in mind?');
+    expect(card.querySelectorAll('.contact-actions a').map((a) => a.getAttribute('href'))).toEqual([
+      'mailto:nanavatiharsh00@gmail.com',
+      'https://www.linkedin.com/in/harshnanavati',
+      '/resume/',
+    ]);
   });
 
   it('has the "How I build" section and the three calls to action', () => {
@@ -76,8 +95,10 @@ describe('about page', () => {
     expect(about().text.replace(/’/g, "'")).toContain("What I'm looking for");
   });
 
-  it('has correctly spaced contact links', () => {
-    expect(about().querySelector('.contact')!.text.replace(/\s+/g, ' ').trim()).toBe('Email me · LinkedIn · Resume');
+  it('has a facts card with the contact links: email first, then LinkedIn and the resume', () => {
+    const card = about().querySelector('aside.about-card')!;
+    expect(card.querySelectorAll('dt').map((d) => d.text.trim())).toEqual(['Based in', 'Time zone', 'Open to']);
+    expect(card.querySelectorAll('.contact a').map((a) => a.text.trim())).toEqual(['Email me', 'LinkedIn', 'Resume']);
   });
 
   it('has an experience and education timeline, newest first', () => {
@@ -90,22 +111,6 @@ describe('about page', () => {
     expect(text[1]).toContain('Deloitte');
     expect(text[2]).toContain('Nirma University');
     expect(text[3]).toContain('LDRP-ITR');
-  });
-
-  it('lists talks and sessions newest first, each with a described photo', () => {
-    const items = about().querySelectorAll('ul.talks > li');
-    expect(items.map((li) => li.querySelector('.when')!.text.trim())).toEqual([
-      'Sep 2026',
-      'May 2026',
-      'Aug 2025',
-      'Apr 2025',
-      'Jan 2025',
-    ]);
-    for (const li of items) expect(li.querySelector('img')!.getAttribute('alt')!.length).toBeGreaterThan(10);
-    expect(items[1].text).toContain('35+ engineering students');
-    expect(items[2].text).toContain('80+ people');
-    expect(items[3].text).toContain('60+ IT professionals');
-    expect(items[4].text).toContain('120+ students');
   });
 
   it('shows no video placeholder until the intro video exists', () => {
@@ -131,6 +136,12 @@ describe('resume page', () => {
   it('links to the PDF, and the PDF is published', () => {
     expect(resume().querySelector(`a[href="${RESUME_PDF}"]`)).not.toBeNull();
     expect(existsSync(join(DIST, RESUME_PDF))).toBe(true);
+  });
+
+  it('links every Masterly project heading to its case study', () => {
+    const links = resume().querySelectorAll('.points a.lead').map((a) => a.getAttribute('href')!.split('#')[0]);
+    expect(links).toHaveLength(8);
+    for (const slug of WORK_SLUGS.filter((s) => s !== 'vipermind')) expect(links).toContain(`/work/${slug}/`);
   });
 
   it('shows the resume as readable text instead of an embedded PDF', () => {
@@ -159,5 +170,36 @@ describe('every page', () => {
   it.each(ALL_PAGES)('%s never shows the phone number', (path) => {
     // Any Indian mobile number, with or without the country code.
     expect(rawPage(path)).not.toMatch(/\+91|[6-9]\d{4}[\s-]?\d{5}/);
+  });
+});
+
+describe('talks page', () => {
+  const talks = () => loadPage('/talks/').querySelector('main')!;
+
+  it('has its heading', () => {
+    expect(talks().querySelector('h1')?.text.trim()).toBe('Talks and sessions');
+  });
+
+  it('marks the Talks tab as the current page, and only that tab', () => {
+    const current = loadPage('/talks/').querySelectorAll('header a[aria-current="page"]');
+    expect(current.map((a) => a.text.trim())).toEqual(['Talks']);
+    expect(loadPage('/work/docupilot/').querySelector('header a[aria-current="page"]')?.text.trim()).toBe('Work');
+    expect(loadPage('/').querySelector('header a[aria-current="page"]')).toBeNull();
+  });
+
+  it('lists talks and sessions newest first, each with a described photo', () => {
+    const items = talks().querySelectorAll('ul.talks > li');
+    expect(items.map((li) => li.querySelector('.when')!.text.trim())).toEqual([
+      'Sep 2026',
+      'May 2026',
+      'Aug 2025',
+      'Apr 2025',
+      'Jan 2025',
+    ]);
+    for (const li of items) expect(li.querySelector('img')!.getAttribute('alt')!.length).toBeGreaterThan(10);
+    expect(items[1].text).toContain('35+ engineering students');
+    expect(items[2].text).toContain('80+ people');
+    expect(items[3].text).toContain('60+ IT professionals');
+    expect(items[4].text).toContain('120+ students');
   });
 });

@@ -1,0 +1,171 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import talkApr2025 from '../assets/talks/apr-2025-ai-pipeline.jpg';
+import talkAug2025 from '../assets/talks/aug-2025-ai-session.jpg';
+import talkJan2025 from '../assets/talks/jan-2025-bvm.jpg';
+import talkMay2026 from '../assets/talks/may-2026-rag-webinar.jpg';
+import talkSep2026 from '../assets/talks/sep-2026-launch.jpg';
+
+// Newest first. Numbers come from Harsh's own accounts and LinkedIn posts of each event.
+const talks = [
+  {
+    when: 'Sep 2026',
+    title: 'Hosted a product launch',
+    detail: 'Hosted the launch event for a new Masterly Solutions product.',
+    photo: talkSep2026,
+    alt: 'Harsh hosting the product launch with a microphone, the audience behind him',
+  },
+  {
+    when: 'May 2026',
+    title: 'RAG Decision Map, a free webinar',
+    detail:
+      'A 2-hour online session for 35+ engineering students and IT professionals on what to choose at each stage of a RAG system, from chunking and embeddings to retrieval and reranking, and why.',
+    photo: talkMay2026,
+    alt: 'Announcement poster for the RAG Decision Map webinar on 21 May, hosted by Harsh Nanavati',
+  },
+  {
+    when: 'Aug 2025',
+    title: 'A 2-hour AI session for 80+ people',
+    detail:
+      '40+ students from Birla Vishwakarma Mahavidyalaya and 40+ IT professionals at Masterly Solutions, from the origins of AI to LangChain, LangGraph and RAG.',
+    photo: talkAug2025,
+    alt: 'Harsh presenting a slide on generative adversarial networks',
+  },
+  {
+    when: 'Apr 2025',
+    title: 'From Chaos to Clarity: The AI Pipeline',
+    detail: 'A talk on how an AI pipeline comes together, for 60+ IT professionals from inside and outside the company.',
+    photo: talkApr2025,
+    alt: 'Harsh on stage in front of the From Chaos to Clarity title slide',
+  },
+  {
+    when: 'Jan 2025',
+    title: 'AI and data science at BVM',
+    detail: 'Visited Birla Vishwakarma Mahavidyalaya, Vallabh Vidyanagar, to talk about AI and data science with 120+ students.',
+    photo: talkJan2025,
+    alt: 'Harsh standing beside a slide at Birla Vishwakarma Mahavidyalaya',
+  },
+];
+---
+
+<BaseLayout
+  title="Talks and sessions"
+  description="Talks, webinars and sessions where Harsh Nanavati explains AI, RAG and LLM systems to engineers and students."
+  path="/talks/"
+  ogImage="/og/talks.png"
+>
+  <div class="container wide">
+    <h1>Talks and sessions</h1>
+    <p class="lede">
+      Sessions where I explain AI and LLM systems to engineers and students, from a webinar for 35+ people to a room of
+      120+ students.
+    </p>
+
+    <ul class="talks">
+      {
+        talks.map((talk) => (
+          <li>
+            <Image class="talk-photo" src={talk.photo} alt={talk.alt} width={960} height={720} />
+            <div class="talk-body">
+              <p class="when">{talk.when}</p>
+              <h2>{talk.title}</h2>
+              <p class="detail">{talk.detail}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .lede {
+    max-width: var(--text-width);
+    margin: 0 0 2rem;
+  }
+
+  /* Cards in a grid: one column on phones, two on tablets, three on wide screens. */
+  .talks {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .talks li {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg);
+  }
+
+  .talk-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .talk-body {
+    padding: 16px 18px 20px;
+  }
+
+  .talks p {
+    margin: 0;
+  }
+
+  .when {
+    font-size: 14px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Titles are card headings, so they read at body size rather than as section headings. */
+  h2 {
+    margin: 4px 0 6px;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .detail {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  @media (min-width: 640px) {
+    .talks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* An odd last card takes the full row instead of leaving a gap. */
+    .talks li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Wide screens: the two newest sessions as a larger pair, the rest three across, so no row has a gap. */
+  @media (min-width: 1000px) {
+    .talks {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 28px;
+    }
+
+    .talks li,
+    .talks li:last-child:nth-child(odd) {
+      grid-column: span 2;
+    }
+
+    .talks li:nth-child(-n + 2) {
+      grid-column: span 3;
+    }
+  }
+</style>

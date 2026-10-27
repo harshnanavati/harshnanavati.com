@@ -11,23 +11,25 @@
   --text-width: 680px;
   --wide-width: 1080px;
   --gutter: 16px;
+  --header-height: 72px;
+  /* Space between the header and the start of each page. */
+  --main-top: 40px;
   color-scheme: light;
 }
 
-/* Dark theme: the visitor's system setting, unless they picked light with the toggle. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #121212;
-    --text: #ececec;
-    --muted: #a3a29c;
-    --border: #2c2c2a;
-    --accent: #8fb0e6;
-    --surface: #1c1c1c;
-    color-scheme: dark;
+/* Below this width the header's tabs drop under the name, so it is two rows tall. */
+@media (max-width: 599px) {
+  :root {
+    --header-height: 92px;
   }
 }
 
-/* Dark theme picked with the toggle. */
+/* The header stays on screen, so jumps to a section stop below it, not behind it. */
+html {
+  scroll-padding-top: calc(var(--header-height) + 16px);
+}
+
+/* Light is the default on every device; dark applies only once a visitor picks it with the toggle. */
 :root[data-theme='dark'] {
   --bg: #121212;
   --text: #ececec;

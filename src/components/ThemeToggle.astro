@@ -24,9 +24,8 @@
 
 <script>
   const root = document.documentElement;
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
-
-  const current = () => (root.dataset.theme ?? (media.matches ? 'dark' : 'light')) as 'light' | 'dark';
+  // Light unless the visitor has picked dark; the device's own setting is deliberately ignored.
+  const current = () => (root.dataset.theme === 'dark' ? 'dark' : 'light');
 
   function label() {
     const next = current() === 'dark' ? 'light' : 'dark';
@@ -48,7 +47,6 @@
     });
   }
 
-  media.addEventListener('change', label);
   label();
 </script>
 
@@ -83,15 +81,5 @@
 
   :global(:root[data-theme='dark']) .moon {
     display: none;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .sun {
-      display: block;
-    }
-
-    :global(:root:not([data-theme='light'])) .moon {
-      display: none;
-    }
   }
 </style>

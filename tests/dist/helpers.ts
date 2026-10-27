@@ -15,7 +15,7 @@ export const WORK_SLUGS = [
   'vipermind',
 ] as const;
 
-export const ALL_PAGES = ['/', '/about/', '/resume/', ...WORK_SLUGS.map((s) => `/work/${s}/`)];
+export const ALL_PAGES = ['/', '/work/', '/talks/', '/about/', '/resume/', ...WORK_SLUGS.map((s) => `/work/${s}/`)];
 
 export function pageFile(path: string): string {
   return join(DIST, path, 'index.html');

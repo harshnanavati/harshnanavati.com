@@ -58,7 +58,8 @@ describe('sharing and indexing', () => {
     expect(meta('meta[property="og:image:height"]')).toBe('630');
     expect(meta('meta[property="og:image:alt"]')!.length).toBeGreaterThan(10);
     expect(meta('meta[name="twitter:image:alt"]')!.length).toBeGreaterThan(10);
-    const type = p.startsWith('/work/') ? 'article' : 'website';
+    // Case studies are articles; the Work page that lists them is not.
+    const type = p.startsWith('/work/') && p !== '/work/' ? 'article' : 'website';
     expect(meta('meta[property="og:type"]')).toBe(type);
   });
 });

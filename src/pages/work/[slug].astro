@@ -449,7 +449,7 @@ const cite = (chip: (typeof numbers)[number], i: number) => ({
     .toc {
       display: block;
       position: sticky;
-      top: 24px;
+      top: calc(var(--header-height) + 24px);
     }
 
     .toc ul {

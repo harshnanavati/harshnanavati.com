@@ -6,7 +6,7 @@ const TITLES: Record<(typeof WORK_SLUGS)[number], [string, string?]> = {
   docupilot: ['DocuPilot', 'Enterprise RAG Platform'],
   'crickpal-intelligence-layer': ['CrickPal Intelligence Layer', 'AI Win-Prediction Platform'],
   'crickpal-ai-summary': ['CrickPal AI Summary', 'Real-Time LLM Commentary Engine'],
-  'ai-face-matching': ['AI Face Matching System'],
+  'ai-face-matching': ['AI Face Matching System', 'GPU Photo-Tagging Pipeline'],
   quantumcopilot: ['QuantumCopilot', 'AI Loan & Financial Assistant'],
   'rag-support-chatbot': ['RAG Support Chatbot', 'Self-Correcting Customer Support'],
   'concierge-chatbot': ['Concierge Chatbot', 'Long-Context Visitor Assistant'],

@@ -10,11 +10,10 @@ const require = createRequire(import.meta.url);
 const font = (weight: 400 | 500) =>
   readFileSync(require.resolve(`@fontsource/inter/files/inter-latin-${weight}-normal.woff`));
 
-// The home card is the one shared most, so it carries the headshot when there is one.
-const headshotExt = ['jpg', 'jpeg', 'png', 'webp'].find((ext) => existsSync(`src/assets/headshot.${ext}`));
-const headshot =
-  headshotExt &&
-  `data:image/${headshotExt === 'jpg' ? 'jpeg' : headshotExt};base64,${readFileSync(`src/assets/headshot.${headshotExt}`).toString('base64')}`;
+// The home card is the one shared most, so it carries a headshot. It has its own, tighter crop: a face
+// reads at link-preview size, and LinkedIn caches the card, so it shouldn't change with the site photo.
+const cardPhoto = 'src/assets/og/headshot-card.jpg';
+const headshot = existsSync(cardPhoto) && `data:image/jpeg;base64,${readFileSync(cardPhoto).toString('base64')}`;
 
 export const getStaticPaths = (async () => {
   const work = await getCollection('work');
@@ -22,6 +21,8 @@ export const getStaticPaths = (async () => {
     { params: { slug: 'home' }, props: { title: SITE.name, subtitle: 'Applied AI Engineer. I build production LLM systems: RAG, AI agents and evaluation.', home: true } },
     { params: { slug: 'about' }, props: { title: `About ${SITE.name}`, subtitle: 'Applied AI engineer from India, looking for a remote role.' } },
     { params: { slug: 'resume' }, props: { title: 'Resume', subtitle: `${SITE.name} · ${SITE.role}` } },
+    { params: { slug: 'work' }, props: { title: 'Work', subtitle: 'Case studies of production AI systems: RAG, AI agents, real-time LLM pipelines and computer vision.' } },
+    { params: { slug: 'talks' }, props: { title: 'Talks and sessions', subtitle: `${SITE.name} on AI, RAG and LLM systems, for engineers and students.` } },
     ...work.map((entry) => ({
       params: { slug: entry.id },
       props: { title: entry.data.title, subtitle: entry.data.outcome },

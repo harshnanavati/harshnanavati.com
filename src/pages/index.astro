@@ -2,16 +2,57 @@
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Cite from '../components/Cite.astro';
-import ProjectRow from '../components/ProjectRow.astro';
-import type { WorkSlug } from '../diagrams';
+import WorkGrid from '../components/WorkGrid.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { HEADSHOT } from '../lib/headshot';
 import { INTRO_VIDEO } from '../lib/intro';
 import { SITE } from '../lib/site';
-import { splitTitle } from '../lib/title';
-import { MOMENTS } from '../visuals';
 
 const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+// Four projects that together show the range: retrieval at scale, enterprise RAG, agents and computer vision.
+// The Work page has all of them.
+const FEATURED = ['docupilot', 'rag-support-chatbot', 'crickpal-intelligence-layer', 'ai-face-matching'];
+const featured = work.filter((entry) => FEATURED.includes(entry.id));
+
+// How I take a project end to end. Each stage carries proof from a project on this site, linked to where
+// that project's case study backs it.
+const stages = [
+  {
+    title: 'Understand the problem',
+    text: "Start with the client and the people who'll use it. Pin down requirements and constraints, and let those pick the design.",
+    proof: 'RAG removed',
+    note: 'Concierge content was ~50 FAQs, so one cached prompt beat a full RAG pipeline.',
+    href: '/work/concierge-chatbot/#key-decisions',
+  },
+  {
+    title: 'Prove it works',
+    text: 'Build a small working version and a baseline to beat before anyone commits to the full build.',
+    proof: 'Baseline first',
+    note: 'CrickPal: an Elo baseline at log-loss 0.643 over 4.1k T20Is sets the bar for every feature.',
+    href: '/work/crickpal-intelligence-layer/#results',
+  },
+  {
+    title: 'Build the system',
+    text: 'Guardrails and automated checks go in from the start, not after launch.',
+    proof: 'Every answer cited',
+    note: 'DocuPilot links each answer to the exact page it came from.',
+    href: '/work/docupilot/#key-decisions',
+  },
+  {
+    title: 'Ship to production',
+    text: 'Retries, job queues and logging, so it runs without anyone watching it.',
+    proof: 'Runs unattended',
+    note: 'Face matching cut manual photo tagging by an estimated ~70%.',
+    href: '/work/ai-face-matching/#results',
+  },
+  {
+    title: 'Optimize in production',
+    text: 'Measure real use, then make it faster, cheaper and better.',
+    proof: '30,000+ questions',
+    note: 'The support chatbot has served 8,800+ people and learns from every staff correction.',
+    href: '/work/rag-support-chatbot/#results',
+  },
+];
 ---
 
 <BaseLayout
@@ -22,17 +63,19 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
 >
   <div class="container wide">
     <section class:list={['hero', { 'with-photo': HEADSHOT }]}>
-      <div class="hero-text">
+      <div class="hero-head">
         <p class="kicker">{SITE.name}, {SITE.role}</p>
         <h1>I build production LLM systems: RAG, AI agents and evaluation.</h1>
+      </div>
+      <div class="hero-text">
         <p class="lede">
           I design and ship production AI: retrieval, agents, real-time LLM pipelines and computer vision. At Masterly
           Solutions I've built seven AI systems<Cite
             n={1}
             id="hero-systems"
             source="Selected work"
-            basis="Seven of the case studies on this page are Masterly Solutions work: four client projects and three in-house products, two of them live. The eighth is a personal project."
-            href="#work"
+            basis="Seven of the eight case studies on the Work page are Masterly Solutions work: four client projects and three in-house products, two of them live. The eighth is a personal project."
+            href="/work/"
             linkText="Go to the work"
           />, the largest used by 8,800+ people<Cite
             n={2}
@@ -63,83 +106,63 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
           )
         }
       </div>
-      {HEADSHOT && <Image class="photo" src={HEADSHOT} alt="Harsh Nanavati" width={360} height={360} loading="eager" />}
+      {HEADSHOT && <Image class="photo" src={HEADSHOT} alt="Harsh Nanavati" width={640} height={640} loading="eager" />}
+    </section>
+
+    <section class="build" aria-labelledby="how-i-build">
+      <h2 id="how-i-build">How I build</h2>
+      <p class="build-lede">
+        I take AI projects from the first client conversation to a system running in production. On every project on
+        this site, I owned all five stages myself.
+      </p>
+      <ol class="stages">
+        {
+          stages.map((stage, i) => (
+            <li>
+              <span class="step" aria-hidden="true">
+                {i + 1}
+              </span>
+              <div class="stage-body">
+                <h3>{stage.title}</h3>
+                <p class="stage-text">{stage.text}</p>
+                <a class="proof" href={stage.href}>
+                  <span class="proof-value">{stage.proof}</span>
+                  <span class="proof-note">{stage.note}</span>
+                </a>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </section>
 
     <section id="work">
       <h2>Selected work</h2>
-      <ul class="rows">
-        {
-          work.map((entry) => {
-            const Moment = MOMENTS[entry.id as WorkSlug];
-            const { name, descriptor } = splitTitle(entry.data.title);
-            return (
-              <ProjectRow
-                href={`/work/${entry.id}/`}
-                title={name}
-                descriptor={descriptor}
-                outcome={entry.data.summary}
-                tags={entry.data.tags}
-              >
-                {Moment && <Moment slot="preview" />}
-              </ProjectRow>
-            );
-          })
-        }
-      </ul>
+      <WorkGrid entries={featured} previews={false} />
+      <p class="all-work">
+        <a href="/work/">View all {work.length} case studies</a>
+      </p>
     </section>
 
-    <section>
-      <h2>How I build</h2>
-      <div class="principles">
-        <p>
-          <strong>Answers you can check.</strong> If an AI system can't show where an answer came from, people can't
-          trust it. My systems cite their sources, down to the page.<Cite
-            n={3}
-            id="principle-cite"
-            source="DocuPilot's two-stage citation gate"
-            basis="Answers cite only passages that clear a minimum score and sit close to the best match, with the exact page region highlighted."
-            href="/work/docupilot/#key-decisions"
-            linkText="Go to the decision"
-          />
-        </p>
-        <p>
-          <strong>Verify before shipping.</strong> Generated code, retrieved context and model output all pass automated
-          checks before they reach a user.<Cite
-            n={4}
-            id="principle-verify"
-            source="CrickPal Intelligence Layer's verification harness"
-            basis="Generated feature code must pass golden-example, mirror-symmetry, replay-leakage and determinism checks, then human approval."
-            href="/work/crickpal-intelligence-layer/#key-decisions"
-            linkText="Go to the decision"
-          />
-        </p>
-        <p>
-          <strong>Built to keep running.</strong> Retries, job queues, circuit breakers and logging aren't extras.
-          Production AI fails in boring ways, and I design for that from day one.<Cite
-            n={5}
-            id="principle-running"
-            source="AI Face Matching's job queue"
-            basis="Retry budgets, expiring leases and parked jobs let it run unattended and recover from bad inputs on its own."
-            href="/work/ai-face-matching/#key-decisions"
-            linkText="Go to the decision"
-          />
-        </p>
-      </div>
+    <section class="contact-card" aria-labelledby="contact">
+      <h2 id="contact">Have an AI project or a role in mind?</h2>
+      <p>
+        I'm looking for a remote Applied AI or GenAI engineering role: full-time, contract or through an employer of
+        record.
+      </p>
+      <p class="contact-actions">
+        <a class="primary" href={`mailto:${SITE.email}`}>Email me</a>
+        <a href={SITE.linkedin} target="_blank" rel="noopener">Connect on LinkedIn</a>
+        <a href="/resume/">See my resume</a>
+      </p>
     </section>
-
-    <p class="closing">
-      Looking for an Applied AI or GenAI engineering role, remote, full-time or contract.{' '}
-      <a href={`mailto:${SITE.email}`}>Email me</a> or{' '}
-      <a href={SITE.linkedin} target="_blank" rel="noopener">connect on LinkedIn</a>.
-    </p>
   </div>
 </BaseLayout>
 
 <style>
   .hero {
     display: grid;
-    gap: 32px;
+    gap: 20px 48px;
     padding: 24px 0 8px;
   }
 
@@ -152,7 +175,7 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
 
   .hero h1 {
     max-width: 900px;
-    margin: 0 0 20px;
+    margin: 0;
     font-size: clamp(2.1rem, 6vw, 3.2rem);
     text-wrap: balance;
   }
@@ -210,49 +233,110 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     background: var(--text);
   }
 
-  .rows {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+
+  /* How I build: a real sequence, so numbered steps joined by a line.
+     Phones read it top to bottom down the line; wide screens read it left to right along it. */
+  .build-lede {
+    max-width: var(--text-width);
+    margin: 0 0 28px;
+    font-size: 18px;
+    line-height: 1.55;
   }
 
-  .principles {
+  .stages {
+    --step: 32px;
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0 40px;
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .stages::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--step) / 2);
+    bottom: calc(var(--step) / 2);
+    left: calc(var(--step) / 2 - 1px);
+    border-left: 2px solid var(--accent);
+    opacity: 0.35;
+  }
+
+  .stages li {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--step) minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--step);
+    height: var(--step);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stage-body h3 {
+    margin: 4px 0 6px;
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .stage-text {
+    margin: 0 0 12px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  .proof {
+    display: grid;
+    align-content: start;
+    gap: 2px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .proof-value {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--accent);
+  }
+
+  .proof-note {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .proof:hover .proof-value {
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
   @media (min-width: 760px) {
-    .rows {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 28px;
-    }
-
-    /* An odd last card takes the full row, its preview beside the text instead of above it. */
-    .rows > :global(li:last-child:nth-child(odd)) {
-      grid-column: 1 / -1;
-    }
-
-    .rows > :global(li:last-child:nth-child(odd) > a) {
-      flex-direction: row;
-    }
-
-    .rows > :global(li:last-child:nth-child(odd) .preview) {
-      flex: 0 0 calc(50% - 14px);
-      border-bottom: 0;
-      border-right: 1px solid var(--border);
-    }
-
-    .rows > :global(li:last-child:nth-child(odd) .text) {
-      align-content: center;
-    }
-
+    /* The headline runs the full width; the photo sits beside the intro and buttons below it. */
     .hero.with-photo {
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
+    }
+
+    .hero-head {
+      grid-column: 1 / -1;
     }
 
     .photo {
@@ -262,20 +346,118 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     }
   }
 
-  /* Three columns only when each one still has a comfortable line length. */
-  @media (min-width: 900px) {
-    .principles {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .principles p {
-      margin-top: 0;
+  /* Wide screens have room for a photo that holds its own beside the intro. */
+  @media (min-width: 1100px) {
+    .photo {
+      width: 320px;
+      height: 320px;
     }
   }
 
-  .closing {
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
+  /* Five across only when each column still has a comfortable line length. */
+  @media (min-width: 1000px) {
+    /* Number, title, text and proof each share a row across all five columns, so the proofs line up. */
+    .stages {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: auto auto 1fr auto;
+      gap: 0 24px;
+    }
+
+    .stages::before {
+      display: none;
+    }
+
+    .stages li {
+      grid-row: span 4;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: subgrid;
+      gap: 0;
+    }
+
+    .stage-body {
+      display: contents;
+    }
+
+    .step {
+      margin-bottom: 14px;
+    }
+
+    /* The line joins one step to the next and stops at the last. */
+    .stages li:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: calc(var(--step) / 2 - 1px);
+      left: var(--step);
+      width: calc(100% + 24px - var(--step));
+      border-top: 2px solid var(--accent);
+      opacity: 0.35;
+    }
+  }
+
+  .all-work {
+    margin: 28px 0 0;
+    text-align: center;
+  }
+
+  .all-work a {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .all-work a:hover {
+    border-color: var(--accent);
+  }
+
+  /* The page ends on one clear next step. */
+  .contact-card {
+    margin-top: 4rem;
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+  }
+
+  .contact-card h2 {
+    margin: 0 0 10px;
+  }
+
+  .contact-card p {
+    max-width: var(--text-width);
+    margin: 0;
+  }
+
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+    margin-top: 20px !important;
+  }
+
+  .contact-actions a {
+    font-weight: 500;
+  }
+
+  .contact-actions a.primary {
+    padding: 10px 20px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+  }
+
+  .contact-actions a.primary:hover {
+    background: var(--text);
+  }
+
+  @media (max-width: 520px) {
+    .contact-card {
+      padding: 24px 20px;
+    }
   }
 </style>

@@ -25,7 +25,7 @@ describe.each(ALL_PAGES)('SEO for %s', (path) => {
 });
 
 describe('sitemap', () => {
-  it('lists exactly the nine pages', () => {
+  it('lists exactly the site pages', () => {
     expect(existsSync(join(DIST, 'sitemap-index.xml'))).toBe(true);
     const xml = readFileSync(join(DIST, 'sitemap-0.xml'), 'utf8');
     const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]).sort();
