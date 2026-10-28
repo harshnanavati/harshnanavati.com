@@ -7,19 +7,23 @@ import sitemap from '@astrojs/sitemap';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 
-// The page's source file, so the sitemap can say when its content last changed.
-const sourceFile = (pathname) => {
-  if (pathname === '/') return 'src/pages/index.astro';
-  if (pathname === '/work/') return 'src/pages/work/index.astro';
+// Every file a page's content comes from, so the sitemap can say when that content last changed:
+// the page itself and the data files it reads (the resume page's text lives in resume.ts, for example).
+const sourceFiles = (pathname) => {
+  if (pathname === '/') return ['src/pages/index.astro', 'src/lib/site.ts', 'src/content/work'];
+  if (pathname === '/work/') return ['src/pages/work/index.astro', 'src/content/work'];
+  if (pathname === '/about/') return ['src/pages/about.astro', 'src/lib/site.ts'];
+  if (pathname === '/resume/') return ['src/pages/resume.astro', 'src/lib/resume.ts'];
+  if (pathname === '/talks/') return ['src/pages/talks.astro', 'src/assets/talks'];
   const work = pathname.match(/^\/work\/([^/]+)\/$/);
-  return work ? `src/content/work/${work[1]}.mdx` : `src/pages${pathname.replace(/\/$/, '')}.astro`;
+  return work ? [`src/content/work/${work[1]}.mdx`] : [`src/pages${pathname.replace(/\/$/, '')}.astro`];
 };
 
-// The last commit to touch the file. Without git, or for a file never committed, there's no date,
+// The last commit to touch any of the files. Without git, or for files never committed, there's no date,
 // and the URL goes out without a lastmod rather than failing the build.
-const lastCommitDate = (file) => {
+const lastCommitDate = (files) => {
   try {
-    return execFileSync('git', ['log', '-1', '--format=%cI', '--', file], { cwd: root, encoding: 'utf8' }).trim() || undefined;
+    return execFileSync('git', ['log', '-1', '--format=%cI', '--', ...files], { cwd: root, encoding: 'utf8' }).trim() || undefined;
   } catch {
     return undefined;
   }
@@ -53,7 +57,7 @@ export default defineConfig({
     sitemap({
       filter: (page) => !page.includes('/og/') && !page.includes('/404') && !page.includes('support-concierge-chatbots'),
       serialize: (item) => {
-        const lastmod = lastCommitDate(sourceFile(new URL(item.url).pathname));
+        const lastmod = lastCommitDate(sourceFiles(new URL(item.url).pathname));
         return lastmod ? { ...item, lastmod } : item;
       },
     }),

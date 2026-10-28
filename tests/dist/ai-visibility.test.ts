@@ -55,7 +55,8 @@ describe('JSON-LD', () => {
     const doc = loadPage(`/work/${slug}/`);
     const url = `https://harshnanavati.com/work/${slug}/`;
     const article = ofType(doc, 'Article')!;
-    expect(article.headline).toBe(doc.querySelector('title')!.text.split(' · ')[0]);
+    // The article keeps the project's full title, even where the browser tab uses a shorter one.
+    expect(article.headline).toContain(doc.querySelector('main h1')!.text.trim());
     expect(article.description).toBe(doc.querySelector('meta[name="description"]')!.getAttribute('content'));
     expect(article.url).toBe(url);
     expect(article.image).toBe(`https://harshnanavati.com/og/${slug}.png`);

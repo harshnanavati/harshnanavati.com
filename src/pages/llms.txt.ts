@@ -49,6 +49,7 @@ export function header(): string {
     `- Location: ${locality}, ${region}, ${country} (${timeZone}); open to remote roles, working the team’s hours in the US or Europe`,
     `- Email: ${SITE.email}`,
     `- LinkedIn: ${SITE.linkedin}`,
+    `- GitHub: ${SITE.github}`,
     `- Website: ${SITE.url}/`,
     '',
   ].join('\n');

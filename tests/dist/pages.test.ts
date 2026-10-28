@@ -23,7 +23,7 @@ describe('home page', () => {
       '/work/crickpal-intelligence-layer/',
       '/work/ai-face-matching/',
     ]);
-    expect(rows[0].text).toContain('with a cited source page for every answer');
+    expect(rows[0].text).toContain('with answers cited to the exact source page');
     const all = home().querySelector('.all-work a')!;
     expect(all.getAttribute('href')).toBe('/work/');
     expect(all.text.trim()).toBe('View all 8 case studies');

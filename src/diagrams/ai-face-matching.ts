@@ -26,7 +26,7 @@ export const diagrams: Diagram[] = [
           { label: 'Detect every face', tech: 'mtcnn' },
           { label: 'Embed', tech: 'facenet' },
           { label: "Compare against the game's team rosters" },
-          { label: 'Matches for staff review' },
+          { label: 'Low-confidence matches go to staff' },
         ],
       },
     ],

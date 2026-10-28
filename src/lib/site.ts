@@ -5,7 +5,7 @@ export const SITE = {
   url: 'https://harshnanavati.com',
   email: 'nanavatiharsh00@gmail.com',
   linkedin: 'https://www.linkedin.com/in/harshnanavati',
-  // Used in structured data (sameAs) only, not as a visible link.
+  // In structured data (sameAs), the footer and llms.txt.
   github: 'https://github.com/harshnanavati',
   role: 'Applied AI Engineer',
   employer: 'Masterly Solutions Pvt. Ltd.',

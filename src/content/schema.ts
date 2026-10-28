@@ -16,6 +16,10 @@ const link = z.object({ label: z.string().min(1), href: z.url() });
 
 export const workSchema = z.object({
   title: z.string().min(1),
+  // A shorter title for search results, where the full title plus " · Harsh Nanavati" would be cut off.
+  seoTitle: z.string().max(44).optional(),
+  // The search-result description: third person, with the main search terms early.
+  description: z.string().min(100).max(160),
   order: z.number().int().min(1).max(8),
   outcome: z.string().min(1),
   summary: z.string().min(1),

@@ -69,14 +69,17 @@ test.describe('case study on a wide screen', () => {
     await expect(toc).toBeInViewport();
   });
 
-  test('key decisions flow down two columns', async ({ page }) => {
+  test('key decisions sit in a two-column grid whose rows line up', async ({ page }) => {
     await page.goto('/work/quantumcopilot/');
     const cards = page.locator('#key-decisions + ol > li');
     await expect(cards).toHaveCount(4);
-    const lefts = await cards.evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().left)));
-    expect(new Set(lefts).size).toBe(2);
-    // Reading order runs down the first column, then the second.
-    expect(lefts[0]).toBeLessThan(lefts.at(-1)!);
+    const boxes = await cards.evaluateAll((els) =>
+      els.map((el) => ({ left: Math.round(el.getBoundingClientRect().left), top: Math.round(el.getBoundingClientRect().top) })),
+    );
+    expect(new Set(boxes.map((b) => b.left)).size).toBe(2);
+    // Each pair starts on the same line, so the rules above them line up.
+    expect(boxes[0].top).toBe(boxes[1].top);
+    expect(boxes[2].top).toBe(boxes[3].top);
   });
 
   test('the concierge page’s before-and-after diagram fills the reading column', async ({ page }) => {
@@ -87,6 +90,39 @@ test.describe('case study on a wide screen', () => {
     expect(second.left).toBe(text.left);
     expect(second.right).toBe(nav.right);
   });
+});
+
+test.describe('results and details on every screen size', () => {
+  for (const width of [1440, 1024, 390]) {
+    test(`two or three numbers sit in one row with no empty block, at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      for (const slug of ['ai-face-matching', 'vipermind', 'quantumcopilot']) {
+        await page.goto(`/work/${slug}/`);
+        const fit = await page.locator('.stats').evaluate((ul) => {
+          const items = [...ul.children].map((li) => li.getBoundingClientRect());
+          const box = ul.getBoundingClientRect();
+          return { rows: new Set(items.map((r) => Math.round(r.top))).size, gap: Math.round(box.right - Math.max(...items.map((r) => r.right))) };
+        });
+        expect(fit.rows).toBe(1);
+        expect(fit.gap).toBeLessThanOrEqual(2);
+      }
+    });
+  }
+
+  for (const width of [1440, 1100, 1024]) {
+    test(`the details strip never crushes the stack or overlaps the link, at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/work/crickpal-ai-summary/');
+      const layout = await page.locator('.meta-card').evaluate((card) => {
+        const stack = card.querySelector('dl > div:last-child')!.getBoundingClientRect();
+        const link = card.querySelector('.links-out')!.getBoundingClientRect();
+        const overlap = !(link.right <= stack.left || link.left >= stack.right || link.bottom <= stack.top || link.top >= stack.bottom);
+        return { stackWidth: stack.width, overlap };
+      });
+      expect(layout.stackWidth).toBeGreaterThanOrEqual(240);
+      expect(layout.overlap).toBe(false);
+    });
+  }
 });
 
 test.describe('architecture diagrams on a wide screen', () => {

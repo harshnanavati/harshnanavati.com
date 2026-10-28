@@ -56,3 +56,33 @@ describe('IndexNow', () => {
     expect(readFileSync(join(DIST, `${key}.txt`), 'utf8').trim()).toBe(key);
   });
 });
+
+describe('search result snippets', () => {
+  it.each(ALL_PAGES)('%s has a title and description short enough not to be cut off', (path) => {
+    const doc = loadPage(path);
+    expect(doc.querySelector('title')!.text.length).toBeLessThanOrEqual(60);
+    expect(doc.querySelector('meta[name="description"]')!.getAttribute('content')!.length).toBeLessThanOrEqual(160);
+  });
+
+  it('case study descriptions are in the third person and name Harsh', () => {
+    for (const path of ALL_PAGES.filter((p) => p.startsWith('/work/') && p !== '/work/')) {
+      const description = loadPage(path).querySelector('meta[name="description"]')!.getAttribute('content')!;
+      expect(description).toContain('Harsh Nanavati');
+      expect(description).not.toMatch(/\bI\b/);
+    }
+  });
+
+  it('case study articles carry publish and update dates', () => {
+    const graph = JSON.parse(loadPage('/work/docupilot/').querySelector('script[type="application/ld+json"]')!.text)['@graph'];
+    const article = graph.find((n: { '@type': string }) => n['@type'] === 'Article');
+    expect(Date.parse(article.datePublished)).not.toBeNaN();
+    expect(Date.parse(article.dateModified)).toBeGreaterThanOrEqual(Date.parse(article.datePublished));
+  });
+});
+
+describe('profiles', () => {
+  it('links GitHub and LinkedIn from the footer as his own profiles', () => {
+    const links = loadPage('/').querySelectorAll('footer a[rel~="me"]').map((a) => a.getAttribute('href'));
+    expect(links).toEqual(expect.arrayContaining(['https://www.linkedin.com/in/harshnanavati', 'https://github.com/harshnanavati']));
+  });
+});

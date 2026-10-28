@@ -9,7 +9,7 @@ const label =
   'A worker claims one game at a time. Roster photos are turned once into face embeddings (MTCNN detection, alignment, FaceNet) and cached. ' +
   'Every face in the game photos is detected, embedded and compared with that game’s team rosters, using a strictness threshold stored in the database. ' +
   'Game video can enter the same pipeline through YOLOv8 player detection exported to ONNX. ' +
-  'Data lives in three SQL Server databases for photos, rosters and results, and staff review the matches, with their corrections kept on re-runs.';
+  'Data lives in three SQL Server databases for photos, rosters and results, and staff review only the low-confidence matches, with their corrections kept on re-runs.';
 ---
 
 <ArchFigure label={label} height={410}>

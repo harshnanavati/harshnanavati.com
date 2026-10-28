@@ -4,6 +4,7 @@ import { workSchema } from '../../src/content/schema';
 const valid = {
   kind: 'Client project',
   title: 'DocuPilot – Enterprise RAG Platform',
+  description: 'DocuPilot, an enterprise RAG platform: staff get answers from hundreds of pages of procedures, each cited to the exact page.',
   order: 1,
   outcome: 'An AI assistant that answers staff questions.',
   summary: 'Answers for 600+ staff, with a source for every answer',
@@ -64,5 +65,10 @@ describe('workSchema', () => {
 
   it('rejects a link that is not a URL', () => {
     expect(() => workSchema.parse({ ...valid, links: [{ label: 'x', href: 'not a url' }] })).toThrow();
+  });
+
+  it('keeps search titles and descriptions short enough not to be cut off', () => {
+    expect(() => workSchema.parse({ ...valid, seoTitle: 'x'.repeat(45) })).toThrow();
+    expect(() => workSchema.parse({ ...valid, description: 'x'.repeat(161) })).toThrow();
   });
 });

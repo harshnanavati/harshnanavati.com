@@ -1,5 +1,7 @@
 ---
 title: AI Face Matching System – GPU Photo-Tagging Pipeline
+seoTitle: 'AI Face Matching System – GPU Tagging'
+description: 'A GPU face-recognition pipeline by Harsh Nanavati that tags players in tournament photos automatically, cutting manual tagging by an estimated ~70%.'
 order: 5
 outcome: 'Staff no longer tag every tournament photo by hand: a GPU face-recognition pipeline tags players automatically and runs unattended, cutting manual tagging by an estimated ~70%.'
 summary: 'Cut manual photo tagging by an estimated ~70%, with players tagged automatically and unattended'
@@ -34,7 +36,7 @@ A US youth-sports organization photographs every game, and staff tagged the play
 
 <ProjectDiagram slug="ai-face-matching" index={0} />
 
-A scheduler finds new games and puts them on a job queue. Each player's roster photo is turned once into a face embedding (512 numbers per face) and cached. For every game photo, each face is detected, embedded and compared against that game's team rosters, and the matches are saved for staff review.
+A scheduler finds new games and puts them on a job queue. Each player's roster photo is turned once into a face embedding (512 numbers per face) and cached. For every game photo, each face is detected, embedded and compared against that game's team rosters. Confident matches are tagged automatically, and only low-confidence ones go to staff for review.
 
 ## Key decisions
 

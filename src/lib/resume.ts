@@ -46,7 +46,7 @@ export const RESUME = {
         {
           lead: 'DocuPilot – Answer Grounding & Guardrails',
           href: '/work/docupilot/#key-decisions',
-          text: 'GPT-4o-mini answers constrained by answer-grounded citation selection and a two-stage citation gate, with every claim linked to its source page region; role-based document access, JWT auth, SHA-256 dedup and per-query observability on FastAPI and SQL Server.',
+          text: 'GPT-4o-mini answers constrained by answer-grounded citation selection and a two-stage citation gate, with answers cited to their source page regions; role-based document access, JWT auth, SHA-256 dedup and per-query observability on FastAPI and SQL Server.',
         },
         {
           lead: 'CrickPal Intelligence Layer – AI Win-Prediction Platform',
@@ -61,7 +61,7 @@ export const RESUME = {
         {
           lead: 'AI Face Matching System – GPU Photo-Tagging Pipeline',
           href: '/work/ai-face-matching/',
-          text: 'cut manual photo tagging by an estimated ~70% with an unattended MTCNN and FaceNet pipeline: self-healing job queue, retry budgets, stale-lease recovery and an embedding cache across three SQL Server databases; extended to video with YOLOv8 detection and ONNX/DirectML export.',
+          text: 'cut manual photo tagging by an estimated ~70% with an unattended MTCNN and FaceNet pipeline: a fault-tolerant job queue with retry budgets, stale-lease recovery and an embedding cache across three SQL Server databases; extended to video with YOLOv8 detection, exported to ONNX and run with DirectML.',
         },
         {
           lead: 'QuantumCopilot – AI Loan & Financial Assistant',

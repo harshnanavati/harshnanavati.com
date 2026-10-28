@@ -57,8 +57,10 @@ describe.each(WORK_SLUGS)('work page %s', (slug) => {
     const [name, descriptor] = TITLES[slug];
     expect(main(slug).querySelector('h1')?.text.trim()).toBe(name);
     expect(main(slug).querySelector('.hero .descriptor')?.text.trim()).toBe(descriptor);
-    // The browser tab and search results keep the full title.
-    expect(page(slug).querySelector('title')?.text).toContain(descriptor ?? name);
+    // The browser tab and search results lead with the project name, short enough not to be cut off.
+    const title = page(slug).querySelector('title')!.text;
+    expect(title.startsWith(name)).toBe(true);
+    expect(title.length).toBeLessThanOrEqual(60);
   });
 
   it('has the template sections in order', () => {

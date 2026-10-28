@@ -15,7 +15,7 @@ export const diagrams: Diagram[] = [
         ],
       },
       {
-        label: 'Learn',
+        label: 'Staff corrections',
         steps: [
           { label: 'Staff mark an answer wrong' },
           { label: 'Staff correction loop', key: true },

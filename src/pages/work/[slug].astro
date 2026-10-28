@@ -6,6 +6,7 @@ import LinksOut from '../../components/LinksOut.astro';
 import VideoSlot from '../../components/VideoSlot.astro';
 import { DIAGRAMS, type WorkSlug } from '../../diagrams';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { firstCommitDate, lastCommitDate } from '../../lib/git-dates';
 import { SITE } from '../../lib/site';
 import { splitTitle } from '../../lib/title';
 import { MOMENTS } from '../../visuals';
@@ -52,19 +53,25 @@ const byline = /personal/i.test(data.kind)
 // Structured data for this case study: an article by Harsh, and where it sits on the site.
 const path = `/work/${slug}/`;
 const canonical = new URL(path, SITE.url).href;
+// When the case study was first published and last changed, from its source file's git history.
+const sourceFile = `src/content/work/${slug}.mdx`;
+const datePublished = firstCommitDate(sourceFile);
+const dateModified = lastCommitDate(sourceFile);
 const personRef = { '@id': `${SITE.url}/#person` };
 const schema = [
   {
     '@type': 'Article',
     '@id': `${canonical}#article`,
     headline: data.title,
-    description: data.outcome,
+    description: data.description,
     url: canonical,
     mainEntityOfPage: canonical,
     image: new URL(`/og/${slug}.png`, SITE.url).href,
     author: personRef,
     publisher: personRef,
     keywords: data.tags.join(', '),
+    ...(datePublished && { datePublished }),
+    ...(dateModified && { dateModified }),
     inLanguage: 'en',
     isPartOf: { '@id': `${SITE.url}/#website` },
   },
@@ -80,8 +87,8 @@ const schema = [
 ---
 
 <BaseLayout
-  title={data.title}
-  description={data.outcome}
+  title={data.seoTitle ?? data.title}
+  description={data.description}
   path={path}
   ogImage={`/og/${slug}.png`}
   ogType="article"
@@ -396,14 +403,14 @@ const schema = [
     overflow: hidden;
   }
 
-  /* Two or three numbers would stretch into wide, empty boxes; they keep a natural width instead. */
+  /* Two or three numbers would stretch into wide, empty boxes. They sit in one row of equal columns
+     instead, as wide as they need up to 220px each, and narrow together on small screens. */
   .stats:not(:has(li:nth-child(4))) {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 220px);
     width: fit-content;
     max-width: 100%;
-  }
-
-  .stats:not(:has(li:nth-child(4))) li {
-    flex: 0 1 220px;
   }
 
   .stats li {
@@ -495,17 +502,18 @@ const schema = [
     margin-top: 0.4rem;
   }
 
-  /* Key decisions read as a ruled list: each one is a choice and its reason. On wider screens
-     they flow down two columns, so a long item never leaves a hole beside a short one. */
+  /* Key decisions read as a ruled list: each one is a choice and its reason. On wider screens they sit
+     in a two-column grid, so the rules above each pair line up; an odd last one spans the row. */
   .prose :global(#key-decisions + ol) {
-    column-gap: 40px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px 40px;
     padding: 0;
     list-style: none;
   }
 
   .prose :global(#key-decisions + ol > li) {
-    break-inside: avoid;
-    margin: 0 0 8px;
+    margin: 0;
     padding: 16px 0 8px;
     border-top: 1px solid var(--border);
     line-height: 1.6;
@@ -554,7 +562,11 @@ const schema = [
 
   @media (min-width: 760px) {
     .prose :global(#key-decisions + ol) {
-      columns: 2;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .prose :global(#key-decisions + ol > li:last-child:nth-child(odd)) {
+      grid-column: 1 / -1;
     }
   }
 
@@ -598,8 +610,10 @@ const schema = [
       gap: 28px;
     }
 
+    /* When the details need the room, the outbound link drops to its own row instead of squeezing them. */
     .meta-card {
       display: flex;
+      flex-wrap: wrap;
       align-items: flex-start;
       gap: 16px 48px;
       padding: 16px 0;
@@ -611,7 +625,8 @@ const schema = [
 
     .meta-card dl {
       display: flex;
-      flex: 1;
+      flex: 1 1 820px;
+      flex-wrap: wrap;
       gap: 16px 48px;
     }
 
@@ -625,8 +640,10 @@ const schema = [
       text-wrap: pretty;
     }
 
+    /* The stack takes the rest of the row, but never so little that it breaks a word per line. */
     .meta-card dl > div:last-child {
       flex: 1 1 320px;
+      min-width: 240px;
       max-width: none;
     }
 

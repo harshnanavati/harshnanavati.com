@@ -41,9 +41,12 @@ const { notes } = Astro.props;
     margin: 0;
   }
 
+  /* One column that can shrink below its content, so a wide code block scrolls inside the screen
+     instead of widening the page. */
   .screen {
     position: relative;
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     padding: 22px;
     border: 1px solid var(--border);
