@@ -230,11 +230,12 @@ const jsonLd = {
     font-weight: 500;
   }
 
-  /* Taller tap areas without changing the layout: the padding is cancelled by the margin. */
+  /* Taller tap areas without changing the layout: the padding is cancelled by the margin. Only the
+     block sides, so the name keeps the auto right margin that pushes everything else to the right. */
   .name,
   .links a {
-    padding: 9px 0;
-    margin: -9px 0;
+    padding-block: 9px;
+    margin-block: -9px;
   }
 
   /* One way to get in touch that's always on screen: last on the right on wide screens,
@@ -316,8 +317,8 @@ const jsonLd = {
   }
 
   .footer-links a {
-    padding: 10px 0;
-    margin: -10px 0;
+    padding-block: 10px;
+    margin-block: -10px;
   }
 
   @media print {

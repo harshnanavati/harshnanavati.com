@@ -148,6 +148,32 @@ test.describe('header', () => {
       await expect(page.locator('.header-cta')).toBeInViewport();
     });
   }
+
+  test('puts the name on the left and the tabs and Email me on the right on a wide screen', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    const box = (selector: string) =>
+      page.locator(selector).first().evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        return { left: Math.round(r.left), right: Math.round(r.right) };
+      });
+    const nav = await box('header nav');
+    const name = await box('header .name');
+    const tabs = await box('header .links');
+    const cta = await box('header .header-cta');
+    expect(name.left).toBe(nav.left);
+    expect(cta.right).toBe(nav.right);
+    // The tabs sit beside Email me, not beside the name.
+    expect(tabs.left - name.right).toBeGreaterThan(200);
+  });
+
+  test('puts Email me at the right edge on a phone too', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 800 });
+    await page.goto('/');
+    const navRight = await page.locator('header nav').evaluate((el) => Math.round(el.getBoundingClientRect().right));
+    const ctaRight = await page.locator('header .header-cta').evaluate((el) => Math.round(el.getBoundingClientRect().right));
+    expect(ctaRight).toBe(navRight);
+  });
 });
 
 test.describe('How I build on a wide screen', () => {
